@@ -2,6 +2,7 @@ import { types } from '../types/types';
 
 const state = {
     name: 'Ricardo Tilleria',
+    rut: '17520926',
     logged: true
 }
 

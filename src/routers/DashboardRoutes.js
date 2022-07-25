@@ -16,7 +16,7 @@ export const DashboardRoutes = () => {
             <Route path='autor' element={ <AutorScreen /> } />
             <Route path='perfil' element={ <PerfilScreen /> } />
 
-            <Route path='/' element={ <MenuScreen />} />
+            <Route path='/' element={ <DashboardScreen />} />
           </Routes>
         </div>
     </>

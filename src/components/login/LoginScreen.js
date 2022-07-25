@@ -10,7 +10,7 @@ export const LoginScreen = () => {
     const handleLogin = () => {
       const action = {
         type: types.login,
-        payload: { name: 'Ricardo Tilleria' }
+        payload: { name: 'Ricardo Tilleria', rut: '17520926' }
       }
       
       dispatch(action);

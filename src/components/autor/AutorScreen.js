@@ -1,16 +1,16 @@
 import React from 'react'
+import { environment } from '../../environment/environment.dev';
 import { useFetch } from '../../hooks/useFetch'
 
 export const AutorScreen = () => {
-  const { source, loading } =  useFetch("https://localhost:7190/api/Autor");
-  
+  const endpoint = environment.UrlApiAutores;
 
+  const { source, loading } =  useFetch(endpoint);
+  
   if (loading) {return `Loading`}
 
   const { data } = source;
 
-  console.log(data);
-   
   return (
     <div className='row mt-5'>
         <h1>AutorScreen</h1>
@@ -37,8 +37,6 @@ export const AutorScreen = () => {
                     ))
                 )
         }
-            
-       
     </div>
   )
 }

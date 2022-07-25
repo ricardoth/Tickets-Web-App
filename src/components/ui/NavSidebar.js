@@ -1,40 +1,43 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { useFetch } from '../../hooks/useFetch';
 import { types } from '../../types/types';
-// import './NavSidebar.css';
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { NavDropdown } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
+import { environment } from '../../environment/environment.dev';
+import { NavItemChild } from './NavItemChild';
+import { procesoPesado } from '../../selectors/procesoPesado';
+
 
 export const NavSidebar = () => {
+    const [ menus, setMenus] = useState([]);
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    //Se debe colocar en el login cuando ejecuta la accion, se manda el rut y debe traer todos los menues asociados a ese rut
-    const endpoint = `https://localhost:44383/api/Menu`;
+    const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const { source, loading } = useFetch(endpoint);
 
-    if (loading) {return `Loading`}
+    const memoProcesoPesado = useMemo(() => procesoPesado(source), [source]);
 
-    const { data } = source;
+    if (loading) {return (<div>Loading...</div>)}
 
+    const { data } = source; 
+    
     const padres = data.filter(x => x.padre === 0 && x.esPadre === true)
     const hijos = data.filter(x => x.padre !== 0);
-    // const hijosSinNietos = hijos.filter(x => x.esPadre === false);
     const nietos = data.filter(x => x.esPadre === false && x.tieneHijos === false);
 
     const handleLogout = () => {
         dispatch({ type: types.logout });
 
         navigate("/login", {
-            replace: true
+            replace: true 
         });
     }
 
-    return (
+    return ( 
         <>
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
             <Navbar.Brand as={Link} to="dashboard">Dashboard</Navbar.Brand>
@@ -42,11 +45,9 @@ export const NavSidebar = () => {
             <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav className="mr-auto">
                 {
-                    
-
                     padres.map( (menu) => {
                         if(!menu.tieneHijos) {
-                            return <Nav.Link as={Link} key={menu.idMenu} to={menu.url}>{menu.nombre}</Nav.Link>;
+                            return <NavItemChild key={menu.idMenu} menuPadre={menu}/>
                         } else {
                             return (
                                 <NavDropdownMenu key={menu.idMenu} title={menu.nombre} id="collasible-nav-dropdown">
@@ -75,7 +76,7 @@ export const NavSidebar = () => {
                                                 } 
                                                 
                                             } else {
-                                                console.log(child)
+                                                // console.log(child)
                                                 // return (
                                                 //     <NavDropdown.Item key={child.idMenu} href={child.url}>{child.nombre}</NavDropdown.Item>
                                                 // )
