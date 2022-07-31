@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { useFetch } from '../../hooks/useFetch';
@@ -13,17 +13,20 @@ import { procesoPesado } from '../../selectors/procesoPesado';
 
 
 export const NavSidebar = () => {
-    const [ menus, setMenus] = useState([]);
+    // const [ menus, setMenus] = useState([]);
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
-    const { source, loading } = useFetch(endpoint);
+    const [ state, fetchData ] = useFetch(endpoint);
+    // const { source, loading } = useFetch(endpoint);
 
-    const memoProcesoPesado = useMemo(() => procesoPesado(source), [source]);
+    useEffect(() => {
+      fetchData(endpoint)
+    }, [fetchData]);
 
-    if (loading) {return (<div>Loading...</div>)}
+    if (state.loading) {return (<div>Loading...</div>)}
 
-    const { data } = source; 
+    const { data } = state.source; 
     
     const padres = data.filter(x => x.padre === 0 && x.esPadre === true)
     const hijos = data.filter(x => x.padre !== 0);
