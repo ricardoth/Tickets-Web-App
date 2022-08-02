@@ -9,12 +9,12 @@ export const MenuScreen = () => {
   const [state, fetchData ] =  useFetch(endpoint);
 
   useEffect(() => {
-    fetchData(endpoint)
+    fetchData(endpoint);
   }, [fetchData]);
 
   if(state.loading) { return (<div>Loading...</div>)}
   const {data} = state.source; 
-  
+
   return (
     
     <div className='row mt-5'>

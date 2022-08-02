@@ -7,29 +7,55 @@ import { environment } from '../../environment/environment.dev';
 const endpoint = environment.UrlApiMenu + "?id=";
 const idApp = environment.ID_APP;
 
+// const initialState = {
+//     idMenu: null,
+//     idApp: idApp,
+//     nombre: '',
+//     padre: '',
+//     url: '',
+//     urlFriend: '',
+//     esActivo: '',
+//     esPadre: '',
+//     tieneHijos: ''
+
+// }
+
 export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
     const [ formValues, handleInputChange, reset ] = useForm(menuEdit);
-    console.log(formValues)
+    // const [ menu, setMenu] = useState(menuEdit);
 
     useEffect(() => {
-        // console.log(menuEdit)
-        //No cambia el estado anterior en el form
-        reset();
+        console.log(menuEdit)
+        console.log(formValues)
+        // setMenu(menuEdit);
+
+        // reset();
     }, [menuEdit]);
+
+    const handleRegistrion = (data) => {
+        console.log(data)
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        let data = new FormData(e.target);
+        let formObject = Object.fromEntries(data.entries());
+
+        // setMenuEdit(formObject);
+        
+        // setMenu(formValues);
+        // console.log(menu)
 
         let menuSend = {
-            IdMenu: formValues.idMenu,
+            IdMenu: formObject.idMenu,
             IdApp: idApp,
-            Nombre: formValues.nombre,
-            Padre: formValues.padre,
-            Url: formValues.url,
-            UrlFriend: formValues.url,
-            EsActivo: formValues.esActivo,
-            EsPadre: formValues.esPadre,
-            TieneHijos: formValues.tieneHijos
+            Nombre: formObject.nombre,
+            Padre: formObject.padre,
+            Url: formObject.url,
+            UrlFriend: formObject.url,
+            EsActivo: formObject.esActivo,
+            EsPadre: formObject.esPadre,
+            TieneHijos: formObject.tieneHijos
         }
 
         Swal.fire({
@@ -51,13 +77,15 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    setMenuEdit(formValues);
-                    // console.log(menuEdit)
-                    // const temp = [...menus];
-                    // const index = temp.findIndex(x => x.idMenu === idMenu);
-                    // temp.splice(index, 1);
-                    // setMenus(temp);
+                    setMenuEdit(formObject);
+                        // console.log(menuEdit)
+                        // const temp = [...menus];
+                        // const index = temp.findIndex(x => x.idMenu === idMenu);
+                        // temp.splice(index, 1);
+                        // setMenus(temp);
                     Swal.fire('Actualizado!', '', 'success');
+                    
+                    
                 })
                 .catch(err => console.log(err)); 
               }
@@ -84,7 +112,7 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 className="form-control" 
                                 onChange={handleInputChange} 
                                 name="nombre"
-                                defaultValue={formValues.nombre} 
+                                defaultValue={menuEdit.nombre} 
                                 
                                 />
                         </div>
@@ -97,7 +125,7 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 className="form-control" 
                                 onChange={handleInputChange} 
                                 name="url" 
-                                defaultValue={formValues.url}
+                                defaultValue={menuEdit.url}
                                 />
                         </div>
                     </div>
@@ -111,7 +139,7 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 className="form-control" 
                                 onChange={handleInputChange} 
                                 name="padre" 
-                                defaultValue={formValues.padre}
+                                defaultValue={menuEdit.padre}
                                 />
                         </div>
 
@@ -123,7 +151,7 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 className="form-control" 
                                 onChange={handleInputChange} 
                                 name="esActivo" 
-                                defaultValue={formValues.esActivo}
+                                defaultValue={menuEdit.esActivo}
                                 />
                         </div>
                     </div>
@@ -138,7 +166,7 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 className="form-control" 
                                 onChange={handleInputChange} 
                                 name="esPadre" 
-                                defaultValue={formValues.esPadre}
+                                defaultValue={menuEdit.esPadre}
                                 />
                         </div>
 
@@ -150,13 +178,13 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 className="form-control" 
                                 onChange={handleInputChange} 
                                 name="tieneHijos" 
-                                defaultValue={formValues.tieneHijos}
+                                defaultValue={menuEdit.tieneHijos}
                                 />
                         </div>
                     </div>
                     <br />
                     <div className='modal-footer'>
-                        <button type="submit" className="btn btn-primary" >Aceptar</button>
+                        <button type="submit" className="btn btn-primary">Aceptar</button>
                         <button className="btn btn-danger" onClick={close} type="button" data-dismiss="modal">Cerrar</button>
                     </div>
                 </form>

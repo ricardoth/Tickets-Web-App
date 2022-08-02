@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component'; 
 import { FaTrashAlt, FaCheck, FaTimes, FaPen } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -10,11 +10,9 @@ export const MenuTable = ({menus, setMenus}) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuEdit, setMenuEdit] = useState({});
 
-
     useEffect(() => {
         setMenus(endpoint);
-    }, [setMenus])
-    
+    }, [menuEdit]);
 
     const handleDelete = (e, idMenu) => {
         e.preventDefault();
@@ -46,13 +44,9 @@ export const MenuTable = ({menus, setMenus}) => {
     }
 
     
-    const handleEdit = (e, menu) => {
-        setMenuEdit(menu);
-
+    const handleEdit = (idMenu, menu) => {
+        setMenuEdit(menu.idMenu === idMenu ? menu : menuEdit);
         setShowMenu(true);
-        console.log(menu)
-        // const temp = [...menus];
-        // const index = temp.findIndex(x => x.idMenu === idMenu);
 
         // Swal.fire({
         //     title: 'Atención',
@@ -109,7 +103,7 @@ export const MenuTable = ({menus, setMenus}) => {
                     <button className='btn btn-danger' onClick={ (e) => handleDelete(e,row.idMenu)}>
                         <FaTrashAlt />
                     </button>,
-                    <button className='btn btn-primary' onClick={ (e) => handleEdit(e, row)}>
+                    <button className='btn btn-primary' onClick={ () => handleEdit(row.idMenu, row)}>
                         <FaPen />
                     </button>
                 </div>
@@ -131,7 +125,6 @@ export const MenuTable = ({menus, setMenus}) => {
                 responsive
                 defaultSortAsc={true}
             />
-
             <MenuModal show={showMenu} close={() => setShowMenu(false)} menuEdit={menuEdit} setMenuEdit={setMenuEdit}/>
         </>
         
