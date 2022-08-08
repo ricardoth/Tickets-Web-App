@@ -3,7 +3,8 @@ import DataTable from 'react-data-table-component';
 import { FaTrashAlt, FaCheck, FaTimes, FaPen } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { environment } from '../../environment/environment.dev';
-import { MenuModal } from './MenuModal';
+import { MenuEditModal } from './MenuEditModal';
+
 const endpoint = environment.UrlApiMenu + "/";
 
 export const MenuTable = ({menus, setMenus}) => {
@@ -31,11 +32,10 @@ export const MenuTable = ({menus, setMenus}) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
                     const temp = [...menus];
                     const index = temp.findIndex(x => x.idMenu === idMenu);
                     temp.splice(index, 1);
-                    setMenus(temp);
+                    setMenus(endpoint);
                     Swal.fire('Eliminado!', '', 'success')
                 })
                 .catch(err => console.log(err)); 
@@ -43,32 +43,11 @@ export const MenuTable = ({menus, setMenus}) => {
         });
     }
 
-    
     const handleEdit = (idMenu, menu) => {
         setMenuEdit(menu.idMenu === idMenu ? menu : menuEdit);
         setShowMenu(true);
-
-        // Swal.fire({
-        //     title: 'Atención',
-        //     text: '¿Desea editar el menú?',
-        //     icon: 'warning',
-        //     confirmButtonText: 'Aceptar'
-        // })
-        // .then(response => response.json())
-        // .then( data => {
-        //     let temp = [...menus];
-        //     const index = temp.findIndex(x => x.idMenu === idMenu);
-        //     // var o = temp[index];
-        //     // o.nombre= "Master Data PAge";
-        //     setMenus(temp);
-        // })
-        // .catch(err => console.log(err));
-
-        
-        // setMenus([...menus, menu]);
     }
     
-
     const columns = [
         {
             name: 'Nombre',
@@ -93,11 +72,12 @@ export const MenuTable = ({menus, setMenus}) => {
         },
         {
             name: 'Vigente',
-            selector: row => row.tieneHijos === true ? <FaCheck /> : <FaTimes />
+            selector: row => (
+                row.esActivo === true ? <FaCheck /> : <FaTimes />
+            )
         },
         {
             name: "Acciones",
-           
             cell: (row) => [
                 <div key={row.idMenu}>
                     <button className='btn btn-danger' onClick={ (e) => handleDelete(e,row.idMenu)}>
@@ -125,7 +105,7 @@ export const MenuTable = ({menus, setMenus}) => {
                 responsive
                 defaultSortAsc={true}
             />
-            <MenuModal show={showMenu} close={() => setShowMenu(false)} menuEdit={menuEdit} setMenuEdit={setMenuEdit}/>
+            <MenuEditModal show={showMenu} close={() => setShowMenu(false)} menuEdit={menuEdit} setMenuEdit={setMenuEdit}/>
         </>
         
     )

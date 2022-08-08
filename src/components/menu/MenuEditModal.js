@@ -2,62 +2,69 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
+import '../../styles/Switch.css';
+
 import { environment } from '../../environment/environment.dev';
+import { Switch } from '../switch/Switch';
 
 const endpoint = environment.UrlApiMenu + "?id=";
 const idApp = environment.ID_APP;
 
-// const initialState = {
-//     idMenu: null,
-//     idApp: idApp,
-//     nombre: '',
-//     padre: '',
-//     url: '',
-//     urlFriend: '',
-//     esActivo: '',
-//     esPadre: '',
-//     tieneHijos: ''
-
-// }
-
-export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
+export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
     const [ formValues, handleInputChange, reset ] = useForm(menuEdit);
-    // const [ menu, setMenu] = useState(menuEdit);
+
+    const [esActivo, setEsActivo] = useState(false);
+    const [esPadre, setEsPadre] = useState(false);
+    const [tieneHijos, setTieneHijos] = useState(false);
+
+    // const onToggle = (id) => {
+    //     // setEsActivo(!esActivo);
+    //     // setEsPadre(!esPadre);
+    //     // setTieneHijos(!tieneHijos);
+    //     setEsActivo((preState) => ({
+    //         ...preState,
+    //         [id]: !preState[id]
+    //     }));
+    //     setEsPadre((preState) => ({
+    //         ...preState,
+    //         [id]: !preState[id]
+    //     }));
+    //     setTieneHijos((preState) => ({
+    //         ...preState,
+    //         [id]: !preState[id]
+    //     }));
+    // }
+    const onToggleActivo = () => setEsActivo(!esActivo);
+    const onTogglePadre = () => setEsPadre(!esPadre);
+    const onToggleChild = () => setTieneHijos(!tieneHijos);
 
     useEffect(() => {
-        console.log(menuEdit)
-        console.log(formValues)
-        // setMenu(menuEdit);
-
-        // reset();
+        // if(!Object.entries(menuEdit).length === 0) {
+        //     console.log(menuEdit)
+           
+        //     // setEsActivo(menuEdit.esActivo);
+        // }
+        reset();
     }, [menuEdit]);
-
-    const handleRegistrion = (data) => {
-        console.log(data)
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         let data = new FormData(e.target);
         let formObject = Object.fromEntries(data.entries());
 
-        // setMenuEdit(formObject);
-        
-        // setMenu(formValues);
-        // console.log(menu)
-
         let menuSend = {
-            IdMenu: formObject.idMenu,
+            IdMenu: formValues.idMenu,
             IdApp: idApp,
-            Nombre: formObject.nombre,
-            Padre: formObject.padre,
-            Url: formObject.url,
-            UrlFriend: formObject.url,
-            EsActivo: formObject.esActivo,
-            EsPadre: formObject.esPadre,
-            TieneHijos: formObject.tieneHijos
+            Nombre: formValues.nombre,
+            Padre: formValues.padre,
+            Url: formValues.url,
+            UrlFriend: formValues.url,
+            EsActivo: formValues.esActivo,
+            EsPadre: formValues.esPadre,
+            TieneHijos: formValues.tieneHijos
         }
 
+        console.log(esActivo)
         Swal.fire({
             title: 'Atención',
             text: '¿Desea editar el menú?',
@@ -78,14 +85,8 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                 .then(response => response.json())
                 .then(data => {
                     setMenuEdit(formObject);
-                        // console.log(menuEdit)
-                        // const temp = [...menus];
-                        // const index = temp.findIndex(x => x.idMenu === idMenu);
-                        // temp.splice(index, 1);
-                        // setMenus(temp);
+                    close(true);
                     Swal.fire('Actualizado!', '', 'success');
-                    
-                    
                 })
                 .catch(err => console.log(err)); 
               }
@@ -145,14 +146,16 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
 
                         <div className="col-lg-6">
                             <label>Vigencia</label>
-                            <input 
-                                type="text" 
-                                placeholder="Vigencia" 
-                                className="form-control" 
-                                onChange={handleInputChange} 
-                                name="esActivo" 
-                                defaultValue={menuEdit.esActivo}
-                                />
+                            <div>
+                                <label className="toggle-switch">
+                                    <Switch
+                                        id="1"
+                                        isOn={esActivo}
+                                        onToggle={onToggleActivo}
+                                    />
+
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -160,26 +163,28 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                     <div className='row'>
                         <div className="col-lg-6">
                             <label>Indicador Padre</label>
-                            <input 
-                                type="text" 
-                                placeholder="Indicador Padre" 
-                                className="form-control" 
-                                onChange={handleInputChange} 
-                                name="esPadre" 
-                                defaultValue={menuEdit.esPadre}
-                                />
+                            <div>
+                                <label className="toggle-switch">
+                                    <Switch
+                                        id="2"
+                                        isOn={esPadre}
+                                        onToggle={onTogglePadre}
+                                    />
+                                </label>
+                            </div>
                         </div>
 
                         <div className="col-lg-6">
                             <label>Indicador Submenús</label>
-                            <input 
-                                type="text" 
-                                placeholder="Indicador Submenús" 
-                                className="form-control" 
-                                onChange={handleInputChange} 
-                                name="tieneHijos" 
-                                defaultValue={menuEdit.tieneHijos}
-                                />
+                            <div>
+                                <label className="toggle-switch">
+                                     <Switch
+                                        id="3"
+                                        isOn={tieneHijos}
+                                        onToggle={onToggleChild}
+                                    />
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <br />
@@ -189,7 +194,6 @@ export const MenuModal = ({show, close, menuEdit, setMenuEdit} ) => {
                     </div>
                 </form>
                 </Modal.Body>
-              
             </Modal>
         </>
     );

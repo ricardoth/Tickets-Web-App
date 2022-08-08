@@ -9,16 +9,12 @@ import { NavDropdown } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { environment } from '../../environment/environment.dev';
 import { NavItemChild } from './NavItemChild';
-import { procesoPesado } from '../../selectors/procesoPesado';
-
 
 export const NavSidebar = () => {
-    // const [ menus, setMenus] = useState([]);
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const [ state, fetchData ] = useFetch(endpoint);
-    // const { source, loading } = useFetch(endpoint);
 
     useEffect(() => {
       fetchData(endpoint)
@@ -97,20 +93,20 @@ export const NavSidebar = () => {
                 </Nav>
             </Navbar.Collapse>
 
-            <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
+                <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                     <ul className='navbar-nav ml-auto'>
                         <span className='nav-item nav-link text-info'>
-                             {user.name}
+                                {user.name}
                         </span>
 
                         <button 
-                             className="nav-item nav-link btn" 
-                             onClick={handleLogout}
+                                className="nav-item nav-link btn" 
+                                onClick={handleLogout}
                         >
-                           Logout
+                            Logout
                         </button>
                     </ul>
-                 </div>
+                </div>
             </Navbar>
         </>
     )
