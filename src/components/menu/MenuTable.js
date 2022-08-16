@@ -45,7 +45,9 @@ export const MenuTable = ({menus, setMenus}) => {
 
     const handleEdit = (idMenu, menu) => {
         setMenuEdit(menu.idMenu === idMenu ? menu : menuEdit);
-        setShowMenu(true);
+        setTimeout(() => {
+             setShowMenu(true);
+        }, 100);
     }
     
     const columns = [

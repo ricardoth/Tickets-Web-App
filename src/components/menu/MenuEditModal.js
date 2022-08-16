@@ -1,70 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from '../../hooks/useForm';
+import React, { useEffect, useMemo, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import '../../styles/Switch.css';
-
 import { environment } from '../../environment/environment.dev';
-import { Switch } from '../switch/Switch';
+import { Switch } from '../ui/switch/Switch';
+import { useForm } from 'react-hook-form';
+import { Combobox } from "../ui/combobox/Combobox";
 
-const endpoint = environment.UrlApiMenu + "?id=";
+const endpoint = environment.UrlApiMenu;
+const endpointPadre = environment.UrlApiMenuPadre;
 const idApp = environment.ID_APP;
 
+const parser = json => 
+    json.map(({ nombre, idMenu }) => ({
+        label: nombre, value: idMenu }));
+
 export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
-    const [ formValues, handleInputChange, reset ] = useForm(menuEdit);
+    const { register, handleSubmit, reset } = useForm({
+        defaultValues: {
+            idMenu: menuEdit.idMenu,
+            nombre: menuEdit.nombre,
+            padre: menuEdit.padre,
+            url: menuEdit.url,
+            urlFriend: menuEdit.url,
+            esActivo: menuEdit.esActivo,
+            esPadre: menuEdit.esPadre,
+            tieneHijos: menuEdit.tieneHijos
+        }
+    });
+
+    useEffect(() => {
+        setEsActivo(menuEdit.esActivo);
+        setEsPadre(menuEdit.esPadre);
+        setTieneHijos(menuEdit.tieneHijos);
+        setValuePadre(menuEdit.padre);
+        reset(menuEdit);
+      }, [menuEdit]);
+
+    const [valuePadre, setValuePadre] = useState();
 
     const [esActivo, setEsActivo] = useState(false);
     const [esPadre, setEsPadre] = useState(false);
     const [tieneHijos, setTieneHijos] = useState(false);
-
-    // const onToggle = (id) => {
-    //     // setEsActivo(!esActivo);
-    //     // setEsPadre(!esPadre);
-    //     // setTieneHijos(!tieneHijos);
-    //     setEsActivo((preState) => ({
-    //         ...preState,
-    //         [id]: !preState[id]
-    //     }));
-    //     setEsPadre((preState) => ({
-    //         ...preState,
-    //         [id]: !preState[id]
-    //     }));
-    //     setTieneHijos((preState) => ({
-    //         ...preState,
-    //         [id]: !preState[id]
-    //     }));
-    // }
+    
     const onToggleActivo = () => setEsActivo(!esActivo);
     const onTogglePadre = () => setEsPadre(!esPadre);
     const onToggleChild = () => setTieneHijos(!tieneHijos);
 
-    useEffect(() => {
-        // if(!Object.entries(menuEdit).length === 0) {
-        //     console.log(menuEdit)
-           
-        //     // setEsActivo(menuEdit.esActivo);
-        // }
-        reset();
-    }, [menuEdit]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        let data = new FormData(e.target);
-        let formObject = Object.fromEntries(data.entries());
-
+    const onSubmit = (data) => {
         let menuSend = {
-            IdMenu: formValues.idMenu,
+            IdMenu: data.idMenu,
             IdApp: idApp,
-            Nombre: formValues.nombre,
-            Padre: formValues.padre,
-            Url: formValues.url,
-            UrlFriend: formValues.url,
-            EsActivo: formValues.esActivo,
-            EsPadre: formValues.esPadre,
-            TieneHijos: formValues.tieneHijos
+            Nombre: data.nombre,
+            Padre: valuePadre,
+            Url: data.url,
+            UrlFriend: data.url,
+            EsActivo: esActivo,
+            EsPadre: esPadre,
+            TieneHijos: tieneHijos
         }
 
-        console.log(esActivo)
         Swal.fire({
             title: 'Atención',
             text: '¿Desea editar el menú?',
@@ -74,7 +69,7 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(endpoint + menuEdit.idMenu, {
+                fetch(endpoint + "?id=" + menuEdit.idMenu, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
@@ -84,12 +79,15 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    setMenuEdit(formObject);
-                    close(true);
+                    setMenuEdit(menuSend);
+                    setTimeout(() => {
+                        close(true);
                     Swal.fire('Actualizado!', '', 'success');
+                    }, 100);
+                    
                 })
                 .catch(err => console.log(err)); 
-              }
+                }
         });
     }
 
@@ -103,7 +101,7 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                 <Modal.Title>Editar Menú</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                <form className="container animate__animated animate__fadeIn" onSubmit={handleSubmit}>
+                <form className="container animate__animated animate__fadeIn" onSubmit={handleSubmit(onSubmit)}>
                     <div className='row'>
                         <div className="col-lg-6">
                             <label>Nombre</label>
@@ -111,10 +109,8 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 type="text" 
                                 placeholder="Nombre" 
                                 className="form-control" 
-                                onChange={handleInputChange} 
                                 name="nombre"
-                                defaultValue={menuEdit.nombre} 
-                                
+                                {...register("nombre")}
                                 />
                         </div>
 
@@ -124,9 +120,8 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                 type="text" 
                                 placeholder="Url" 
                                 className="form-control" 
-                                onChange={handleInputChange} 
                                 name="url" 
-                                defaultValue={menuEdit.url}
+                                {...register("url")}
                                 />
                         </div>
                     </div>
@@ -134,13 +129,12 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                     <div className='row'>
                         <div className="col-lg-6">
                             <label>Padre</label>
-                            <input 
-                                type="text" 
-                                placeholder="Padre" 
-                                className="form-control" 
-                                onChange={handleInputChange} 
-                                name="padre" 
-                                defaultValue={menuEdit.padre}
+                                <Combobox
+                                    id={"todos"}
+                                    value={valuePadre}
+                                    setValue={setValuePadre}
+                                    url={endpointPadre}
+                                    parser={parser}
                                 />
                         </div>
 

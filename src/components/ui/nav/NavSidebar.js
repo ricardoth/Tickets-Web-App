@@ -1,14 +1,14 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../auth/authContext';
-import { useFetch } from '../../hooks/useFetch';
-import { types } from '../../types/types';
+import { AuthContext } from '../../../auth/authContext';
+import { useFetch } from '../../../hooks/useFetch';
+import { types } from '../../../types/types';
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { NavDropdown } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
-import { environment } from '../../environment/environment.dev';
-import { NavItemChild } from './NavItemChild';
+import { environment } from '../../../environment/environment.dev';
+import { NavItemChild } from '../nav/NavItemChild';
 
 export const NavSidebar = () => {
     const { user, dispatch } = useContext(AuthContext);

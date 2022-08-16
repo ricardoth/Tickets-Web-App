@@ -3,7 +3,7 @@ import { AutorScreen } from '../components/autor/AutorScreen';
 import { DashboardScreen } from '../components/dashboard/DashboardScreen';
 import { MenuScreen } from '../components/menu/MenuScreen';
 import { PerfilScreen } from '../components/perfil/PerfilScreen';
-import { NavSidebar } from '../components/ui/NavSidebar';
+import { NavSidebar } from '../components/ui/nav/NavSidebar';
 
 export const DashboardRoutes = () => {
   return (

@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
-import Modal from 'react-bootstrap/Modal';
+import { Dropdown, Row, Modal} from  'react-bootstrap';
 import Swal from 'sweetalert2';
 import { environment } from '../../environment/environment.dev';
 import '../../styles/Switch.css';
+import { Switch } from '../ui/switch/Switch';
+import { Combobox } from "../ui/combobox/Combobox";
 
 const endpoint = environment.UrlApiMenu;
+const endpointPadre = environment.UrlApiMenuPadre;
 const idApp = environment.ID_APP;
+
+const parser = json => 
+    json.map(({ nombre, idMenu }) => ({
+        label: nombre, value: idMenu }));
+
 
 export const MenuAddModal = ({show, close, setMenus}) => {
     const [ formValues, handleInputChange, reset ] = useForm({
@@ -20,9 +28,20 @@ export const MenuAddModal = ({show, close, setMenus}) => {
         tieneHijos: false
     });
 
+    useEffect(() => {
+        reset();
+        setEsActivo(false);
+        setEsPadre(false);
+        setTieneHijos(false);
+        setValuePadre(0);
+    }, [show, close])
+    
+
     const [esActivo, setEsActivo] = useState(false);
     const [esPadre, setEsPadre] = useState(false);
     const [tieneHijos, setTieneHijos] = useState(false);
+
+    const [valuePadre, setValuePadre] = useState();
 
     const onToggleActivo = () => setEsActivo(!esActivo);
     const onTogglePadre = () => setEsPadre(!esPadre);
@@ -30,15 +49,16 @@ export const MenuAddModal = ({show, close, setMenus}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         let menuSend = {
             IdApp: idApp,
             Nombre: formValues.nombre,
-            Padre: formValues.padre,
+            Padre: valuePadre,
             Url: formValues.url,
             UrlFriend: formValues.url,
             EsActivo: esActivo,
             EsPadre: esPadre,
-            TieneHijos: formValues.tieneHijos
+            TieneHijos: tieneHijos
         }
 
         Swal.fire({
@@ -115,7 +135,15 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                         <div className='row'>
                             <div className="col-lg-6">
                                 <label>Padre</label>
-                                <input 
+                                <Combobox
+                                    id={"todos"}
+                                    value={valuePadre}
+                                    // defaultValue={formValues.padre} 
+                                    setValue={setValuePadre}
+                                    url={endpointPadre}
+                                    parser={parser}
+                                />
+                                {/* <input 
                                     type="number" 
                                     placeholder="Padre" 
                                     className="form-control" 
@@ -123,20 +151,18 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                                     name="padre" 
                                     defaultValue={formValues.padre} 
                                     autoComplete="off"
-                                    />
+                                    /> */}
                             </div>
 
                             <div className="col-lg-6">
                                 <label>Vigencia</label>
                                 <div>
                                     <label className="toggle-switch">
-                                        <input type="checkbox" 
-                                            className="form-control" 
-                                            checked={esActivo} 
-                                            defaultValue={esActivo} 
-                                            onChange={onToggleActivo} 
+                                        <Switch
+                                            id="1"
+                                            isOn={esActivo}
+                                            onToggle={onToggleActivo}
                                         />
-                                        <span className="switch" />
                                     </label>
                                 </div>
                             </div>
@@ -148,13 +174,11 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                                 <label>Indicador Padre</label>
                                 <div>
                                     <label className="toggle-switch">
-                                        <input type="checkbox" 
-                                            className="form-control" 
-                                            checked={esPadre} 
-                                            defaultValue={esPadre} 
-                                            onChange={onTogglePadre} 
+                                        <Switch
+                                            id="2"
+                                            isOn={esPadre}
+                                            onToggle={onTogglePadre}
                                         />
-                                        <span className="switch" />
                                     </label>
                                 </div>
                             </div>
@@ -163,13 +187,11 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                                 <label>Indicador Submenús</label>
                                 <div>
                                     <label className="toggle-switch">
-                                        <input type="checkbox" 
-                                            className="form-control" 
-                                            checked={tieneHijos} 
-                                            defaultValue={tieneHijos} 
-                                            onChange={onToogleChild} 
+                                        <Switch
+                                            id="3"
+                                            isOn={tieneHijos}
+                                            onToggle={onToogleChild}
                                         />
-                                        <span className="switch" />
                                     </label>
                                 </div>
                             </div>
