@@ -10,8 +10,15 @@ export const useFetch = ( url ) => {
         }
     }, [])
 
-    const fetchData = useCallback((url) => {
-        fetch( url )
+    const fetchData = useCallback((url, token) => {
+        console.log(token)
+        fetch( url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then( resp => resp.json() )
             .then( source => {
                 if ( isMounted.current ) {

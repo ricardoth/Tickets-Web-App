@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useState } from 'react';
-
+import { AuthContext } from '../../../auth/authContext';
 
 export const Combobox = ({ id, value, setValue, url, parser}) => {
+    const { user, dispatch } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([{label: "loading", value: "loading"}]);
 
@@ -14,7 +15,13 @@ export const Combobox = ({ id, value, setValue, url, parser}) => {
         let unmounted = false;
 
         async function getCharacters() {
-          const response = await fetch(url);
+          const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+          });
           const {data, meta} = await response.json();
           if (!unmounted) {
             setItems(parser(data));

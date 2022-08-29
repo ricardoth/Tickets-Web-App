@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useFetch } from '../../hooks/useFetch';
 import { environment } from '../../environment/environment.dev';
 import { MenuTable } from './MenuTable';
 import { MenuAddModal } from './MenuAddModal';
+import { AuthContext } from '../../auth/authContext';
 const endpoint = environment.UrlApiMenu;
 
-export const MenuScreen = () => {
+const MenuScreen = () => {
+  const { user, dispatch } = useContext(AuthContext);
   const [ state, fetchData ] =  useFetch(endpoint);
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
-    fetchData(endpoint);
+    fetchData(endpoint, user.token);
   }, [fetchData]);
 
-  if(state.loading) { return (<div>Loading...</div>)}
+  if(state.loading) { return }
   const {data} = state.source; 
 
   const handleAdd = () => {
@@ -36,3 +38,5 @@ export const MenuScreen = () => {
     </div>
   )
 }
+
+export default MenuScreen;

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import '../../styles/Switch.css';
@@ -6,6 +6,7 @@ import { environment } from '../../environment/environment.dev';
 import { Switch } from '../ui/switch/Switch';
 import { useForm } from 'react-hook-form';
 import { Combobox } from "../ui/combobox/Combobox";
+import { AuthContext } from '../../auth/authContext';
 
 const endpoint = environment.UrlApiMenu;
 const endpointPadre = environment.UrlApiMenuPadre;
@@ -16,6 +17,7 @@ const parser = json =>
         label: nombre, value: idMenu }));
 
 export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
+    const { user, dispatch } = useContext(AuthContext);
     const { register, handleSubmit, reset } = useForm({
         defaultValues: {
             idMenu: menuEdit.idMenu,
@@ -74,6 +76,7 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
                     },
                     body: JSON.stringify(menuSend)
                 })

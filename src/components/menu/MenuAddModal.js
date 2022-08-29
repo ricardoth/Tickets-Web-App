@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { Dropdown, Row, Modal} from  'react-bootstrap';
 import Swal from 'sweetalert2';
@@ -6,6 +6,7 @@ import { environment } from '../../environment/environment.dev';
 import '../../styles/Switch.css';
 import { Switch } from '../ui/switch/Switch';
 import { Combobox } from "../ui/combobox/Combobox";
+import { AuthContext } from '../../auth/authContext';
 
 const endpoint = environment.UrlApiMenu;
 const endpointPadre = environment.UrlApiMenuPadre;
@@ -17,6 +18,7 @@ const parser = json =>
 
 
 export const MenuAddModal = ({show, close, setMenus}) => {
+    const { user, dispatch } = useContext(AuthContext);
     const [ formValues, handleInputChange, reset ] = useForm({
         idMenu: 0,
         nombre: '',
@@ -75,13 +77,14 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
                     },
                     body: JSON.stringify(menuSend)
                 })
                 .then(response => response.json())
                 .then(data => {
                     if(!data.ok ){
-                        setMenus(endpoint);
+                        setMenus(endpoint, user.token);
                         close(true);
                         Swal.fire('Agregado!', '', 'success');
                     } else {
@@ -143,15 +146,6 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                                     url={endpointPadre}
                                     parser={parser}
                                 />
-                                {/* <input 
-                                    type="number" 
-                                    placeholder="Padre" 
-                                    className="form-control" 
-                                    onChange={handleInputChange} 
-                                    name="padre" 
-                                    defaultValue={formValues.padre} 
-                                    autoComplete="off"
-                                    /> */}
                             </div>
 
                             <div className="col-lg-6">

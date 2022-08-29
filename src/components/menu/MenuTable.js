@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component'; 
 import { FaTrashAlt, FaCheck, FaTimes, FaPen } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { AuthContext } from '../../auth/authContext';
 import { environment } from '../../environment/environment.dev';
 import { MenuEditModal } from './MenuEditModal';
 
 const endpoint = environment.UrlApiMenu + "/";
 
 export const MenuTable = ({menus, setMenus}) => {
+    const { user, dispatch } = useContext(AuthContext);
     const [showMenu, setShowMenu] = useState(false);
     const [menuEdit, setMenuEdit] = useState({});
 
     useEffect(() => {
-        setMenus(endpoint);
+        setMenus(endpoint, user.token);
     }, [menuEdit]);
 
     const handleDelete = (e, idMenu) => {
@@ -28,14 +30,19 @@ export const MenuTable = ({menus, setMenus}) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(endpoint + idMenu, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
                 })
                 .then(response => response.json())
                 .then(data => {
                     const temp = [...menus];
                     const index = temp.findIndex(x => x.idMenu === idMenu);
                     temp.splice(index, 1);
-                    setMenus(endpoint);
+                    setMenus(endpoint, user.token);
                     Swal.fire('Eliminado!', '', 'success')
                 })
                 .catch(err => console.log(err)); 

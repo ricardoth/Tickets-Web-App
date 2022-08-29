@@ -10,17 +10,18 @@ import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { environment } from '../../../environment/environment.dev';
 import { NavItemChild } from '../nav/NavItemChild';
 
-export const NavSidebar = () => {
+const NavSidebar = () => {
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const [ state, fetchData ] = useFetch(endpoint);
+    
 
     useEffect(() => {
-      fetchData(endpoint)
+      fetchData(endpoint, user.token )
     }, [fetchData]);
 
-    if (state.loading) {return (<div>Loading...</div>)}
+    if (state.loading) {return }
 
     const { data } = state.source; 
     
@@ -96,7 +97,7 @@ export const NavSidebar = () => {
                 <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                     <ul className='navbar-nav ml-auto'>
                         <span className='nav-item nav-link text-info'>
-                                {user.name}
+                                {user.user}
                         </span>
 
                         <button 
@@ -111,3 +112,5 @@ export const NavSidebar = () => {
         </>
     )
 }
+
+export default NavSidebar;
