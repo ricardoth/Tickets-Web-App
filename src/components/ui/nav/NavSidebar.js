@@ -12,6 +12,7 @@ import { NavItemChild } from '../nav/NavItemChild';
 
 const NavSidebar = () => {
     const { user, dispatch } = useContext(AuthContext);
+    console.log(user)
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const [ state, fetchData ] = useFetch(endpoint);

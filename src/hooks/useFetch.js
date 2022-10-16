@@ -11,7 +11,6 @@ export const useFetch = ( url ) => {
     }, [])
 
     const fetchData = useCallback((url, token) => {
-        console.log(token)
         fetch( url, {
             headers: {
                 'Accept': 'application/json',

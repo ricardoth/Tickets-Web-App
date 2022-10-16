@@ -7,6 +7,7 @@ export const environment = {
     //IdentificationServerAPI
     UrlApiMenu: "https://localhost:44383/api/Menu",
     urlApiMenuUsuario: "https://localhost:44383/api/GetMenuUsuario",
+    urlApiInfoUsuario: "https://localhost:44383/api/GetInfoUsuario/",
     UrlApiMenuPadre: "https://localhost:44383/api/GetMenuPadre",
 
     //BibliotecaAPI

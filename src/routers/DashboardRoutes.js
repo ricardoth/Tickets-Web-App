@@ -4,6 +4,7 @@ import { AutorScreen } from '../components/autor/AutorScreen';
 import { DashboardScreen } from '../components/dashboard/DashboardScreen';
 import { MenuScreen } from '../components/menu/MenuScreen';
 import { PerfilScreen } from '../components/perfil/PerfilScreen';
+import { ProcesoCarga } from '../components/procesoCarga/ProcesoCarga';
 import { Loader } from '../components/ui/loader/Loader';
 const LazyNavSidebar = lazy(() => import('../components/ui/nav/NavSidebar'));
 const LazyMenuScreen = lazy(() => import('../components/menu/MenuScreen'));
@@ -23,6 +24,7 @@ export const DashboardRoutes = () => {
                                           </Suspense> } />
             <Route path='autor' element={ <AutorScreen /> } />
             <Route path='perfil' element={ <PerfilScreen /> } />
+            <Route path='procesoCarga' element={ <ProcesoCarga /> } />
 
             <Route path='/' element={ <DashboardScreen />} />
           </Routes>
