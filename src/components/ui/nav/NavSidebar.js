@@ -12,12 +12,10 @@ import { NavItemChild } from '../nav/NavItemChild';
 
 const NavSidebar = () => {
     const { user, dispatch } = useContext(AuthContext);
-    console.log(user)
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const [ state, fetchData ] = useFetch(endpoint);
     
-
     useEffect(() => {
       fetchData(endpoint, user.token )
     }, [fetchData]);
@@ -36,6 +34,10 @@ const NavSidebar = () => {
         navigate("/login", {
             replace: true 
         });
+    }
+
+    const closeNav = () => {
+
     }
 
     return ( 
@@ -62,7 +64,7 @@ const NavSidebar = () => {
                                                                 nietos.map((nieto) => {
                                                                     if(nieto.padre === child.idMenu) {
                                                                         return (
-                                                                            <NavDropdown.Item as={NavLink} key={nieto.idMenu} to={nieto.url}>{nieto.nombre}</NavDropdown.Item>
+                                                                            <NavDropdown.Item onSelect={closeNav} as={NavLink} key={nieto.idMenu} to={nieto.url}>{nieto.nombre}</NavDropdown.Item>
                                                                         );
 
                                                                     }
@@ -76,13 +78,7 @@ const NavSidebar = () => {
                                                     )
                                                 } 
                                                 
-                                            } else {
-                                                // console.log(child)
-                                                // return (
-                                                //     <NavDropdown.Item key={child.idMenu} href={child.url}>{child.nombre}</NavDropdown.Item>
-                                                // )
-                                            }
-
+                                            } 
                                           
                                         }) 
                                     }

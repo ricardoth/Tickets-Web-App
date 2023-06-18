@@ -1,5 +1,8 @@
 export const environment = {
     ID_APP: 1,
+    //Basic Auth ApiDecimatio
+    UserBasicAuth: 'UsrApiDecimatio',
+    PasswordBasicAuth: 'a13997423b6df6a7131981d215f1d3bb',
 
     //Login
     UrlApiToken: "https://localhost:44383/api/Token",
@@ -11,5 +14,25 @@ export const environment = {
     UrlApiMenuPadre: "https://localhost:44383/api/GetMenuPadre",
 
     //BibliotecaAPI
-    UrlApiAutores: "https://localhost:7190/api/Autor"
+    UrlApiAutores: "https://localhost:7190/api/Autor",
+
+    //Tickets Eventos
+    UrlGeneracionTicket: "https://localhost:7100/api/Ticket"
+
 };
+
+// export const environment = {
+//     ID_APP: 1,
+
+//     //Login
+//     UrlApiToken: "http://localhost:9095/api/Token",
+
+//     //IdentificationServerAPI
+//     UrlApiMenu: "http://localhost:9095/api/Menu",
+//     urlApiMenuUsuario: "http://localhost:9095/api/GetMenuUsuario",
+//     urlApiInfoUsuario: "http://localhost:9095/api/GetInfoUsuario/",
+//     UrlApiMenuPadre: "http://localhost:9095/api/GetMenuPadre",
+
+//     //BibliotecaAPI
+//     UrlApiAutores: "https://localhost:7190/api/Autor"
+// };

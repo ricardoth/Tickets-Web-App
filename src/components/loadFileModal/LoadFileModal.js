@@ -1,15 +1,13 @@
+import axios from 'axios';
 import React, { useContext, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 import * as XLSX from "xlsx";
 import { AuthContext } from '../../auth/authContext';
-import { useFetch } from '../../hooks/useFetch';
-import { ClienteCarga } from '../../models/interfaces/ClienteCarga.js';
 
 export const LoadFileModal = ({show, close}) => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [ excel, setExcel ] = useState();
-    const [ headerExcel, setHeaderExcel ] = useState();
-    const [ state, fetchData ] = useFetch();
     
     const prepareFile = async (e) => {
         let [file] = e.target.files;
@@ -20,27 +18,6 @@ export const LoadFileModal = ({show, close}) => {
             const workBook = XLSX.read(bStr, { type: 'binary'});
             const wsName = workBook.SheetNames[0];
             const ws = workBook.Sheets[wsName];
-
-            const data = XLSX.utils.sheet_to_json(ws, {
-                header: 1,
-                blankrows: false,
-                range: 1,
-                defval: "",  
-            });
-
-            const headers = XLSX.utils.sheet_to_json(ws, {
-                header: 1,
-            });
-
-            // const range = XLSX.utils.decode_range(ws["!ref"]?.toString());
-            // console.log(range.e);
-            //  range.e = { r:11, c:15 };
-
-            // const dataValidation = XLSX.utils.sheet_to_json(ws, {
-            //     range: range,
-            //     blankrows: false,
-            //     header: 1
-            // });
             const resultado = [];
 
             const datos = XLSX.utils.sheet_to_json(ws, {
@@ -50,7 +27,7 @@ export const LoadFileModal = ({show, close}) => {
                 defval: "",
             });
         
-            datos.map((value, key) => {
+            datos.map((value) => {
                 if (value[0] === "") {
                     return;
                 }
@@ -73,10 +50,6 @@ export const LoadFileModal = ({show, close}) => {
 
             });
 
-            const cabecera = headers[0];
-            const formatHeader = Object.assign(...cabecera.map(k => ({ [k]: 0})));
-            
-            setHeaderExcel(formatHeader);
             setExcel(resultado);
         }
         reader.readAsBinaryString(file);
@@ -89,20 +62,21 @@ export const LoadFileModal = ({show, close}) => {
         if(excelFields.length === 0)
             return false;
 
-        fetch('https://localhost:44383/api/ProcesoCarga', {
-            method: 'POST',
-              headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${user.token}`
-              },
-            body: JSON.stringify(excel)
+        const result = await axios.post('https://localhost:44383/api/ProcesoCarga',JSON.stringify(excel), {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            }
         })
-        .then(res => res.json())
-        .then(data => {
-            console.log(data)
-        })
-        .catch(err => console.log(err));
+        
+        if(result.data) {
+            Swal.fire('Proceso de Carga', 'Se ha procesado el documento con éxito!', 'success');
+            close();
+
+        } else {
+            Swal.fire('Proceso de Carga', 'Ha ocurrido un error al tratar de procesar el archivo!', 'error');
+        }
     }
 
     return (

@@ -12,8 +12,8 @@ const urlInfoUser = environment.urlApiInfoUsuario;
 
 export const LoginScreen = () => {
     const navigate = useNavigate();
-    const { user, dispatch } = useContext(AuthContext);
-    const [formValues, handleInputChange, reset] = useForm({
+    const { dispatch } = useContext(AuthContext);
+    const [formValues, handleInputChange] = useForm({
       usuario: '',
       password: ''
     });
@@ -63,15 +63,16 @@ export const LoginScreen = () => {
       })
       .then(response => response.json())
       .then(({data}) => {
+        console.log(data)
         const { rut } = data;
         const basicInfoUser = {
           type: types.login,
           payload: { user: userLogin, rut: rut, token: token}
         }
         dispatch(basicInfoUser);
+        console.log(basicInfoUser)
 
         const lastPath = localStorage.getItem('lastPath') || '/dashboard';
-
         navigate(lastPath, {
           replace: true
         });

@@ -13,6 +13,7 @@ const MenuScreen = () => {
 
   useEffect(() => {
     fetchData(endpoint, user.token);
+    console.log(state);
   }, [fetchData]);
 
   if(state.loading) { return }
