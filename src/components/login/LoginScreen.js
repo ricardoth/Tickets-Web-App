@@ -66,7 +66,7 @@ export const LoginScreen = () => {
         const { rut } = data;
         const basicInfoUser = {
           type: types.login,
-          payload: { user: userLogin, rut: rut, token: token}
+          payload: { user: userLogin, rut: rut, token: token} 
         }
         dispatch(basicInfoUser);
 
