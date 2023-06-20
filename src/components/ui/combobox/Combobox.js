@@ -1,8 +1,17 @@
-import React, { useContext, useEffect } from 'react'
-import { useState } from 'react';
+import React, { useContext, useEffect ,useState} from 'react'
+import {Buffer} from 'buffer';
 import { AuthContext } from '../../../auth/authContext';
+import { environment } from '../../../environment/environment.dev';
 
-export const Combobox = ({ id, value, setValue, url, parser}) => {
+const basicAuthType = environment.BasicAuthType;
+const jwtAuthType = environment.JWTAuthType;
+const basicAuth = {
+    username: environment.UserBasicAuth,
+    password: environment.PasswordBasicAuth
+};
+
+//apiService es a que api se realizará la llamada
+export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
     const { user, dispatch } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([{label: "loading", value: "loading"}]);
@@ -14,13 +23,24 @@ export const Combobox = ({ id, value, setValue, url, parser}) => {
     useEffect(() => {
         let unmounted = false;
 
-        async function getCharacters() {
-          const response = await fetch(url, {
-            headers: {
+        let headerAuth = null;
+
+        if (tipoAuth == jwtAuthType) {
+            headerAuth = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
-            },
+            }
+        }  else if (tipoAuth == basicAuthType){
+
+            headerAuth = {
+                Authorization: `Basic ${Buffer.from(`${basicAuth.username}:${basicAuth.password}`).toString('base64')}`,
+            };
+        }
+
+        async function getCharacters() {
+          const response = await fetch(url, {
+            headers: headerAuth
           });
           const {data, meta} = await response.json();
           if (!unmounted) {

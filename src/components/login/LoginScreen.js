@@ -63,14 +63,12 @@ export const LoginScreen = () => {
       })
       .then(response => response.json())
       .then(({data}) => {
-        console.log(data)
         const { rut } = data;
         const basicInfoUser = {
           type: types.login,
           payload: { user: userLogin, rut: rut, token: token}
         }
         dispatch(basicInfoUser);
-        console.log(basicInfoUser)
 
         const lastPath = localStorage.getItem('lastPath') || '/dashboard';
         navigate(lastPath, {

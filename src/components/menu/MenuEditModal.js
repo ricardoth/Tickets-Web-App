@@ -138,6 +138,7 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                                     setValue={setValuePadre}
                                     url={endpointPadre}
                                     parser={parser}
+                                    tipoAuth={environment.JWTAuthType}
                                 />
                         </div>
 

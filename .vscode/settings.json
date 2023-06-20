@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/b86bcb7a-d068-43fb-8972-12e4b8e31811/resourceGroups/rg-dev-desarrollo/providers/Microsoft.Web/sites/ticket-backoffice",
+    "appService.deploySubpath": "."
+}

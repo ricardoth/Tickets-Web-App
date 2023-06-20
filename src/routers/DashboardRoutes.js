@@ -2,7 +2,6 @@ import {Suspense, lazy} from 'react';
 import { Route, Routes} from 'react-router-dom';
 import { AutorScreen } from '../components/autor/AutorScreen';
 import { DashboardScreen } from '../components/dashboard/DashboardScreen';
-import { MenuScreen } from '../components/menu/MenuScreen';
 import { PerfilScreen } from '../components/perfil/PerfilScreen';
 import { ProcesoCarga } from '../components/procesoCarga/ProcesoCarga';
 import { Loader } from '../components/ui/loader/Loader';

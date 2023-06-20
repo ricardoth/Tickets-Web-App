@@ -42,8 +42,8 @@ const NavSidebar = () => {
 
     return ( 
         <>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-            <Navbar.Brand as={Link} to="dashboard">Dashboard</Navbar.Brand>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='ps-3'>
+            <Navbar.Brand as={Link} to="dashboard" >Dashboard</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav className="mr-auto">

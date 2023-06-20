@@ -145,6 +145,7 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                                     setValue={setValuePadre}
                                     url={endpointPadre}
                                     parser={parser}
+                                    tipoAuth={environment.JWTAuthType}
                                 />
                             </div>
 

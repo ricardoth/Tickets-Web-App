@@ -10,7 +10,7 @@ import { AppRouter } from './routers/AppRouter';
 
 const init = () => {
   // localStorage.setItem('user', JSON.stringify(user));
-  console.log(localStorage.getItem('user'));
+  // console.log(localStorage.getItem('user'));
   //return JSON.parse(localStorage.getItem('user')) || { logged: false };
   return { logged: false };
 }

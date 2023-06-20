@@ -6,8 +6,14 @@ import {Buffer} from 'buffer';
 import { Combobox } from '../ui/combobox/Combobox';
 import { ModalTicket } from './ModalTicket';
 import { environment } from '../../environment/environment.dev';
+import {parserUsuario, parserEvento, parserMedioPago, parserSector} from '../../types/parsers';
 
 const UrlGeneracionTicket = environment.UrlGeneracionTicket;
+const UrlGetUsuarios = environment.UrlGetUsuarios;
+const UrlGetEventos = environment.UrlGetEventos;
+const UrlGetSectores = environment.UrlGetSectores;
+const UrlGetMedioPagos = environment.UrlGetMedioPagos;
+
 const basicAuth = {
     username: environment.UserBasicAuth,
     password: environment.PasswordBasicAuth
@@ -20,8 +26,11 @@ const validationSchema = Yup.object({
   });
 
 export const GeneracionTicket = () => {
-    const [modalTicket, setModalTicket] = useState(false);
     const [base64Pdf, setBase64Pdf] = useState("");
+    const [valueUsuario, setValueUsuario] = useState();
+    const [valueEvento, setValueEvento] = useState();
+    const [valueSector, setValueSector] = useState();
+    const [valueMedioPago, setValueMedioPago] = useState();
   
     const [isOpen, setIsOpen] = useState(false);
   
@@ -45,14 +54,13 @@ export const GeneracionTicket = () => {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-          console.log('Form data:', values);
-    
-          values.idMedioPago = 1;
+          values.idUsuario = valueUsuario;
+          values.idEvento = valueEvento;
+          values.idSector = valueSector;
+          values.idMedioPago = valueMedioPago;
           values.montoTotal = values.montoPago;
           var fecha = new Date();
-    
           values.fechaTicket = fecha;
-        
           values.activo = true;
     
             try {
@@ -61,7 +69,6 @@ export const GeneracionTicket = () => {
                     Authorization: `Basic ${Buffer.from(`${basicAuth.username}:${basicAuth.password}`).toString('base64')}`,
                 },
             });
-        
                openModal();
                setBase64Pdf(response.data);
         
@@ -84,67 +91,58 @@ export const GeneracionTicket = () => {
                 <div className='row'>
                     <div className="col-lg-6">
                         <label>Usuario</label>
-                        <input 
-                            type="text" 
+                       
+                        <Combobox
                             id="idUsuario"
-                            placeholder="Usuario" 
-                            className="form-control" 
-                            onChange={formik.handleChange}
                             name="idUsuario"
-                            autoComplete="off"
-                            />
+                            value={valueUsuario}
+                            setValue={setValueUsuario}
+                            url={UrlGetUsuarios}
+                            parser={parserUsuario}
+                            tipoAuth={environment.BasicAuthType}
+                        /> 
                     </div>
+                   
+
                     <div className="col-lg-6">
                         <label>Evento</label>
-                        <input 
-                            type="text" 
-
+                        <Combobox
                             id="idEvento"
                             name="idEvento"
-                            value={formik.values.idEvento}
-                            onChange={formik.handleChange}
-                            className="form-control" 
-                            autoComplete="off"
-                            />
+                            value={valueEvento}
+                            setValue={setValueEvento}
+                            url={UrlGetEventos}
+                            parser={parserEvento}
+                            tipoAuth={environment.BasicAuthType}
+                        /> 
                     </div>
                     
                 </div>
-                <br />
                 <div className='row'>
                     <div className="col-lg-6">
                         <label>Sector</label>
-                        <input 
-                            type="text" 
-
-                            id="idSector"
-                            name="idSector"
-                            value={formik.values.idSector}
-                            onChange={formik.handleChange}
-                            className="form-control" 
-                            autoComplete="off"
-                            />
-                        {/* <Combobox
-                            id={"todos"}
-                            value={valuePadre}
-                            // defaultValue={formValues.padre} 
-                            setValue={setValuePadre}
-                            url={endpointPadre}
-                            parser={parser}
-                        /> */}
+                        <Combobox
+                                id="idSector"
+                                name="idSector"
+                                value={valueSector}
+                                setValue={setValueSector}
+                                url={UrlGetSectores}
+                                parser={parserSector}
+                                tipoAuth={environment.BasicAuthType}
+                            /> 
                     </div>
 
                     <div className="col-lg-6">
                         <label>MedioPago</label>
-                        <input 
-                            type="text" 
-
-                            id="idMedioPago"
-                            name="idMedioPago"
-                            value={formik.values.idMedioPago}
-                            onChange={formik.handleChange}
-                            className="form-control" 
-                            autoComplete="off"
-                            />
+                        <Combobox
+                                id="idMedioPago"
+                                name="idMedioPago"
+                                value={valueMedioPago}
+                                setValue={setValueMedioPago}
+                                url={UrlGetMedioPagos}
+                                parser={parserMedioPago}
+                                tipoAuth={environment.BasicAuthType}
+                            /> 
                     </div>
 
                     {/* <div className="col-lg-6">
