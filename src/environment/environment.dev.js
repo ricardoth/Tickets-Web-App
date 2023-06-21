@@ -28,19 +28,3 @@ export const environment = {
     UrlGetMedioPagos: "https://localhost:7100/api/MedioPago",
 
 };
-
-// export const environment = {
-//     ID_APP: 1,
-
-//     //Login
-//     UrlApiToken: "http://localhost:9095/api/Token",
-
-//     //IdentificationServerAPI
-//     UrlApiMenu: "http://localhost:9095/api/Menu",
-//     urlApiMenuUsuario: "http://localhost:9095/api/GetMenuUsuario",
-//     urlApiInfoUsuario: "http://localhost:9095/api/GetInfoUsuario/",
-//     UrlApiMenuPadre: "http://localhost:9095/api/GetMenuPadre",
-
-//     //BibliotecaAPI
-//     UrlApiAutores: "https://localhost:7190/api/Autor"
-// };

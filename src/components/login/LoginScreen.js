@@ -2,10 +2,11 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { useForm } from '../../hooks/useForm';
-import { types } from '../../types/types';
+import { types} from '../../types/types';
 import { environment } from '../../environment/environment.dev';
 import './LoginScreen.css'
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 const urlLogin = environment.UrlApiToken;
 const urlInfoUser = environment.urlApiInfoUsuario;
@@ -52,38 +53,35 @@ export const LoginScreen = () => {
       }
     }
 
-    const handleInfoUser = (userLogin, token) => {
-      fetch(urlInfoUser + userLogin, {
-        method: 'GET',
+    const handleInfoUser = async (userLogin, token) => {
+      try {
+        const response = await axios.get(urlInfoUser + userLogin, {
           headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
           },
-      })
-      .then(response => response.json())
-      .then(({data}) => {
-        const { rut } = data;
-        const basicInfoUser = {
-          type: types.login,
-          payload: { user: userLogin, rut: rut, token: token} 
-        }
-        dispatch(basicInfoUser);
-
-        const lastPath = localStorage.getItem('lastPath') || '/dashboard';
-        navigate(lastPath, {
-          replace: true
         });
-      })
-      .catch((err) => console.log(err));
+          const { rut } = response.data.data;
+          const basicInfoUser = {
+            type: types.login,
+            payload: { user: userLogin, rut: rut, token: token} 
+          }
+          dispatch(basicInfoUser);
+
+          const lastPath = localStorage.getItem('lastPath') || '/dashboard';
+          navigate(lastPath, {
+            replace: true
+          });
+      } catch (error) {
+        console.error('API error:', error);
+      }
     }
 
     return (
       <div className='container mt-5'>
 
           <div id="contenedorcentrado" className='card'>
-
-           
             <div id="login" className='card-body'>
               <form id="loginform" className='form-group' >
                 <div className='row'>
@@ -129,14 +127,14 @@ export const LoginScreen = () => {
 
             <div id="derecho">
                     <div className="titulo">
-                        Bienvenido
+                        Tickets App
                     </div>
                     <hr/>
                     <div className="pie-form">
                         <a href="#">¿Perdiste tu contraseña?</a>
                         <a href="#">¿No tienes Cuenta? Registrate</a>
                         <hr/>
-                        <a href="#">« Volver</a>
+                        {/* <a href="#">« Volver</a> */}
                     </div>
                 </div>
           </div>

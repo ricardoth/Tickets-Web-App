@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../auth/authContext';
 import { useFetch } from '../../../hooks/useFetch';
@@ -15,6 +15,7 @@ const NavSidebar = () => {
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const [ state, fetchData ] = useFetch(endpoint);
+    const [expanded, setExpanded] = useState(false);
     
     useEffect(() => {
       fetchData(endpoint, user.token )
@@ -37,12 +38,12 @@ const NavSidebar = () => {
     }
 
     const closeNav = () => {
-
+        setExpanded(false)
     }
 
     return ( 
         <>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='ps-3'>
+            <Navbar collapseOnSelect expanded={expanded} bg="dark" variant="dark" className='lg ps-3'>
             <Navbar.Brand as={Link} to="dashboard" >Dashboard</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
@@ -77,7 +78,6 @@ const NavSidebar = () => {
                                                         <NavDropdown.Item as={NavLink} key={child.idMenu} to={child.url}>{child.nombre}</NavDropdown.Item>
                                                     )
                                                 } 
-                                                
                                             } 
                                           
                                         }) 

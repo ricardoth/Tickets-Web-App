@@ -3,11 +3,6 @@ import { AuthContext } from './auth/authContext';
 import { authReducer } from './auth/authReducer';
 import { AppRouter } from './routers/AppRouter';
 
-// const user = {
-//   name: 'Ricardo Tilleria', 
-//   rut: '17520926'
-// }
-
 const init = () => {
   // localStorage.setItem('user', JSON.stringify(user));
   // console.log(localStorage.getItem('user'));

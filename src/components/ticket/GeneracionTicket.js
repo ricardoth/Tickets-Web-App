@@ -6,6 +6,7 @@ import {Buffer} from 'buffer';
 import { Combobox } from '../ui/combobox/Combobox';
 import { ModalTicket } from './ModalTicket';
 import { environment } from '../../environment/environment.dev';
+import { basicAuth} from '../../types/basicAuth';
 import {parserUsuario, parserEvento, parserMedioPago, parserSector} from '../../types/parsers';
 
 const UrlGeneracionTicket = environment.UrlGeneracionTicket;
@@ -13,11 +14,8 @@ const UrlGetUsuarios = environment.UrlGetUsuarios;
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetSectores = environment.UrlGetSectores;
 const UrlGetMedioPagos = environment.UrlGetMedioPagos;
-
-const basicAuth = {
-    username: environment.UserBasicAuth,
-    password: environment.PasswordBasicAuth
-};
+const userBasicAuth = basicAuth.username;
+const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object({
     // Agrega tus reglas de validación aquí, si las necesitas
@@ -65,10 +63,10 @@ export const GeneracionTicket = () => {
     
             try {
                 const response = await axios.post(UrlGeneracionTicket, values, {
-                headers: {
-                    Authorization: `Basic ${Buffer.from(`${basicAuth.username}:${basicAuth.password}`).toString('base64')}`,
-                },
-            });
+                    headers: {
+                        Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                    },
+                });
                openModal();
                setBase64Pdf(response.data);
         
@@ -77,7 +75,6 @@ export const GeneracionTicket = () => {
             }
         },
     });
-
 
     return (
         <div className='row mt-5'>
@@ -88,62 +85,113 @@ export const GeneracionTicket = () => {
 
 
             <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
-                <div className='row'>
-                    <div className="col-lg-6">
-                        <label>Usuario</label>
-                       
-                        <Combobox
-                            id="idUsuario"
-                            name="idUsuario"
-                            value={valueUsuario}
-                            setValue={setValueUsuario}
-                            url={UrlGetUsuarios}
-                            parser={parserUsuario}
-                            tipoAuth={environment.BasicAuthType}
-                        /> 
-                    </div>
-                   
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Información del Cliente</h5>
+                                <p class="card-text">Complete para continuar con la compra</p>
 
-                    <div className="col-lg-6">
-                        <label>Evento</label>
-                        <Combobox
-                            id="idEvento"
-                            name="idEvento"
-                            value={valueEvento}
-                            setValue={setValueEvento}
-                            url={UrlGetEventos}
-                            parser={parserEvento}
-                            tipoAuth={environment.BasicAuthType}
-                        /> 
+                                <div className="col-lg-12">
+                                    <label>Usuario</label>
+                                
+                                    <Combobox
+                                        id="idUsuario"
+                                        name="idUsuario"
+                                        value={valueUsuario}
+                                        setValue={setValueUsuario}
+                                        url={UrlGetUsuarios}
+                                        parser={parserUsuario}
+                                        tipoAuth={environment.BasicAuthType}
+                                    /> 
+
+                                    <p class="card-text">Correo:</p>
+                                    <p class="card-text">Teléfono:</p>
+                                    <p class="card-text">Dirección:</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Información del Evento</h5>
+                                <p class="card-text">Seleccione los datos del evento, sector y formas de pago para completar la compra</p>
+
+                                <div className="col-lg-12">
+                                    <Combobox
+                                        id="idEvento"
+                                        name="idEvento"
+                                        value={valueEvento}
+                                        setValue={setValueEvento}
+                                        url={UrlGetEventos}
+                                        parser={parserEvento}
+                                        tipoAuth={environment.BasicAuthType}
+                                    /> 
+                                    
+                                </div>
+                                <label>Evento</label>
+
+                                <div className="col-lg-12">Nombre, Lugar</div>
+
+                                <div className="col-lg-12">
+                                    <label>Sector</label>
+                                    <Combobox
+                                            id="idSector"
+                                            name="idSector"
+                                            value={valueSector}
+                                            setValue={setValueSector}
+                                            url={UrlGetSectores}
+                                            parser={parserSector}
+                                            tipoAuth={environment.BasicAuthType}
+                                        /> 
+                                </div>
+
+                                <div className="col-lg-12">Ubicación</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Forma de Pago</h5>
+                                <p class="card-text">Seleccione el método de pago que utilizará</p>
+
+                                <div className="col-lg-12">
+                                    <label>MedioPago</label>
+                                    <Combobox
+                                            id="idMedioPago"
+                                            name="idMedioPago"
+                                            value={valueMedioPago}
+                                            setValue={setValueMedioPago}
+                                            url={UrlGetMedioPagos}
+                                            parser={parserMedioPago}
+                                            tipoAuth={environment.BasicAuthType}
+                                        /> 
+                                </div>
+
+                                <div className="col-lg-12">
+                                    <label>Valor</label>
+                                    <input 
+                                        type="text" 
+                                        id="montoPago"
+                                        name="montoPago"
+                                        value={formik.values.montoPago}
+                                        onChange={formik.handleChange}
+                                        className="form-control" 
+                                        placeholder='$'
+                                        autoComplete="off"
+                                        />
+                                </div>
+                                <br/>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" className="btn btn-outline-info"><i class="bi bi-save2"></i> Generar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className='row'>
-                    <div className="col-lg-6">
-                        <label>Sector</label>
-                        <Combobox
-                                id="idSector"
-                                name="idSector"
-                                value={valueSector}
-                                setValue={setValueSector}
-                                url={UrlGetSectores}
-                                parser={parserSector}
-                                tipoAuth={environment.BasicAuthType}
-                            /> 
-                    </div>
-
-                    <div className="col-lg-6">
-                        <label>MedioPago</label>
-                        <Combobox
-                                id="idMedioPago"
-                                name="idMedioPago"
-                                value={valueMedioPago}
-                                setValue={setValueMedioPago}
-                                url={UrlGetMedioPagos}
-                                parser={parserMedioPago}
-                                tipoAuth={environment.BasicAuthType}
-                            /> 
-                    </div>
 
                     {/* <div className="col-lg-6">
                         <label>Vigencia</label>
@@ -157,27 +205,7 @@ export const GeneracionTicket = () => {
                             </label>
                         </div>
                     </div> */}
-                </div>
-                <div className='row'>
-                    <div className="col-lg-6">
-                        <label>Valor</label>
-                        <input 
-                            type="text" 
-                            id="montoPago"
-                            name="montoPago"
-                            value={formik.values.montoPago}
-                            onChange={formik.handleChange}
-                            className="form-control" 
-                            placeholder='$'
-                            autoComplete="off"
-                            />
-                    </div>
-                </div>
-
-            
-                <div className='modal-footer'>
-                    <button type="submit" className="btn btn-primary">Aceptar</button>
-                </div>
+                
             </form>
 
             <ModalTicket isOpen={isOpen} closeModal={closeModal} base64Pdf={base64Pdf} />
