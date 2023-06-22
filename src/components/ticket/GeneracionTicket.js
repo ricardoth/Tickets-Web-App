@@ -93,6 +93,20 @@ export const GeneracionTicket = () => {
 
                     <div className="col-sm-3">
                         <CardInfoMedioPago valueMedioPago={valueMedioPago} setValueMedioPago={setValueMedioPago} />
+
+                        <div className="col-lg-12">
+                        <label>Valor</label>
+                        <input 
+                            type="text" 
+                            id="montoPago"
+                            name="montoPago"
+                            value={formik.values.montoPago}
+                            onChange={formik.handleChange}
+                            className="form-control" 
+                            placeholder='$'
+                            autoComplete="off"
+                            />
+                    </div>
                         <br/>
                         <div className="d-grid gap-2">
                             <button type="submit" className="btn btn-outline-info"><i className="bi bi-save2"></i> Generar</button>
