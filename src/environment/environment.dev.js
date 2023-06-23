@@ -9,13 +9,13 @@ export const environment = {
     PasswordBasicAuth: 'a13997423b6df6a7131981d215f1d3bb',
 
     //Login
-    UrlApiToken: "https://localhost:44383/api/Token",
+    UrlApiToken: "http://localhost:8086/api/Token",
 
     //IdentificationServerAPI
-    UrlApiMenu: "https://localhost:44383/api/Menu",
-    urlApiMenuUsuario: "https://localhost:44383/api/GetMenuUsuario",
-    urlApiInfoUsuario: "https://localhost:44383/api/GetInfoUsuario/",
-    UrlApiMenuPadre: "https://localhost:44383/api/GetMenuPadre",
+    UrlApiMenu: "http://localhost:8086/api/Menu",
+    urlApiMenuUsuario: "http://localhost:8086/api/GetMenuUsuario",
+    urlApiInfoUsuario: "http://localhost:8086/api/GetInfoUsuario/",
+    UrlApiMenuPadre: "http://localhost:8086/api/GetMenuPadre",
 
     //BibliotecaAPI
     UrlApiAutores: "https://localhost:7190/api/Autor",
@@ -23,8 +23,10 @@ export const environment = {
     //Tickets Eventos
     UrlGeneracionTicket: "https://localhost:7100/api/Ticket",
     UrlGetUsuarios: "https://localhost:7100/api/Usuario",
+    UrlGetUsuario: "https://localhost:7100/api/Usuario/",
     UrlGetEventos: "https://localhost:7100/api/Evento",
     UrlGetSectores: "https://localhost:7100/api/Sector",
+    UrlGetSectoresByEvento: "https://localhost:7100/api/Sector/GetSectoresByEvento/",
     UrlGetMedioPagos: "https://localhost:7100/api/MedioPago",
 
 };

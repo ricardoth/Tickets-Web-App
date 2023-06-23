@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { useForm } from '../../hooks/useForm';
@@ -7,6 +7,7 @@ import { environment } from '../../environment/environment.dev';
 import './LoginScreen.css'
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { Loader } from '../ui/loader/Loader';
 
 const urlLogin = environment.UrlApiToken;
 const urlInfoUser = environment.urlApiInfoUsuario;
@@ -18,6 +19,7 @@ export const LoginScreen = () => {
       usuario: '',
       password: ''
     });
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
       e.preventDefault();
@@ -55,6 +57,7 @@ export const LoginScreen = () => {
 
     const handleInfoUser = async (userLogin, token) => {
       try {
+        setLoading(true);
         const response = await axios.get(urlInfoUser + userLogin, {
           headers: {
               'Accept': 'application/json',
@@ -73,12 +76,16 @@ export const LoginScreen = () => {
           navigate(lastPath, {
             replace: true
           });
+
+          setLoading(false);
       } catch (error) {
         console.error('API error:', error);
+        setLoading(false);
       }
     }
 
     return (
+      
       <div className='container mt-5'>
 
           <div id="contenedorcentrado" className='card'>
@@ -116,10 +123,13 @@ export const LoginScreen = () => {
                   </div>
                 </div>
                 <br />
+               
                 <div className='d-grid gap-2 col-12 mx-auto'>
+                { loading ? <Loader /> : 
                   <button className='btn btn-primary' onClick={handleLogin}>
                       Iniciar
-                  </button>
+                  </button>}
+                  
                 </div>
                 
               </form>

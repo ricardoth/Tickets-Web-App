@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from '../../hooks/useForm';
-import { Dropdown, Row, Modal} from  'react-bootstrap';
+import { Modal} from  'react-bootstrap';
 import Swal from 'sweetalert2';
 import { environment } from '../../environment/environment.dev';
 import '../../styles/Switch.css';

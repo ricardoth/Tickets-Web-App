@@ -1,20 +1,43 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {parserEvento, parserSector} from '../../types/parsers';
 import { environment } from '../../environment/environment.dev';
 import { Combobox } from '../ui/combobox/Combobox';
+import { basicAuth} from '../../types/basicAuth';
+import {Buffer} from 'buffer';
+import axios from 'axios';
 
 const UrlGetEventos = environment.UrlGetEventos;
-const UrlGetSectores = environment.UrlGetSectores;
+const UrlGetSectores = environment.UrlGetSectoresByEvento;
+
+const userBasicAuth = basicAuth.username;
+const passBasicAuth = basicAuth.password;
 
 export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setValueSector}) => {
-    useEffect(() => {
-        setValueEvento(valueEvento);
-      }, [valueEvento]);
+    const [sectores, setSectores] = useState([]);
 
     useEffect(() => {
-        setValueSector(valueSector);
-    }, [valueSector]);
-  
+        setValueEvento(valueEvento);
+
+        if (valueEvento !== undefined)
+        {
+            axios.get(UrlGetSectores + `${valueEvento}`, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            })
+            .then(response => {
+                setSectores(response.data.data);
+            })
+            .catch(err => {
+                console.error("Ha ocurrido un error al realizar la Petición a API", err);
+            });
+        }
+      }, [valueEvento]);
+
+    const handleSectorChange = (e) => {
+        setValueSector(e.target.value);
+    }
+
     return (
         <>
             <div className="card">
@@ -23,7 +46,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                     <p className="card-text">Seleccione los datos del evento, sector y formas de pago para completar la compra</p>
 
                     <div className="col-lg-12">
-                        <label>Usuario</label>
+                        <label>Evento</label>
                     
                         <Combobox
                             id="idEvento"
@@ -32,28 +55,39 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                             setValue={setValueEvento}
                             url={UrlGetEventos}
                             parser={parserEvento}
+                           
                             tipoAuth={environment.BasicAuthType}
                         /> 
                         
                         <label>Evento</label>
                     </div>
-
+                    <br />
                     <div className="col-lg-12">Nombre, Lugar</div>
-
+                    <br />
                     
                     <div className="col-lg-12">
                         <label>Sector</label>
-                        <Combobox
-                                id="idSector"
-                                name="idSector"
-                                value={valueSector}
-                                setValue={setValueSector}
-                                url={UrlGetSectores}
-                                parser={parserSector}
-                                tipoAuth={environment.BasicAuthType}
-                            /> 
+                        {
+                            valueEvento && (
+                                // <Combobox
+                                //     id="idSector"
+                                //     name="idSector"
+                                //     value={valueSector}
+                                //     setValue={setValueSector}
+                                //     url={UrlGetSectores}
+                                //     parser={parserSector}
+                                //     tipoAuth={environment.BasicAuthType}
+                                // /> 
+                                <select value={valueSector} onChange={handleSectorChange} className='custom-select form-control'>
+                                    <option value="">---Seleccione---</option>
+                                    { sectores.map((sector) => (
+                                        <option key={sector.idSector} value={sector.idSector}>{sector.nombreSector}</option>
+                                    )) }
+                                </select>
+                            )
+                        }
                     </div>
-
+                    <br />
                     <div className="col-lg-12">Ubicación</div>
                 </div>
             </div>

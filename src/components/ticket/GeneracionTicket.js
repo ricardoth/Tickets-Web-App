@@ -9,6 +9,7 @@ import { basicAuth} from '../../types/basicAuth';
 import { CardInfoCliente } from './CardInfoCliente';
 import { CardInfoEvento } from './CardInfoEvento';
 import { CardInfoMedioPago } from './CardInfoMedioPago';
+import { Loader } from '../ui/loader/Loader';
 
 const UrlGeneracionTicket = environment.UrlGeneracionTicket;
 const userBasicAuth = basicAuth.username;
@@ -26,37 +27,39 @@ export const GeneracionTicket = () => {
     const [valueEvento, setValueEvento] = useState();
     const [valueSector, setValueSector] = useState();
     const [valueMedioPago, setValueMedioPago] = useState();
-  
     const [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const closeModal = () => {
-      setIsOpen(false);
+        setIsOpen(false);
     };
   
     const openModal = () => {
-      setIsOpen(true);
+        setIsOpen(true);
     };
     const formik = useFormik({
         initialValues: {
-          idUsuario: '',
-          idEvento: '',
-          idSector: '',
-          idMedioPago: '',
-          montoPago: '',
-          montoTotal: '',
-          fechaTicket: '',
-          activo: '',
+            idUsuario: '',
+            idEvento: '',
+            idSector: '',
+            idMedioPago: '',
+            montoPago: '',
+            montoTotal: '',
+            fechaTicket: '',
+            activo: '',
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-          values.idUsuario = valueUsuario;
-          values.idEvento = valueEvento;
-          values.idSector = valueSector;
-          values.idMedioPago = valueMedioPago;
-          values.montoTotal = values.montoPago;
-          var fecha = new Date();
-          values.fechaTicket = fecha;
-          values.activo = true;
+            values.idUsuario = valueUsuario;
+            values.idEvento = valueEvento;
+            values.idSector = valueSector;
+            values.idMedioPago = valueMedioPago;
+            values.montoTotal = values.montoPago;
+            var fecha = new Date();
+            values.fechaTicket = fecha;
+            values.activo = true;
+
+            setLoading(true);
     
             try {
                 const response = await axios.post(UrlGeneracionTicket, values, {
@@ -66,12 +69,15 @@ export const GeneracionTicket = () => {
                 });
                openModal();
                setBase64Pdf(response.data);
-        
+               setLoading(false);
             } catch (error) {
                 console.error('API error:', error);
+                setLoading(false);
             }
         },
     });
+
+ 
 
 
     return (
@@ -109,13 +115,14 @@ export const GeneracionTicket = () => {
                     </div>
                         <br/>
                         <div className="d-grid gap-2">
-                            <button type="submit" className="btn btn-outline-info"><i className="bi bi-save2"></i> Generar</button>
+                            <button type="submit" className="btn btn-outline-info" disabled={loading}><i className="bi bi-save2"></i> Generar</button>
                         </div>
                     </div>
                 </div>
             </form>
-
-            <ModalTicket isOpen={isOpen} closeModal={closeModal} base64Pdf={base64Pdf} />
+            {   loading ? <Loader /> : 
+                    <ModalTicket isOpen={isOpen} closeModal={closeModal} base64Pdf={base64Pdf} />
+            }
         </div>
     )
 }
