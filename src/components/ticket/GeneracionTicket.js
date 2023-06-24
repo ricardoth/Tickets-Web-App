@@ -70,15 +70,13 @@ export const GeneracionTicket = () => {
                openModal();
                setBase64Pdf(response.data);
                setLoading(false);
+               
             } catch (error) {
                 console.error('API error:', error);
                 setLoading(false);
             }
         },
     });
-
- 
-
 
     return (
         <div className='row mt-5'>

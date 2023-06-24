@@ -14,11 +14,14 @@ const passBasicAuth = basicAuth.password;
 
 export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setValueSector}) => {
     const [sectores, setSectores] = useState([]);
+    const [eventoResponse, setEventoResponse] = useState({});
+    const [ isVisibleFlyer, setIsVisibleFlyer ] = useState(true);
 
     useEffect(() => {
         setValueEvento(valueEvento);
+        console.log(isVisibleFlyer)
 
-        if (valueEvento !== undefined)
+        if (valueEvento !== undefined && valueEvento != 0)
         {
             axios.get(UrlGetSectores + `${valueEvento}`, {
                 headers: {
@@ -31,8 +34,31 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
             .catch(err => {
                 console.error("Ha ocurrido un error al realizar la Petición a API", err);
             });
+
+
+            axios.get(UrlGetEventos + `/${valueEvento}`, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            })
+            .then(response => {
+                const { data } = response.data;
+                setEventoResponse(data);
+                console.log(data)
+                setIsVisibleFlyer(false);
+            })
+            .catch(err => {
+                setEventoResponse("");
+                console.error("Ha ocurrido un error al realizar la Petición a API", err);
+            });
+        }else{
+            setEventoResponse("");
+            setIsVisibleFlyer(true);
         }
-      }, [valueEvento]);
+
+        
+    }, [valueEvento]);
+
 
     const handleSectorChange = (e) => {
         setValueSector(e.target.value);
@@ -59,25 +85,24 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                             tipoAuth={environment.BasicAuthType}
                         /> 
                         
-                        <label>Evento</label>
+                        <label>Flyer</label>
+                        <div className='col-lg-12'> 
+
+                            <img hidden={isVisibleFlyer} src={`data:image/jpeg;base64, ${eventoResponse.flyer}`}  alt="Imagen base64"  
+                                style = {{width:"50%", height:"50%", border:"3px solid black", justifyContent: 'center', alignItems: 'center'}} 
+                            />
+                            <p className="card-text">Lugar: <span className='fw-bold'>{eventoResponse.direccion}</span></p>
+                            
+                        </div>
+                        {/* <div className='col-lg-6'>
+                            <p className="card-text">Lugar: <span className='fw-bold'>{eventoResponse.idLugar}</span></p>
+                        </div> */}
                     </div>
                     <br />
-                    <div className="col-lg-12">Nombre, Lugar</div>
-                    <br />
-                    
                     <div className="col-lg-12">
                         <label>Sector</label>
                         {
                             valueEvento && (
-                                // <Combobox
-                                //     id="idSector"
-                                //     name="idSector"
-                                //     value={valueSector}
-                                //     setValue={setValueSector}
-                                //     url={UrlGetSectores}
-                                //     parser={parserSector}
-                                //     tipoAuth={environment.BasicAuthType}
-                                // /> 
                                 <select value={valueSector} onChange={handleSectorChange} className='custom-select form-control'>
                                     <option value="">---Seleccione---</option>
                                     { sectores.map((sector) => (

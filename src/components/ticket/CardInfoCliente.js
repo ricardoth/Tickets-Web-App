@@ -58,9 +58,9 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario}) => {
                             tipoAuth={environment.BasicAuthType}
                         /> 
 
-                        <p className="card-text">Correo: {correoUser}</p>
-                        <p className="card-text">Teléfono: {telefonoUser}</p>
-                        <p className="card-text">Dirección: {direccionUser}</p>
+                        <p className="card-text">Correo: <span className='fw-bold'>{correoUser}</span></p>
+                        <p className="card-text">Teléfono: <span className='fw-bold'>{telefonoUser}</span></p>
+                        <p className="card-text">Dirección: <span className='fw-bold'>{direccionUser}</span></p>
                     </div>
                 </div>
             </div>
