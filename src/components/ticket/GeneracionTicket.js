@@ -88,14 +88,15 @@ export const GeneracionTicket = () => {
 
             <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                 <div className="row">
-                    <div className="col-sm-3">
+                    <div className="col-sm-4">
                         <CardInfoCliente valueUsuario={valueUsuario} setValueUsuario={setValueUsuario}/>
                     </div>
-                    <div className="col-sm-6">
-                        <CardInfoEvento valueEvento={valueEvento} setValueEvento={setValueEvento} valueSector={valueSector} setValueSector={setValueSector}/>
+                    <div className="col-sm-4">
+                    <CardInfoEvento valueEvento={valueEvento} setValueEvento={setValueEvento} valueSector={valueSector} setValueSector={setValueSector}/>
+                       
                     </div>
 
-                    <div className="col-sm-3">
+                    <div className="col-sm-4">
                         <CardInfoMedioPago valueMedioPago={valueMedioPago} setValueMedioPago={setValueMedioPago} />
 
                         <div className="col-lg-12">
@@ -113,10 +114,11 @@ export const GeneracionTicket = () => {
                     </div>
                         <br/>
                         <div className="d-grid gap-2">
-                            <button type="submit" className="btn btn-outline-info" disabled={loading}><i className="bi bi-save2"></i> Generar</button>
+                            <button type="submit" className="btn btn-outline-info" disabled={loading}><i className="bi bi-save2"></i> Generar </button>
                         </div>
                     </div>
                 </div>
+               
             </form>
             {   loading ? <Loader /> : 
                     <ModalTicket isOpen={isOpen} closeModal={closeModal} base64Pdf={base64Pdf} />

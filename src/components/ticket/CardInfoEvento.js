@@ -14,12 +14,24 @@ const passBasicAuth = basicAuth.password;
 
 export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setValueSector}) => {
     const [sectores, setSectores] = useState([]);
-    const [eventoResponse, setEventoResponse] = useState({});
+    const [evento, setEvento] = useState({
+        idEvento: '',
+        idLugar: '',
+        nombreEvento: '',
+        direccion: '',
+        fecha: '',
+        flyer: '',
+        activo: false,
+        lugar: {
+            nombreLugar: '',
+            ubicacion: '',
+            numeracion: ''
+        }
+    });
     const [ isVisibleFlyer, setIsVisibleFlyer ] = useState(true);
 
     useEffect(() => {
         setValueEvento(valueEvento);
-        console.log(isVisibleFlyer)
 
         if (valueEvento !== undefined && valueEvento != 0)
         {
@@ -43,16 +55,16 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
             })
             .then(response => {
                 const { data } = response.data;
-                setEventoResponse(data);
+                setEvento(data);
                 console.log(data)
                 setIsVisibleFlyer(false);
             })
             .catch(err => {
-                setEventoResponse("");
+                resetStateEvento();
                 console.error("Ha ocurrido un error al realizar la Petición a API", err);
             });
         }else{
-            setEventoResponse("");
+            resetStateEvento();
             setIsVisibleFlyer(true);
         }
 
@@ -62,6 +74,23 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
 
     const handleSectorChange = (e) => {
         setValueSector(e.target.value);
+    }
+
+    const resetStateEvento = () => {
+        setEvento({
+            idEvento: '',
+                idLugar: '',
+                nombreEvento: '',
+                direccion: '',
+                fecha: '',
+                flyer: '',
+                activo: false,
+                lugar: {
+                    nombreLugar: '',
+                    ubicacion: '',
+                    numeracion: ''
+                }
+        });
     }
 
     return (
@@ -81,22 +110,29 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                             setValue={setValueEvento}
                             url={UrlGetEventos}
                             parser={parserEvento}
-                           
                             tipoAuth={environment.BasicAuthType}
                         /> 
                         
-                        <label>Flyer</label>
-                        <div className='col-lg-12'> 
-
-                            <img hidden={isVisibleFlyer} src={`data:image/jpeg;base64, ${eventoResponse.flyer}`}  alt="Imagen base64"  
-                                style = {{width:"50%", height:"50%", border:"3px solid black", justifyContent: 'center', alignItems: 'center'}} 
-                            />
-                            <p className="card-text">Lugar: <span className='fw-bold'>{eventoResponse.direccion}</span></p>
-                            
+                        <div className='row'>
+                            <div className='col-lg-12'>
+                                <div className='card'>
+                                    <img hidden={isVisibleFlyer} src={`data:image/jpeg;base64, ${evento.flyer}`}  alt="Imagen base64"  
+                                        style = {{width:"100%", height:"70%",}} 
+                                    />
+                                     <div className="card-body">
+                                        <p className='fw-bold'>Lugar:</p>
+                                        { isVisibleFlyer ? "": 
+                                            (
+                                                <div>
+                                                    <p className="card-text ">{evento.lugar.nombreLugar}</p>
+                                                    <p className="card-text">{evento.lugar.ubicacion} #{evento.lugar.numeracion}</p>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        {/* <div className='col-lg-6'>
-                            <p className="card-text">Lugar: <span className='fw-bold'>{eventoResponse.idLugar}</span></p>
-                        </div> */}
                     </div>
                     <br />
                     <div className="col-lg-12">
