@@ -12,13 +12,14 @@ const UrlGetUsuarioTicket = environment.UrlGetUsuario;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
-export const CardInfoCliente = ({valueUsuario, setValueUsuario}) => {
+export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setContinuar}) => {
     const [correoUser, setCorreoUser] = useState("");
     const [telefonoUser, setTelefonoUser] = useState("");
     const [direccionUser, setDireccionUser] = useState("");
 
     useEffect(() => {
-        if (valueUsuario !== undefined) {
+        if (valueUsuario !== undefined || valueUsuario > 0) {
+            
             axios.get(UrlGetUsuarioTicket + `${valueUsuario}`, {
                 headers: {
                     Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
@@ -31,6 +32,7 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario}) => {
                 setCorreoUser(correo);
                 setTelefonoUser(telefono);
                 setDireccionUser(direccion);
+                setContinuar(false);
             })
             .catch(err => {
                 console.error("Ha ocurrido un error al realizar la Petición a API", err);
@@ -45,22 +47,26 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario}) => {
                     <h5 className="card-title">Información del Cliente</h5>
                     <p className="card-text">Complete para continuar con la compra</p>
 
-                    <div className="col-lg-12">
-                        <label>Usuario</label>
-                    
-                        <Combobox
-                            id="idUsuario"
-                            name="idUsuario"
-                            value={valueUsuario}
-                            setValue={setValueUsuario}
-                            url={UrlGetUsuarios}
-                            parser={parserUsuario}
-                            tipoAuth={environment.BasicAuthType}
-                        /> 
+                    <div className="row">
+                        <div className='col-lg-6'>
+                            <label>Usuario</label>
+                            
+                            <Combobox
+                                id="idUsuario"
+                                name="idUsuario"
+                                value={valueUsuario}
+                                setValue={setValueUsuario}
+                                url={UrlGetUsuarios}
+                                parser={parserUsuario}
+                                tipoAuth={environment.BasicAuthType}
+                            /> 
+                        </div>
 
-                        <p className="card-text">Correo: <span className='fw-bold'>{correoUser}</span></p>
-                        <p className="card-text">Teléfono: <span className='fw-bold'>{telefonoUser}</span></p>
-                        <p className="card-text">Dirección: <span className='fw-bold'>{direccionUser}</span></p>
+                        <div className='col-lg-6'>
+                            <p className="card-text">Correo: <span className='fw-bold'>{correoUser}</span></p>
+                            <p className="card-text">Teléfono: <span className='fw-bold'>{telefonoUser}</span></p>
+                            <p className="card-text">Dirección: <span className='fw-bold'>{direccionUser}</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
