@@ -63,9 +63,9 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
                         </div>
 
                         <div className='col-lg-6'>
-                            <p className="card-text">Correo: <span className='fw-bold'>{correoUser}</span></p>
-                            <p className="card-text">Teléfono: <span className='fw-bold'>{telefonoUser}</span></p>
-                            <p className="card-text">Dirección: <span className='fw-bold'>{direccionUser}</span></p>
+                            <p className="card-text fw-bold">Correo: <span className='fw-normal'>{correoUser}</span></p>
+                            <p className="card-text fw-bold">Teléfono: <span className='fw-normal'>{telefonoUser}</span></p>
+                            <p className="card-text fw-bold">Dirección: <span className='fw-normal'>{direccionUser}</span></p>
                         </div>
                     </div>
                 </div>

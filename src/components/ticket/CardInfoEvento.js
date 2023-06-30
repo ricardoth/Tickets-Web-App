@@ -6,6 +6,7 @@ import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
 import axios from 'axios';
 import { CardCountTicket } from './CardCountTicket';
+import { useCounter } from '../../hooks/useCounter';
 
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetSectores = environment.UrlGetSectores;
@@ -14,7 +15,7 @@ const UrlGetSectoresByEvento = environment.UrlGetSectoresByEvento;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
-export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setValueSector}) => {
+export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setValueSector, total, setTotal, counter, increment, decrement}) => {
     const [sectores, setSectores] = useState([]);
     const [evento, setEvento] = useState({
         idEvento: '',
@@ -32,12 +33,16 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     });
     const [sector, setSector] = useState({
         idSector: '',
-        idLugar: '',
+        idEvento: '',
         nombreSector: '',
-        capacidad: '',
+        capacidadDisponible: '',
+        capacidadActual: '',
+        capacidadTotal: '',
+        precio: '',
         activo: false,
     });
     const [ isVisibleFlyer, setIsVisibleFlyer ] = useState(true);
+
 
     useEffect(() => {
         setValueEvento(valueEvento);
@@ -79,8 +84,6 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
             resetStateEvento();
             setIsVisibleFlyer(true);
         }
-
-        
     }, [valueEvento]);
 
     useEffect(() => {
@@ -94,10 +97,8 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
             .then(response => {
                 const { data } = response.data;
                 setSector(data);
-                // setIsVisibleFlyer(false);
             })
             .catch(err => {
-                // resetStateEvento();
                 console.error("Ha ocurrido un error al realizar la Petición a API", err);
             });
         }
@@ -105,8 +106,8 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     }, [valueSector])
     
 
-    const handleSectorChange = (e) => {
-        setValueSector(e.target.value);
+    const handleSectorChange = ({target}) => {
+        setValueSector(target.value);
     }
 
     const resetStateEvento = () => {
@@ -146,38 +147,40 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                 tipoAuth={environment.BasicAuthType}
                             /> 
                             
-                            <div className='row'>
-                                <div className='col-lg-6'>
-                                    <div className='card'>
-                                        <img hidden={isVisibleFlyer} src={`data:image/jpeg;base64, ${evento.flyer}`}  className='img-fluid img-thumbnail' alt="Imagen base64"  
-                                            style = {{width:"100%", height:"100%",}} 
-                                        />
-                                    </div>
-                                </div>
-                                <div className='col-lg-6'>
-                                    <div className='card'>
-                                       
-                                        <div className="card-body">
-                                            <p className='fw-bold'>Lugar:</p>
-                                            { isVisibleFlyer ? "": 
-                                                (
-                                                    <div>
-                                                        <p className="card-text">{evento.lugar.nombreLugar}</p>
-                                                        <p className="card-text">{evento.lugar.ubicacion} #{evento.lugar.numeracion}</p>
-                                                         <p className='card-text'>Fecha: {evento.fecha}</p> 
+                            {
 
-                                                    </div>
-                                                )
-                                            }
+                                valueEvento && (
+                                    <div className='row'>
+                                        <div className='col-lg-6'>
+                                            <div className='card'>
+                                                <img hidden={isVisibleFlyer} src={`data:image/jpeg;base64, ${evento.flyer}`}  className='img-fluid img-thumbnail' alt="Imagen base64"  
+                                                    style = {{width:"100%", height:"100%",}} 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='col-lg-6'>
+                                            <div className='card'>
+                                            
+                                                <div className="card-body">
+                                                    <p className='fw-bold'>Lugar:</p>
+                                                    { isVisibleFlyer ? "": 
+                                                        (
+                                                            <div>
+                                                                <p className="card-text">{evento.lugar.nombreLugar}</p>
+                                                                <p className="card-text">{evento.lugar.ubicacion} #{evento.lugar.numeracion}</p>
+                                                                <p className='card-text'>Fecha: {evento.fecha}</p> 
+
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                )
+                            }
                         </div>
-                        
-
                         <div className="col-lg-6">
-                           
                             {
                                  valueEvento && (
                                     <div>
@@ -189,37 +192,36 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                             )) }
                                         </select>
 
-                                        <div className='row mt-3'>
-                                            <div className='col-lg-12'>
-                                                <div className='card'>
-                                                    <div className="card-body">
-                                                        <div>
-                                                            <p className="card-text"> <span className='fw-bold'>Sector:</span> {sector.nombreSector}</p>
+                                        {
+                                            valueSector && (
+                                                <div className='row mt-3'>
+                                                    <div className='col-lg-12'>
+                                                        <div className='card'>
+                                                            <div className="card-body">
+                                                                <div>
+                                                                    <p className="card-text"> <span className='fw-bold'>Sector:</span> {sector.nombreSector}</p>
+                                                                    
+                                                                    <div className="row align-items-center mt-2 d-none d-sm-flex">
+                                                                        <p className="card-text">Capacidad Máxima: {sector.capacidadTotal}</p>
+                                                                        <CardCountTicket 
+                                                                            sectorValue={sector}
+                                                                            counter={counter} 
+                                                                            increment={increment} 
+                                                                            decrement={decrement} 
+                                                                            total={total}
+                                                                            setTotal={setTotal}
+                                                                        />
 
-                                                            
-                                                            <div className="row align-items-center mt-2 d-none d-sm-flex">
-                                                                <p className="card-text">Capacidad Máxima: {sector.capacidad}</p>
-                                                                <CardCountTicket />
-                                                          
-
+                                                                    </div>
+                                                                </div>
                                                             </div>
-
-
-                                                            <table className='table'>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-
-                                                                </tbody>
-                                                            </table>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+
+                                            )
+                                        }
+                                        
                                     </div>    
                                 )
                             }

@@ -12,8 +12,10 @@ import { CardInfoMedioPago } from './CardInfoMedioPago';
 import { Loader } from '../ui/loader/Loader';
 import { TabsStepsTickets } from './TabsStepsTickets';
 import { Tab } from 'react-bootstrap';
+import { useCounter } from '../../hooks/useCounter';
 
 const UrlGeneracionTicket = environment.UrlGeneracionTicket;
+const UrlGeneracionTickets = environment.UrlGeneracionManyTickets;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
@@ -33,6 +35,8 @@ export const GeneracionTicket = () => {
     const [loading, setLoading] = useState(false);
     const [continuar, setContinuar] = useState(true);
     const [activeTab, setActiveTab] = useState('cliente');
+    const [total, setTotal] = useState(0);
+    const { counter, increment, decrement } = useCounter(0);
 
     const closeModal = () => {
         setIsOpen(false);
@@ -41,6 +45,7 @@ export const GeneracionTicket = () => {
     const openModal = () => {
         setIsOpen(true);
     };
+    
     const formik = useFormik({
         initialValues: {
             idUsuario: '',
@@ -58,19 +63,36 @@ export const GeneracionTicket = () => {
             values.idEvento = valueEvento;
             values.idSector = valueSector;
             values.idMedioPago = valueMedioPago;
-            values.montoTotal = values.montoPago;
-            var fecha = new Date();
+            values.montoPago = total;
+            values.montoTotal = total;
+            let fecha = new Date();
             values.fechaTicket = fecha;
             values.activo = true;
 
+            let ticketList = [];
+
+            for (let i = 0; i < counter; i++) {
+                let ticket = {
+                    idUsuario: values.idUsuario,
+                    idEvento: values.idEvento,
+                    idSector: values.idSector,
+                    idMedioPago: values.idMedioPago,
+                    montoPago: total / counter,
+                    montoTotal: total / counter,
+                    fechaTicket: values.fechaTicket,
+                    activo: values.activo
+                };
+                ticketList.push(ticket);
+            }
+
             setLoading(true);
-    
             try {
-                const response = await axios.post(UrlGeneracionTicket, values, {
+                const response = await axios.post(UrlGeneracionTickets, ticketList, {
                     headers: {
                         Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                     },
                 });
+
                openModal();
                setBase64Pdf(response.data);
                setLoading(false);
@@ -114,7 +136,17 @@ export const GeneracionTicket = () => {
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="tickets">
-                            <CardInfoEvento valueEvento={valueEvento} setValueEvento={setValueEvento} valueSector={valueSector} setValueSector={setValueSector}/>
+                            <CardInfoEvento 
+                                valueEvento={valueEvento} 
+                                setValueEvento={setValueEvento} 
+                                valueSector={valueSector} 
+                                setValueSector={setValueSector}
+                                total={total}
+                                setTotal={setTotal}
+                                counter={counter}
+                                increment={increment}
+                                decrement={decrement}
+                            />
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="pago">
@@ -126,11 +158,10 @@ export const GeneracionTicket = () => {
                                         type="text" 
                                         id="montoPago"
                                         name="montoPago"
-                                        value={formik.values.montoPago}
+                                        value={total}
                                         onChange={formik.handleChange}
                                         className="form-control" 
-                                        placeholder='$'
-                                        autoComplete="off"
+                                        disabled={true}
                                         />
                                 </div>
                                 <br/>
@@ -141,14 +172,11 @@ export const GeneracionTicket = () => {
                     </Tab.Content>
                     <br />
                 </form>
-
             </Tab.Container>
 
-            
-            
 
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button id='btnSiguiente' className='btn btn-primary' disabled={activeTab === 'pago'} onClick={handleNextTabs}>Continuar</button>
+                <button id='btnSiguiente' className='btn btn-primary' hidden={activeTab === 'pago'} disabled={activeTab === 'pago'} onClick={handleNextTabs}>Continuar</button>
             </div>
             {   loading ? <Loader /> : 
                     <ModalTicket isOpen={isOpen} closeModal={closeModal} base64Pdf={base64Pdf} />

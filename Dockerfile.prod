@@ -1,0 +1,16 @@
+FROM node:alpine AS build 
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm i 
+
+COPY . .
+
+RUN npm run build
+
+#Step 2
+FROM nginx 
+COPY --from=build /app/build /usr/share/nginx/html
+
