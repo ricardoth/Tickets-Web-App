@@ -6,7 +6,6 @@ import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
 import axios from 'axios';
 import { CardCountTicket } from './CardCountTicket';
-import { useCounter } from '../../hooks/useCounter';
 
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetSectores = environment.UrlGetSectores;

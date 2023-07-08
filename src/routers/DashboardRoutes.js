@@ -6,6 +6,7 @@ import { PerfilScreen } from '../components/perfil/PerfilScreen';
 import { ProcesoCarga } from '../components/procesoCarga/ProcesoCarga';
 import { Loader } from '../components/ui/loader/Loader';
 import { GeneracionTicket } from '../components/ticket/GeneracionTicket';
+import { TicketControlPanel } from '../components/ticket/TicketControlPanel';
 const LazyNavSidebar = lazy(() => import('../components/ui/nav/NavSidebar'));
 const LazyMenuScreen = lazy(() => import('../components/menu/MenuScreen'));
 
@@ -27,6 +28,7 @@ export const DashboardRoutes = () => {
             <Route path='procesoCarga' element={ <ProcesoCarga /> } />
 
             <Route path='generarTicket' element={ <GeneracionTicket /> } />
+            <Route path='ticketControlPanel' element={ <TicketControlPanel />} />
             <Route path='/' element={ <DashboardScreen />} />
           </Routes>
         </div>

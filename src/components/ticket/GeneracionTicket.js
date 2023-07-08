@@ -171,6 +171,7 @@ export const GeneracionTicket = () => {
                         </Tab.Pane>
                     </Tab.Content>
                     <br />
+
                 </form>
             </Tab.Container>
 

@@ -5,18 +5,43 @@ import Swal from 'sweetalert2';
 import { AuthContext } from '../../auth/authContext';
 import { environment } from '../../environment/environment.dev';
 import { MenuEditModal } from './MenuEditModal';
+import { Loader } from '../ui/loader/Loader';
+import axios from 'axios';
 
-const endpoint = environment.UrlApiMenu + "/";
+const endpoint = environment.UrlApiMenu; 
 
-export const MenuTable = ({menus, setMenus}) => {
+export const MenuTable = ({menus, setMenus, page, setPage}) => {
     const { user, dispatch } = useContext(AuthContext);
     const [showMenu, setShowMenu] = useState(false);
     const [menuEdit, setMenuEdit] = useState({});
 
+    const { data, meta } = menus;
+
+    const fetchMenus = async (page) => {  
+          await axios.get(endpoint + `${`?PageSize=10&PageNumber=${page}`}`, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${user.token}`
+            }
+          })
+          .then(response => {
+              setMenus(response.data);
+          })
+          .catch(err => {
+              console.error("Ha ocurrido un error al realizar la Petición a API", err);
+          })
+    }
+
     useEffect(() => {
-        setMenus(endpoint, user.token);
+        if ( page != undefined) {
+            setPage(page);
+            fetchMenus(page);
+        }
     }, [menuEdit]);
 
+    if ( meta == undefined) return 'Loading';
+    
     const handleDelete = (e, idMenu) => {
         e.preventDefault();
 
@@ -29,7 +54,7 @@ export const MenuTable = ({menus, setMenus}) => {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(endpoint + idMenu, {
+                fetch(endpoint +  "/" + idMenu, {
                     method: 'DELETE',
                     headers: {
                         'Accept': 'application/json',
@@ -56,7 +81,12 @@ export const MenuTable = ({menus, setMenus}) => {
              setShowMenu(true);
         }, 100);
     }
-    
+
+    const handlePageChange = page => {
+        setPage(page);
+        fetchMenus(page);
+    }
+
     const columns = [
         {
             name: 'Nombre',
@@ -109,8 +139,11 @@ export const MenuTable = ({menus, setMenus}) => {
                 title="Menús"
                 className='animate__animated animate__fadeIn'
                 columns={columns}
-                data={menus}
+                data={data}
                 pagination
+                paginationServer
+                paginationTotalRows={meta.totalCount}
+                onChangePage={handlePageChange}
                 responsive
                 defaultSortAsc={true}
             />

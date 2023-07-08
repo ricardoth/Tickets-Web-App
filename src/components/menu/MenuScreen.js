@@ -1,27 +1,51 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useFetch } from '../../hooks/useFetch';
 import { environment } from '../../environment/environment.dev';
 import { MenuTable } from './MenuTable';
 import { MenuAddModal } from './MenuAddModal';
 import { AuthContext } from '../../auth/authContext';
+import axios from 'axios';
+import { Loader } from '../ui/loader/Loader';
+
 const endpoint = environment.UrlApiMenu;
 
 const MenuScreen = () => {
-  const { user, dispatch } = useContext(AuthContext);
-  const [ state, fetchData ] =  useFetch(endpoint);
-  const [showMenu, setShowMenu] = useState(false);
+    const { user, dispatch } = useContext(AuthContext);
+    const [ showMenu, setShowMenu ] = useState(false);
+    const [ page, setPage ] = useState(1);
+    const [ menus, setMenus ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
 
-  useEffect(() => {
-    fetchData(endpoint, user.token);
-    console.log(state);
-  }, [fetchData]);
-
-  if(state.loading) { return }
-  const {data} = state.source; 
+    const fetchMenus = async (page) => {  
+        setLoading(true);
+          await axios.get(endpoint + `${`?PageSize=10&PageNumber=${page}`}`, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${user.token}`
+            }
+          })
+          .then(response => {
+              setMenus(response.data);
+              setLoading(false);
+          })
+          .catch(err => {
+              console.error("Ha ocurrido un error al realizar la Petición a API", err);
+          })
+    }
 
   const handleAdd = () => {
-    setShowMenu(true);
-  }
+      setShowMenu(true);
+  } 
+
+  // const handlePageChange = page => {
+  //   setPage(page);
+  //   fetchMenus(page);
+  // }
+
+  useEffect(() => {
+    fetchMenus(1);
+  }, []);
 
   return (
     <div className='row mt-5'>
@@ -33,9 +57,10 @@ const MenuScreen = () => {
         </div>
 
         <hr/>
-        <MenuTable menus={data} setMenus={fetchData}/>
+        { loading ? <Loader /> : <MenuTable menus={menus} setMenus={setMenus} page={page} setPage={setPage}/> }
+         
 
-        <MenuAddModal show={showMenu} close={() => setShowMenu(false)} setMenus={fetchData} />
+        {/* <MenuAddModal show={showMenu} close={() => setShowMenu(false)} setMenus={fetchData} />  */}
     </div>
   )
 }
