@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useFetch } from '../../hooks/useFetch';
 import { environment } from '../../environment/environment.dev';
 import { MenuTable } from './MenuTable';
 import { MenuAddModal } from './MenuAddModal';
@@ -25,8 +24,8 @@ const MenuScreen = () => {
               'Authorization': `Bearer ${user.token}`
             }
           })
-          .then(response => {
-              setMenus(response.data);
+          .then(({data}) => {
+              setMenus(data);
               setLoading(false);
           })
           .catch(err => {
@@ -38,13 +37,8 @@ const MenuScreen = () => {
       setShowMenu(true);
   } 
 
-  // const handlePageChange = page => {
-  //   setPage(page);
-  //   fetchMenus(page);
-  // }
-
   useEffect(() => {
-    fetchMenus(1);
+    fetchMenus(page);
   }, []);
 
   return (
@@ -60,7 +54,7 @@ const MenuScreen = () => {
         { loading ? <Loader /> : <MenuTable menus={menus} setMenus={setMenus} page={page} setPage={setPage}/> }
          
 
-        {/* <MenuAddModal show={showMenu} close={() => setShowMenu(false)} setMenus={fetchData} />  */}
+        <MenuAddModal show={showMenu} close={() => setShowMenu(false)} setMenus={fetchMenus} />  
     </div>
   )
 }

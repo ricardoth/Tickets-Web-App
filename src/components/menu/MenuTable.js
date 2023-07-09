@@ -17,8 +17,8 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
 
     const { data, meta } = menus;
 
-    const fetchMenus = async (page) => {  
-          await axios.get(endpoint + `${`?PageSize=10&PageNumber=${page}`}`, {
+    const fetchMenus = async (page, row = 10) => {  
+          await axios.get(endpoint + `${`?PageSize=${row}&PageNumber=${page}`}`, {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -87,6 +87,10 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
         fetchMenus(page);
     }
 
+    const handleRowsChange = row => {
+        fetchMenus(1, row);
+    }
+
     const columns = [
         {
             name: 'Nombre',
@@ -144,6 +148,7 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
                 paginationServer
                 paginationTotalRows={meta.totalCount}
                 onChangePage={handlePageChange}
+                onChangeRowsPerPage={handleRowsChange}
                 responsive
                 defaultSortAsc={true}
             />

@@ -5,7 +5,7 @@ export const ModalTicket = ({ isOpen, closeModal, base64Pdf}) => {
     if (!isOpen) {
         return null;
     }
-
+    
     return (
         <>
            <Modal

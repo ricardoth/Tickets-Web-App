@@ -84,7 +84,7 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                 .then(response => response.json())
                 .then(data => {
                     if(!data.ok ){
-                        setMenus(endpoint, user.token);
+                        setMenus(1);
                         close(true);
                         Swal.fire('Agregado!', '', 'success');
                     } else {
