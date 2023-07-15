@@ -79,12 +79,10 @@ export const TicketControlPanel = () => {
                         Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                     },
                 });
-
                 const {data} = responseDelete.data;
-                console.log(data)
-        
-                if (data == true)
-                handlePageChange(page);
+                fetchTickets(page);
+
+                
             }
         });
     }
@@ -111,7 +109,10 @@ export const TicketControlPanel = () => {
         {
             name: 'Vigente',
             selector: row => (
-                row.activo === true ? <FaCheck /> : <FaTimes />
+                row.activo === true ? 
+                <button className='btn btn-success'><FaCheck /></button> 
+                : 
+                <button className='btn btn-danger'><FaTimes /></button>  
             )
         },
         {
@@ -138,6 +139,7 @@ export const TicketControlPanel = () => {
     ];
 
     return (
+
         <div className='row mt-5'>
              <div className='d-flex justify-content-between'>
                 <h1>Gestión de Tickets</h1>
