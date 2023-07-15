@@ -22,6 +22,7 @@ export const environment = {
 
     //Tickets Eventos
     UrlGeneracionTicket: "https://localhost:7100/api/Ticket",
+    UrlGetTicketQR: "https://localhost:7100/api/Ticket/GetTicketQR",
     UrlGeneracionManyTickets: "https://localhost:7100/api/Ticket/GenerarTickets",
     UrlGetUsuarios: "https://localhost:7100/api/Usuario",
     UrlGetUsuario: "https://localhost:7100/api/Usuario/",

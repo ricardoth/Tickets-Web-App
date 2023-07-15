@@ -6,6 +6,7 @@ import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
 import axios from 'axios';
 import { CardCountTicket } from './CardCountTicket';
+import { formatDateLocaleString } from '../../types/formatDate';
 
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetSectores = environment.UrlGetSectores;
@@ -48,6 +49,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
 
         if (valueEvento !== undefined && valueEvento != 0)
         {
+            //Obtiene Sectores por Evento 
             axios.get(UrlGetSectoresByEvento + `${valueEvento}`, {
                 headers: {
                     Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
@@ -60,7 +62,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                 console.error("Ha ocurrido un error al realizar la Petición a API", err);
             });
 
-
+            //Obtiene Eventos por IdEvento
             axios.get(UrlGetEventos + `/${valueEvento}`, {
                 headers: {
                     Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
@@ -68,10 +70,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
             })
             .then(response => {
                 const { data } = response.data;
-                let fecha = new Date(data.fecha);
-                const opciones = { year: 'numeric', month: 'long', day: '2-digit' };
-                const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones).replace(/\//g, '-');
-                data.fecha = fechaFormateada;
+                data.fecha = formatDateLocaleString(data.fecha);
                 setEvento(data);
                 setIsVisibleFlyer(false);
             })
