@@ -70,6 +70,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
             })
             .then(response => {
                 const { data } = response.data;
+                console.log(response)
                 data.fecha = formatDateLocaleString(data.fecha);
                 setEvento(data);
                 setIsVisibleFlyer(false);
