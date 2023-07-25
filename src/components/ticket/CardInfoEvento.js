@@ -43,6 +43,53 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     });
     const [ isVisibleFlyer, setIsVisibleFlyer ] = useState(true);
 
+    const fetchSectorsByEvent = async () => {
+        await axios.get(UrlGetSectoresByEvento + `${valueEvento}`, {
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            },
+        })
+        .then(response => {
+            setSectores(response.data.data);
+        })
+        .catch(err => {
+            console.error("Ha ocurrido un error al realizar la Petición a API", err);
+        });
+
+    }
+    const fetchEventoById = async () => {
+        await axios.get(UrlGetEventos + `/${valueEvento}`, {
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            },
+        })
+        .then(response => {
+            const { data } = response.data;
+            data.fecha = formatDateLocaleString(data.fecha);
+            setEvento(data);
+            setIsVisibleFlyer(false);
+        })
+        .catch(err => {
+            resetStateEvento();
+            console.error("Ha ocurrido un error al realizar la Petición a API", err);
+        });
+    }
+
+    const fetchSectorById = async () => {
+        await axios.get(UrlGetSectores + `/${valueSector}`, {
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            },
+        })
+        .then(response => {
+            const { data } = response.data;
+            setSector(data);
+        })
+        .catch(err => {
+            console.error("Ha ocurrido un error al realizar la Petición a API", err);
+        });
+
+    }
 
     useEffect(() => {
         setValueEvento(valueEvento);
@@ -50,35 +97,9 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
         if (valueEvento !== undefined && valueEvento != 0)
         {
             //Obtiene Sectores por Evento 
-            axios.get(UrlGetSectoresByEvento + `${valueEvento}`, {
-                headers: {
-                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                },
-            })
-            .then(response => {
-                setSectores(response.data.data);
-            })
-            .catch(err => {
-                console.error("Ha ocurrido un error al realizar la Petición a API", err);
-            });
-
+            fetchSectorsByEvent();
             //Obtiene Eventos por IdEvento
-            axios.get(UrlGetEventos + `/${valueEvento}`, {
-                headers: {
-                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                },
-            })
-            .then(response => {
-                const { data } = response.data;
-                console.log(response)
-                data.fecha = formatDateLocaleString(data.fecha);
-                setEvento(data);
-                setIsVisibleFlyer(false);
-            })
-            .catch(err => {
-                resetStateEvento();
-                console.error("Ha ocurrido un error al realizar la Petición a API", err);
-            });
+            fetchEventoById();
         }else{
             resetStateEvento();
             setIsVisibleFlyer(true);
@@ -86,23 +107,12 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     }, [valueEvento]);
 
     useEffect(() => {
-        if (valueEvento !== undefined || valueEvento > 0)
+        if (valueEvento !== undefined && valueEvento != 0)
         {
-            axios.get(UrlGetSectores + `/${valueSector}`, {
-                headers: {
-                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                },
-            })
-            .then(response => {
-                const { data } = response.data;
-                setSector(data);
-            })
-            .catch(err => {
-                console.error("Ha ocurrido un error al realizar la Petición a API", err);
-            });
+            fetchSectorById();
         }
         
-    }, [valueSector])
+    }, [valueSector]);
     
 
     const handleSectorChange = ({target}) => {
@@ -148,7 +158,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                             
                             {
 
-                                valueEvento && (
+                                valueEvento == 0 ? "" : (
                                     <div className='row'>
                                         <div className='col-lg-6'>
                                             <div className='card'>
@@ -181,7 +191,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                         </div>
                         <div className="col-lg-6">
                             {
-                                 valueEvento && (
+                                 valueEvento == 0 ? "" : (
                                     <div>
                                         <label>Selecciona tu Sector</label>
                                         <select value={valueSector} onChange={handleSectorChange} className='custom-select form-control'>
@@ -192,7 +202,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                         </select>
 
                                         {
-                                            valueSector && (
+                                            valueSector == 0 ? "" : (
                                                 <div className='row mt-3'>
                                                     <div className='col-lg-12'>
                                                         <div className='card'>

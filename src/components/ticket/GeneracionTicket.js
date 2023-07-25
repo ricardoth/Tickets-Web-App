@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { move, useFormik } from 'formik';
+import { ErrorMessage, move, useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import {Buffer} from 'buffer';
@@ -13,24 +13,28 @@ import { Loader } from '../ui/loader/Loader';
 import { TabsStepsTickets } from './TabsStepsTickets';
 import { Tab } from 'react-bootstrap';
 import { useCounter } from '../../hooks/useCounter';
+import Swal from 'sweetalert2';
 
 const UrlGeneracionTicket = environment.UrlGeneracionTicket;
 const UrlGeneracionTickets = environment.UrlGeneracionManyTickets;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
-const validationSchema = Yup.object({
+const validationSchema = Yup.object().shape({
     // Agrega tus reglas de validación aquí, si las necesitas
-      // email: Yup.string().email('Invalid email address').required('Required'),
-    // password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
+    // montoPago: Yup.number().moreThan(0, 'Debe seleccionar a lo menos 1 entrada')
+    // idUsuario: Yup.string().required('El ID del usuario es requerido'),
+    // idEvento: Yup.string().required('El ID del evento es requerido'),
+    // idSector: Yup.string().required('El ID del sector es requerido'),
+    
   });
 
 export const GeneracionTicket = () => {
     const [base64Pdf, setBase64Pdf] = useState("");
-    const [valueUsuario, setValueUsuario] = useState();
-    const [valueEvento, setValueEvento] = useState();
-    const [valueSector, setValueSector] = useState();
-    const [valueMedioPago, setValueMedioPago] = useState();
+    const [valueUsuario, setValueUsuario] = useState(0);
+    const [valueEvento, setValueEvento] = useState(0);
+    const [valueSector, setValueSector] = useState(0);
+    const [valueMedioPago, setValueMedioPago] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [continuar, setContinuar] = useState(true);
@@ -48,16 +52,17 @@ export const GeneracionTicket = () => {
     
     const formik = useFormik({
         initialValues: {
-            idUsuario: '',
-            idEvento: '',
-            idSector: '',
-            idMedioPago: '',
-            montoPago: '',
-            montoTotal: '',
+            idUsuario: valueUsuario,
+            idEvento: valueEvento,
+            idSector: valueSector,
+            idMedioPago: valueMedioPago,
+            montoPago: total,
+            montoTotal: total,
             fechaTicket: '',
-            activo: '',
+            activo: false,
         },
         validationSchema: validationSchema,
+        
         onSubmit: async (values) => {
             values.idUsuario = valueUsuario;
             values.idEvento = valueEvento;
@@ -69,38 +74,45 @@ export const GeneracionTicket = () => {
             values.fechaTicket = fecha;
             values.activo = true;
 
-            let ticketList = [];
+            if(values.idUsuario != 0 && values.idEvento != 0 && values.idSector != 0 && values.idMedioPago != 0 && values.montoTotal > 0)
+            {
+                let ticketList = [];
 
-            for (let i = 0; i < counter; i++) {
-                let ticket = {
-                    idUsuario: values.idUsuario,
-                    idEvento: values.idEvento,
-                    idSector: values.idSector,
-                    idMedioPago: values.idMedioPago,
-                    montoPago: total / counter,
-                    montoTotal: total / counter,
-                    fechaTicket: values.fechaTicket,
-                    activo: values.activo
-                };
-                ticketList.push(ticket);
+                for (let i = 0; i < counter; i++) {
+                    let ticket = {
+                        idUsuario: values.idUsuario,
+                        idEvento: values.idEvento,
+                        idSector: values.idSector,
+                        idMedioPago: values.idMedioPago,
+                        montoPago: total / counter,
+                        montoTotal: total / counter,
+                        fechaTicket: values.fechaTicket,
+                        activo: values.activo
+                    };
+                    ticketList.push(ticket);
+                }
+
+                setLoading(true);
+                try {
+                    const response = await axios.post(UrlGeneracionTickets, ticketList, {
+                        headers: {
+                            Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                        },
+                    });
+
+                    openModal();
+                    setBase64Pdf(response.data);
+                    setLoading(false);
+                    formik.resetForm();
+                } catch (error) {
+                    console.error('API error:', error);
+                    setLoading(false);
+                }
+            } else {
+
+                Swal.fire('Debe completar los campos para generar los tickets!', '', 'error');
             }
 
-            setLoading(true);
-            try {
-                const response = await axios.post(UrlGeneracionTickets, ticketList, {
-                    headers: {
-                        Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                    },
-                });
-
-               openModal();
-               setBase64Pdf(response.data);
-               setLoading(false);
-               
-            } catch (error) {
-                console.error('API error:', error);
-                setLoading(false);
-            }
         },
     });
 
@@ -118,7 +130,6 @@ export const GeneracionTicket = () => {
                 break;
         }
     }
-
 
     return (
         <div className='row mt-5'>
@@ -146,7 +157,7 @@ export const GeneracionTicket = () => {
                                 counter={counter}
                                 increment={increment}
                                 decrement={decrement}
-                            />
+                            /> 
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="pago">
@@ -162,8 +173,13 @@ export const GeneracionTicket = () => {
                                         onChange={formik.handleChange}
                                         className="form-control" 
                                         disabled={true}
-                                        />
+                                    />
+
+                                    {formik.touched.idMedioPago && formik.errors.idMedioPago ? (
+                                        <div>{formik.errors.idMedioPago}</div>
+                                        ) : null}
                                 </div>
+                                
                                 <br/>
                                 <div className="d-grid gap-2 ">
                                     <button type="submit" className="btn btn-outline-info" disabled={loading}><i className="bi bi-save2"></i> Generar </button>

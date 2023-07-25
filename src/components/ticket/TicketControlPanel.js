@@ -84,16 +84,21 @@ export const TicketControlPanel = () => {
     }
 
     const desactivarTicket = async (row) => {
+        if (row.activo) 
+            row.activo = false;
+        else 
+            row.activo = true;
+        
         Swal.fire({
             title: 'Atención',
-            text: '¿Desea dar de baja el Ticket?',
+            text: '¿Desea dar de ' + (row.activo ? 'Activar' : 'Desactivar') + ' el Ticket?',
             icon: 'error',
             showCancelButton: true,
             confirmButtonText: 'Aceptar',
             cancelButtonText: 'Cancelar',
         }).then(async (result) => {
             if (result.isConfirmed) {
-                let responseDelete = await axios.delete(URL_TICKET + `/${row.idTicket}`, {
+                let responseDelete = await axios.delete(URL_TICKET + `?idTicket=${row.idTicket}&activo=${row.activo}`, {
                     headers: {
                         Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                     },

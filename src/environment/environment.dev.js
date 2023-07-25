@@ -26,6 +26,7 @@ export const environment = {
     UrlGetTicketVoucherPDF: "https://localhost:7100/api/Ticket/GetTicketVoucherPDF",
     UrlGeneracionManyTickets: "https://localhost:7100/api/Ticket/GenerarTickets",
     UrlGetUsuarios: "https://localhost:7100/api/Usuario",
+    UrlGetUsuariosFilter: "https://localhost:7100/api/Usuario/GetUsersFilter",
     UrlGetUsuario: "https://localhost:7100/api/Usuario/",
     UrlGetEventos: "https://localhost:7100/api/Evento",
     UrlGetSectores: "https://localhost:7100/api/Sector",

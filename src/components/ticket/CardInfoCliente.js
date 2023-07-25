@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Combobox } from '../ui/combobox/Combobox';
 import { environment } from '../../environment/environment.dev';
-import { parserUsuario } from '../../types/parsers';
 import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
 import axios from 'axios';
+import Select from 'react-select';
 
 const UrlGetUsuarios = environment.UrlGetUsuarios;
 const UrlGetUsuarioTicket = environment.UrlGetUsuario;
+const UrlGetUsuariosFilter = environment.UrlGetUsuariosFilter;
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
@@ -16,9 +16,31 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
     const [correoUser, setCorreoUser] = useState("");
     const [telefonoUser, setTelefonoUser] = useState("");
     const [direccionUser, setDireccionUser] = useState("");
+    const [inputValue, setInputValue] = useState("");
+    const [options, setOptions] = useState([]);
+
+    const fetchUsuarios = async (inputValue) => {
+        try {
+            const response = await axios.get(UrlGetUsuariosFilter + `?filtro=${inputValue}`, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            });
+
+            const { data } = response.data;
+            const newOptions = data.map((item) => ({
+                value: item.idUsuario,
+                label: item.nombres +' '+ item.apellidoP + ' '+ item.apellidoM
+            }));
+
+            setOptions(newOptions);
+        } catch (error) {
+            console.error('Ha ocurrido un error al realizar la Petición a API:', error);
+        }
+    } 
 
     useEffect(() => {
-        if (valueUsuario !== undefined || valueUsuario > 0) {
+        if (valueUsuario !== undefined && valueUsuario !== 0) {
             
             axios.get(UrlGetUsuarioTicket + `${valueUsuario}`, {
                 headers: {
@@ -40,6 +62,18 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
         }
     }, [valueUsuario]);
 
+    const handleChange = (selectedOption) => {
+        setValueUsuario(selectedOption.value);
+    }
+
+    const handleInputChange = (inputValue) => {
+        setInputValue(inputValue);
+        if (inputValue.length >= 3) 
+            fetchUsuarios(inputValue);
+
+        return inputValue;
+    }
+
     return (
         <>
             <div className="card">
@@ -50,16 +84,17 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
                     <div className="row">
                         <div className='col-lg-6'>
                             <label>Usuario</label>
-                            
-                            <Combobox
-                                id="idUsuario"
-                                name="idUsuario"
+
+                            <Select
+                                className="custom-select form-control"
+                                classNamePrefix="select"
                                 value={valueUsuario}
-                                setValue={setValueUsuario}
-                                url={UrlGetUsuarios}
-                                parser={parserUsuario}
-                                tipoAuth={environment.BasicAuthType}
-                            /> 
+                                onChange={handleChange}
+                                onInputChange={handleInputChange}
+                                inputValue={inputValue}
+                                name="idUsuario"
+                                options={options}
+                            />
                         </div>
 
                         <div className='col-lg-6'>
