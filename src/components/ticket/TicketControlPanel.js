@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { basicAuth } from '../../types/basicAuth';
 import { Buffer } from 'buffer';
 import { environment } from '../../environment/environment.dev';
@@ -9,6 +9,9 @@ import { FaCheck, FaSearch, FaTimes } from 'react-icons/fa';
 import { ModalTicketControlPanel } from './ModalTicketControlPanel';
 import Swal from 'sweetalert2';
 import { ModalTicket } from './ModalTicket';
+import { types } from '../../types/types';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../auth/authContext';
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
@@ -16,6 +19,8 @@ const URL_TICKET = environment.UrlGeneracionTicket;
 const URL_TICKET_VOUCHER_PDF = environment.UrlGetTicketVoucherPDF;
 
 export const TicketControlPanel = () => {
+    const { user, dispatch } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [ tickets, setTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
     const [ loading, setLoading ] = useState(false);
@@ -23,8 +28,15 @@ export const TicketControlPanel = () => {
     const [ isOpenVoucher, setIsOpenVoucher ] = useState(false);
     const [ ticket, setTicket ] = useState();
     const [ base64Voucher , setBase64Voucher ] = useState("");
-
     const { data, meta } = tickets;
+
+    const handleLogout = () => {
+        dispatch({ type: types.logout });
+
+        navigate("/login", {
+            replace: true 
+        });
+    }
 
     const fetchTickets = async (page, row = 10) => {
         setLoading(true);
@@ -37,7 +49,14 @@ export const TicketControlPanel = () => {
             setTickets(datos);
             setLoading(false);
         })
-        .catch( err => console.log(err));
+        .catch( err => {
+            Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
+
+            setTimeout(() => {
+                handleLogout();
+
+            }, 1000)
+        });
     }
 
     useEffect(() => {
@@ -79,7 +98,13 @@ export const TicketControlPanel = () => {
             setBase64Voucher(data.nombreTicketComprobante);
             setIsOpenVoucher(true);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
+
+            setTimeout(() => {
+                handleLogout();
+            }, 1000)
+        });
 
     }
 
@@ -98,13 +123,21 @@ export const TicketControlPanel = () => {
             cancelButtonText: 'Cancelar',
         }).then(async (result) => {
             if (result.isConfirmed) {
-                let responseDelete = await axios.delete(URL_TICKET + `?idTicket=${row.idTicket}&activo=${row.activo}`, {
+                const responseDelete = await axios.delete(URL_TICKET + `?idTicket=${row.idTicket}&activo=${row.activo}`, {
                     headers: {
                         Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                     },
                 });
-                const {data} = responseDelete.data;
+                if(responseDelete.status != 200) {
+                    Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
+
+                    setTimeout(() => {
+                        handleLogout();
+                    }, 1000)
+                }
+
                 fetchTickets(page);
+                
             }
         });
     }

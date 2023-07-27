@@ -92,16 +92,13 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     }
 
     useEffect(() => {
-        setValueEvento(valueEvento);
 
-        if (valueEvento !== undefined && valueEvento != 0)
-        {
-            //Obtiene Sectores por Evento 
+         if (valueEvento !== undefined && valueEvento != 0)
+         {
             fetchSectorsByEvent();
-            //Obtiene Eventos por IdEvento
-            fetchEventoById();
-        }else{
-            resetStateEvento();
+             fetchEventoById();
+         } else {
+            // resetStateEvento();
             setIsVisibleFlyer(true);
         }
     }, [valueEvento]);
@@ -113,11 +110,6 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
         }
         
     }, [valueSector]);
-    
-
-    const handleSectorChange = ({target}) => {
-        setValueSector(target.value);
-    }
 
     const resetStateEvento = () => {
         setEvento({
@@ -194,7 +186,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                  valueEvento == 0 ? "" : (
                                     <div>
                                         <label>Selecciona tu Sector</label>
-                                        <select value={valueSector} onChange={handleSectorChange} className='custom-select form-control'>
+                                        <select id="idSector" value={valueSector} onChange={setValueSector} className='custom-select form-control'>
                                             <option value="">---Seleccione---</option>
                                             { sectores.map((sector) => (
                                                 <option key={sector.idSector} value={sector.idSector}>{sector.nombreSector}</option>

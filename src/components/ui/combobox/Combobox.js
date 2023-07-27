@@ -10,19 +10,17 @@ const basicAuth = {
     password: environment.PasswordBasicAuth
 };
 
-//apiService es a que api se realizará la llamada
 export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
     const { user, dispatch } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([{label: "loading", value: "loading"}]);
 
-    const onChange = evt => {
-        setValue(evt.currentTarget.value);
+    const onChange = (event) => {
+        setValue(event);
     }
 
     useEffect(() => {
         let unmounted = false;
-
         let headerAuth = null;
 
         if (tipoAuth == jwtAuthType) {

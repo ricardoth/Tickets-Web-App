@@ -8,8 +8,8 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement, to
     }, [counter]);
     
 
-    const addTicketCounter = () => {
-        setTotal(counter * sectorValue.precio);
+    const addTicketCounter = (e) => {
+        setTotal('montoPago', counter * sectorValue.precio)
         setIsDisabled(true);
     }
 
@@ -60,7 +60,7 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement, to
                 <div className="row my-3">
                     <div className="col-12 text-end text-md-right">
                         <div className="w-100">
-                            <div className={divClassButton} id='btnAddTicketCounter' onClick={addTicketCounter}>Agregar</div>
+                            <div className={divClassButton} onClick={addTicketCounter}>Agregar</div>
                         </div>
                     </div>
                 </div>

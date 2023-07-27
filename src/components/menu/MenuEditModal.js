@@ -4,9 +4,15 @@ import Swal from 'sweetalert2';
 import '../../styles/Switch.css';
 import { environment } from '../../environment/environment.dev';
 import { Switch } from '../ui/switch/Switch';
-import { useForm } from 'react-hook-form';
 import { Combobox } from "../ui/combobox/Combobox";
 import { AuthContext } from '../../auth/authContext';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object().shape({
+    nombre: Yup.string().required('El Nombre es requerido'),
+    url: Yup.string().required('El URL es requerido'),
+  });
 
 const endpoint = environment.UrlApiMenu;
 const endpointPadre = environment.UrlApiMenuPadre;
@@ -16,116 +22,115 @@ const parser = json =>
     json.map(({ nombre, idMenu }) => ({
         label: nombre, value: idMenu }));
 
-export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
+export const MenuEditModal = ({show, handleClose, menuEdit} ) => {
     const { user, dispatch } = useContext(AuthContext);
-    const { register, handleSubmit, reset } = useForm({
-        defaultValues: {
+
+    const formik = useFormik({
+        initialValues: {
             idMenu: menuEdit.idMenu,
             nombre: menuEdit.nombre,
-            padre: menuEdit.padre,
             url: menuEdit.url,
-            urlFriend: menuEdit.url,
+            padre: menuEdit.padre,
             esActivo: menuEdit.esActivo,
             esPadre: menuEdit.esPadre,
-            tieneHijos: menuEdit.tieneHijos
-        }
+            tieneHijos: menuEdit.tieneHijos,
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            values.urlFriend = values.url;
+
+            let menuSend = {
+                IdMenu: values.idMenu,
+                IdApp: idApp,
+                Nombre: values.nombre,
+                Padre: values.padre,
+                Url: values.url,
+                UrlFriend: values.url,
+                EsActivo: values.esActivo,
+                EsPadre: values.esPadre,
+                TieneHijos: values.tieneHijos
+            }
+
+            Swal.fire({
+                title: 'Atención',
+                text: '¿Desea editar el menú?',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    
+                    fetch(endpoint + "?id=" + menuEdit.idMenu, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${user.token}`
+                        },
+                        body: JSON.stringify(menuSend)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        handleClose(true);
+                        setTimeout(() => {
+                            Swal.fire('Actualizado!', '', 'success');
+                        }, 100);
+                        
+                    })
+                    .catch(err => console.log(err)); 
+    
+                }
+            });
+        },
     });
 
-    useEffect(() => {
-        setEsActivo(menuEdit.esActivo);
-        setEsPadre(menuEdit.esPadre);
-        setTieneHijos(menuEdit.tieneHijos);
-        setValuePadre(menuEdit.padre);
-        reset(menuEdit);
-      }, [menuEdit]);
-
-    const [valuePadre, setValuePadre] = useState();
-
-    const [esActivo, setEsActivo] = useState(false);
-    const [esPadre, setEsPadre] = useState(false);
-    const [tieneHijos, setTieneHijos] = useState(false);
-    
-    const onToggleActivo = () => setEsActivo(!esActivo);
-    const onTogglePadre = () => setEsPadre(!esPadre);
-    const onToggleChild = () => setTieneHijos(!tieneHijos);
-
-    const onSubmit = (data) => {
-        let menuSend = {
-            IdMenu: data.idMenu,
-            IdApp: idApp,
-            Nombre: data.nombre,
-            Padre: valuePadre,
-            Url: data.url,
-            UrlFriend: data.url,
-            EsActivo: esActivo,
-            EsPadre: esPadre,
-            TieneHijos: tieneHijos
-        }
-
-        Swal.fire({
-            title: 'Atención',
-            text: '¿Desea editar el menú?',
-            icon: 'error',
-            showCancelButton: true,
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(endpoint + "?id=" + menuEdit.idMenu, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user.token}`
-                    },
-                    body: JSON.stringify(menuSend)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    setMenuEdit(menuSend);
-                    setTimeout(() => {
-                        close(true);
-                    Swal.fire('Actualizado!', '', 'success');
-                    }, 100);
-                    
-                })
-                .catch(err => console.log(err)); 
-                }
-        });
+    if(!show) {
+        return null;
     }
 
     return (
         <>
             <Modal 
                 show={show} 
-                onHide={close}
+                onHide={handleClose}
             >
                 <Modal.Header closeButton>
                 <Modal.Title>Editar Menú</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                <form className="container animate__animated animate__fadeIn" onSubmit={handleSubmit(onSubmit)}>
+                <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                     <div className='row'>
                         <div className="col-lg-6">
                             <label>Nombre</label>
                             <input 
+                                id="nombre"
                                 type="text" 
                                 placeholder="Nombre" 
                                 className="form-control" 
                                 name="nombre"
-                                {...register("nombre")}
-                                />
-                        </div>
+                                onChange={formik.handleChange}
+                                value={formik.values.nombre}
+                            />
+                            {formik.touched.nombre && formik.errors.nombre ? (
+                                        <div style={{color:'red'}}>{formik.errors.nombre}</div>
+                                        ) : null}
+                        </div> 
 
                         <div className="col-lg-6">
                             <label>Url</label>
                             <input 
+                                id='url'
                                 type="text" 
                                 placeholder="Url" 
                                 className="form-control" 
                                 name="url" 
-                                {...register("url")}
+                                onChange={formik.handleChange}
+                                value={formik.values.url}
                                 />
+                            {formik.touched.url && formik.errors.url ? (
+                                        <div style={{color:'red'}}>{formik.errors.url}</div>
+                                        ) : null}
                         </div>
                     </div>
                     <br />
@@ -133,9 +138,9 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                         <div className="col-lg-6">
                             <label>Padre</label>
                                 <Combobox
-                                    id={"todos"}
-                                    value={valuePadre}
-                                    setValue={setValuePadre}
+                                    id={"padre"}
+                                    value={formik.values.padre}
+                                    setValue={formik.handleChange}
                                     url={endpointPadre}
                                     parser={parser}
                                     tipoAuth={environment.JWTAuthType}
@@ -147,15 +152,15 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                             <div>
                                 <label className="toggle-switch">
                                     <Switch
-                                        id="1"
-                                        isOn={esActivo}
-                                        onToggle={onToggleActivo}
+                                        id="esActivo"
+                                        isOn={formik.values.esActivo}
+                                        onToggle={formik.handleChange}
                                     />
 
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
                     <br />
                     <div className='row'>
@@ -164,9 +169,9 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                             <div>
                                 <label className="toggle-switch">
                                     <Switch
-                                        id="2"
-                                        isOn={esPadre}
-                                        onToggle={onTogglePadre}
+                                        id="esPadre"
+                                        isOn={formik.values.esPadre}
+                                        onToggle={formik.handleChange}
                                     />
                                 </label>
                             </div>
@@ -177,18 +182,18 @@ export const MenuEditModal = ({show, close, menuEdit, setMenuEdit} ) => {
                             <div>
                                 <label className="toggle-switch">
                                      <Switch
-                                        id="3"
-                                        isOn={tieneHijos}
-                                        onToggle={onToggleChild}
+                                        id="tieneHijos"
+                                        isOn={formik.values.tieneHijos}
+                                        onToggle={formik.handleChange}
                                     />
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                     <br />
                     <div className='modal-footer'>
                         <button type="submit" className="btn btn-primary">Aceptar</button>
-                        <button className="btn btn-danger" onClick={close} type="button" data-dismiss="modal">Cerrar</button>
+                        <button className="btn btn-danger" onClick={handleClose} type="button" data-dismiss="modal">Cerrar</button>
                     </div>
                 </form>
                 </Modal.Body>

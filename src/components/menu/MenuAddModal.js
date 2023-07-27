@@ -7,6 +7,14 @@ import '../../styles/Switch.css';
 import { Switch } from '../ui/switch/Switch';
 import { Combobox } from "../ui/combobox/Combobox";
 import { AuthContext } from '../../auth/authContext';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object().shape({
+    nombre: Yup.string().required('El Nombre es requerido'),
+    url: Yup.string().required('El URL es requerido'),
+  });
+
 
 const endpoint = environment.UrlApiMenu;
 const endpointPadre = environment.UrlApiMenuPadre;
@@ -19,83 +27,74 @@ const parser = json =>
 
 export const MenuAddModal = ({show, close, setMenus}) => {
     const { user, dispatch } = useContext(AuthContext);
-    const [ formValues, handleInputChange, reset ] = useForm({
-        idMenu: 0,
-        nombre: '',
-        padre: 0,
-        url: '',
-        urlFriend: '',
-        esActivo: false,
-        esPadre: false,
-        tieneHijos: false
-    });
 
     useEffect(() => {
-        reset();
-        setEsActivo(false);
-        setEsPadre(false);
-        setTieneHijos(false);
-        setValuePadre(0);
-    }, [show, close])
+        formik.resetForm();
+    }, [show])
+
+    const formik = useFormik({
+        initialValues: {
+            idMenu: 0,
+            nombre: '',
+            url: '',
+            padre: '',
+            esActivo: false,
+            esPadre: false,
+            tieneHijos: false,
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            values.urlFriend = values.url;
+
+            let menuSend = {
+                IdMenu: values.idMenu,
+                IdApp: idApp,
+                Nombre: values.nombre,
+                Padre: values.padre,
+                Url: values.url,
+                UrlFriend: values.url,
+                EsActivo: values.esActivo,
+                EsPadre: values.esPadre,
+                TieneHijos: values.tieneHijos
+            }
+
+            Swal.fire({
+                title: 'Atención',
+                text: '¿Desea Agregar el menú?',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    
+                    fetch(endpoint , {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${user.token}`
+                        },
+                        body: JSON.stringify(menuSend)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(!data.ok ){
+                            setMenus(1);
+                            close(true);
+                            formik.resetForm();
+                            Swal.fire('Agregado!', '', 'success');
+                        } else {
+                            console.log(data)
+                        }
+                    })
+                    .catch(err => console.log(err)); 
     
+                }
+            });
+        },
+    });
 
-    const [esActivo, setEsActivo] = useState(false);
-    const [esPadre, setEsPadre] = useState(false);
-    const [tieneHijos, setTieneHijos] = useState(false);
-
-    const [valuePadre, setValuePadre] = useState();
-
-    const onToggleActivo = () => setEsActivo(!esActivo);
-    const onTogglePadre = () => setEsPadre(!esPadre);
-    const onToogleChild = () => setTieneHijos(!tieneHijos);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        let menuSend = {
-            IdApp: idApp,
-            Nombre: formValues.nombre,
-            Padre: valuePadre,
-            Url: formValues.url,
-            UrlFriend: formValues.url,
-            EsActivo: esActivo,
-            EsPadre: esPadre,
-            TieneHijos: tieneHijos
-        }
-
-        Swal.fire({
-            title: 'Atención',
-            text: '¿Desea agregar el menú?',
-            icon: 'error',
-            showCancelButton: true,
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(endpoint , {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user.token}`
-                    },
-                    body: JSON.stringify(menuSend)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if(!data.ok ){
-                        setMenus(1);
-                        close(true);
-                        Swal.fire('Agregado!', '', 'success');
-                    } else {
-                        console.log(data)
-                    }
-                })
-                .catch(err => console.log(err)); 
-              }
-        });
-    }
-  
     return (
         <>
                 <Modal 
@@ -106,7 +105,7 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                     <Modal.Title>Agregar Menú</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                    <form className="container animate__animated animate__fadeIn" onSubmit={handleSubmit}>
+                    <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                         <div className='row'>
                             <div className="col-lg-6">
                                 <label>Nombre</label>
@@ -114,89 +113,97 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                                     type="text" 
                                     placeholder="Nombre" 
                                     className="form-control" 
-                                    onChange={handleInputChange} 
+                                    onChange={formik.handleChange} 
                                     name="nombre"
-                                    defaultValue={formValues.nombre} 
+                                    defaultValue={formik.values.nombre} 
                                     autoComplete="off"
                                     />
-                            </div>
 
+                                {formik.touched.nombre && formik.errors.nombre ? (
+                                        <div style={{color:'red'}}>{formik.errors.nombre}</div>
+                                        ) : null}
+                            </div>
+  
                             <div className="col-lg-6">
                                 <label>Url</label>
                                 <input 
                                     type="text" 
                                     placeholder="Url" 
                                     className="form-control" 
-                                    onChange={handleInputChange} 
+                                    onChange={formik.handleChange} 
                                     name="url" 
-                                    defaultValue={formValues.url} 
+                                    defaultValue={formik.values.url} 
                                     autoComplete="off"
                                     />
-                            </div>
-                        </div>
-                        <br />
-                        <div className='row'>
-                            <div className="col-lg-6">
-                                <label>Padre</label>
-                                <Combobox
-                                    id={"todos"}
-                                    value={valuePadre}
-                                    // defaultValue={formValues.padre} 
-                                    setValue={setValuePadre}
-                                    url={endpointPadre}
-                                    parser={parser}
-                                    tipoAuth={environment.JWTAuthType}
-                                />
-                            </div>
 
-                            <div className="col-lg-6">
-                                <label>Vigencia</label>
-                                <div>
-                                    <label className="toggle-switch">
-                                        <Switch
-                                            id="1"
-                                            isOn={esActivo}
-                                            onToggle={onToggleActivo}
-                                        />
-                                    </label>
+                                {formik.touched.url && formik.errors.url ? (
+                                        <div style={{color:'red'}}>{formik.errors.url}</div>
+                                        ) : null}
+                            </div>
+                            
+                            </div> 
+                            <br />
+                            <div className='row'>
+                                <div className="col-lg-6">
+                                    <label>Padre</label>
+                                    <Combobox
+                                        id={"padre"}
+                                        value={formik.values.padre}
+                                        setValue={formik.handleChange}
+                                        url={endpointPadre}
+                                        parser={parser}
+                                        tipoAuth={environment.JWTAuthType}
+                                    />
                                 </div>
-                            </div>
-                        </div>
 
-                        <br />
-                        <div className='row'>
-                            <div className="col-lg-6">
-                                <label>Indicador Padre</label>
-                                <div>
-                                    <label className="toggle-switch">
-                                        <Switch
-                                            id="2"
-                                            isOn={esPadre}
-                                            onToggle={onTogglePadre}
-                                        />
-                                    </label>
+                                <div className="col-lg-6">
+                                    <label>Vigencia</label>
+                                    <div>
+                                        <label className="toggle-switch">
+                                            <Switch
+                                                id="esActivo"
+                                                isOn={formik.values.esActivo}
+                                                onToggle={formik.handleChange}
+                                            />
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="col-lg-6">
-                                <label>Indicador Submenús</label>
-                                <div>
-                                    <label className="toggle-switch">
-                                        <Switch
-                                            id="3"
-                                            isOn={tieneHijos}
-                                            onToggle={onToogleChild}
-                                        />
-                                    </label>
+                            <br />
+                            <div className='row'>
+                                <div className="col-lg-6">
+                                    <label>Indicador Padre</label>
+                                    <div>
+                                        <label className="toggle-switch">
+                                            <Switch
+                                                id="esPadre"
+                                                isOn={formik.values.esPadre}
+                                                onToggle={formik.handleChange}
+                                            />
+                                        </label>
+                                    </div>
                                 </div>
+
+                                <div className="col-lg-6">
+                                    <label>Indicador Submenús</label>
+                                    <div>
+                                        <label className="toggle-switch">
+                                            <Switch
+                                                id="tieneHijos"
+                                                isOn={formik.values.tieneHijos}
+                                                onToggle={formik.handleChange}
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div> 
+                            <br />
+                            <div className='modal-footer'>
+                                <button type="submit" className="btn btn-primary">Aceptar</button>
+                                <button className="btn btn-danger" onClick={close} type="button" data-dismiss="modal">Cerrar</button>
                             </div>
-                        </div>
-                        <br />
-                        <div className='modal-footer'>
-                            <button type="submit" className="btn btn-primary">Aceptar</button>
-                            <button className="btn btn-danger" onClick={close} type="button" data-dismiss="modal">Cerrar</button>
-                        </div>
-                    </form>
+                        </form>
                     </Modal.Body>
                 </Modal>
             </>

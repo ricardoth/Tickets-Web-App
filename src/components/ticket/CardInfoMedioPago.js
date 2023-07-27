@@ -5,9 +5,9 @@ import { parserMedioPago} from '../../types/parsers';
 const UrlGetMedioPagos = environment.UrlGetMedioPagos;
 
 export const CardInfoMedioPago = ({valueMedioPago, setValueMedioPago}) => {
-    useEffect(() => {
-        setValueMedioPago(valueMedioPago);
-      }, [valueMedioPago]);
+    const handleChange = (e) => {
+        setValueMedioPago(e);
+    }
   
     return (
         <>
@@ -22,7 +22,7 @@ export const CardInfoMedioPago = ({valueMedioPago, setValueMedioPago}) => {
                             id="idMedioPago"
                             name="idMedioPago"
                             value={valueMedioPago}
-                            setValue={setValueMedioPago}
+                            setValue={handleChange}
                             url={UrlGetMedioPagos}
                             parser={parserMedioPago}
                             tipoAuth={environment.BasicAuthType}

@@ -23,23 +23,20 @@ const passBasicAuth = basicAuth.password;
 const validationSchema = Yup.object().shape({
     // Agrega tus reglas de validación aquí, si las necesitas
     // montoPago: Yup.number().moreThan(0, 'Debe seleccionar a lo menos 1 entrada')
-    // idUsuario: Yup.string().required('El ID del usuario es requerido'),
-    // idEvento: Yup.string().required('El ID del evento es requerido'),
-    // idSector: Yup.string().required('El ID del sector es requerido'),
+    idUsuario: Yup.number().required('El Usuario es requerido').min(1, 'Debe seleccionar un Usuario'),
+    idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
+    idSector: Yup.number().required('El Sector es requerido').min(1, 'Debe seleccionar un Sector'),
+    idMedioPago: Yup.number().required('El Medio Pago es Requerido').min(1, 'Debe seleccionar un Medio Pago'),
+    montoPago: Yup.number().required().min(1, 'Debe seleccionar a lo menos 1 ticket para generar el proceso')
     
   });
 
 export const GeneracionTicket = () => {
     const [base64Pdf, setBase64Pdf] = useState("");
-    const [valueUsuario, setValueUsuario] = useState(0);
-    const [valueEvento, setValueEvento] = useState(0);
-    const [valueSector, setValueSector] = useState(0);
-    const [valueMedioPago, setValueMedioPago] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [continuar, setContinuar] = useState(true);
     const [activeTab, setActiveTab] = useState('cliente');
-    const [total, setTotal] = useState(0);
     const { counter, increment, decrement } = useCounter(0);
 
     const closeModal = () => {
@@ -52,66 +49,54 @@ export const GeneracionTicket = () => {
     
     const formik = useFormik({
         initialValues: {
-            idUsuario: valueUsuario,
-            idEvento: valueEvento,
-            idSector: valueSector,
-            idMedioPago: valueMedioPago,
-            montoPago: total,
-            montoTotal: total,
+            idUsuario: 0,
+            idEvento: 0,
+            idSector: 0,
+            idMedioPago: 0,
+            montoPago: 0,
+            montoTotal: 0,
             fechaTicket: '',
-            activo: false,
+            activo: true,
         },
         validationSchema: validationSchema,
-        
         onSubmit: async (values) => {
-            values.idUsuario = valueUsuario;
-            values.idEvento = valueEvento;
-            values.idSector = valueSector;
-            values.idMedioPago = valueMedioPago;
-            values.montoPago = total;
-            values.montoTotal = total;
+            values.montoTotal = values.montoPago;
             let fecha = new Date();
             values.fechaTicket = fecha;
-            values.activo = true;
+            
+            let ticketList = [];
 
-            if(values.idUsuario != 0 && values.idEvento != 0 && values.idSector != 0 && values.idMedioPago != 0 && values.montoTotal > 0)
-            {
-                let ticketList = [];
-
-                for (let i = 0; i < counter; i++) {
-                    let ticket = {
-                        idUsuario: values.idUsuario,
-                        idEvento: values.idEvento,
-                        idSector: values.idSector,
-                        idMedioPago: values.idMedioPago,
-                        montoPago: total / counter,
-                        montoTotal: total / counter,
-                        fechaTicket: values.fechaTicket,
-                        activo: values.activo
-                    };
-                    ticketList.push(ticket);
-                }
-
-                setLoading(true);
-                try {
-                    const response = await axios.post(UrlGeneracionTickets, ticketList, {
-                        headers: {
-                            Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                        },
-                    });
-
-                    openModal();
-                    setBase64Pdf(response.data);
-                    setLoading(false);
-                    formik.resetForm();
-                } catch (error) {
-                    console.error('API error:', error);
-                    setLoading(false);
-                }
-            } else {
-
-                Swal.fire('Debe completar los campos para generar los tickets!', '', 'error');
+            for (let i = 0; i < counter; i++) {
+                let ticket = {
+                    idUsuario: values.idUsuario,
+                    idEvento: values.idEvento,
+                    idSector: values.idSector,
+                    idMedioPago: values.idMedioPago,
+                    montoPago: values.montoPago / counter,
+                    montoTotal: values.montoPago / counter,
+                    fechaTicket: values.fechaTicket,
+                    activo: values.activo
+                };
+                ticketList.push(ticket);
             }
+
+            setLoading(true);
+            try {
+                const response = await axios.post(UrlGeneracionTickets, ticketList, {
+                    headers: {
+                        Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                    },
+                });
+
+                openModal();
+                setBase64Pdf(response.data);
+                setLoading(false);
+                formik.resetForm();
+            } catch (error) {
+                console.error('API error:', error);
+                setLoading(false);
+            }
+        
 
         },
     });
@@ -143,25 +128,43 @@ export const GeneracionTicket = () => {
                 <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                     <Tab.Content>
                         <Tab.Pane eventKey="cliente">
-                            <CardInfoCliente valueUsuario={valueUsuario} setValueUsuario={setValueUsuario} continuar={continuar} setContinuar={setContinuar}/>
+                            <CardInfoCliente valueUsuario={formik.values.idUsuario} setValueUsuario={formik.setFieldValue} continuar={continuar} setContinuar={setContinuar}/>
+                            {formik.touched.idUsuario && formik.errors.idUsuario ? (
+                                        <div style={{color:'red'}}>{formik.errors.idUsuario}</div>
+                                        ) : null}
+
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="tickets">
                             <CardInfoEvento 
-                                valueEvento={valueEvento} 
-                                setValueEvento={setValueEvento} 
-                                valueSector={valueSector} 
-                                setValueSector={setValueSector}
-                                total={total}
-                                setTotal={setTotal}
+                                valueEvento={formik.values.idEvento} 
+                                setValueEvento={formik.handleChange} 
+                                valueSector={formik.values.idSector} 
+                                setValueSector={formik.handleChange}
+                                total={formik.values.montoPago}
+                                setTotal={formik.setFieldValue}
                                 counter={counter}
                                 increment={increment}
                                 decrement={decrement}
                             /> 
+                            {formik.touched.idEvento && formik.errors.idEvento ? (
+                                        <div style={{color:'red'}}>{formik.errors.idEvento}</div>
+                                        ) : null}
+
+                            {formik.touched.idSector && formik.errors.idSector ? (
+                                        <div style={{color:'red'}}>{formik.errors.idSector}</div>
+                                        ) : null}
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="pago">
-                            <CardInfoMedioPago valueMedioPago={valueMedioPago} setValueMedioPago={setValueMedioPago} />
+                            <CardInfoMedioPago 
+                                valueMedioPago={formik.values.idMedioPago} 
+                                setValueMedioPago={formik.handleChange} 
+                            />
+                            {formik.touched.idMedioPago && formik.errors.idMedioPago ? (
+                                        <div style={{color:'red'}}>{formik.errors.idMedioPago}</div>
+                                        ) : null}
+
                                 <br/>
                                 <div className="col-lg-12">
                                     <label>Valor</label>
@@ -169,15 +172,15 @@ export const GeneracionTicket = () => {
                                         type="text" 
                                         id="montoPago"
                                         name="montoPago"
-                                        value={total}
+                                        value={formik.values.montoPago}
                                         onChange={formik.handleChange}
                                         className="form-control" 
                                         disabled={true}
                                     />
-
-                                    {formik.touched.idMedioPago && formik.errors.idMedioPago ? (
-                                        <div>{formik.errors.idMedioPago}</div>
+                                    {formik.touched.montoPago && formik.errors.montoPago ? (
+                                        <div style={{color:'red'}}>{formik.errors.montoPago}</div>
                                         ) : null}
+                                    
                                 </div>
                                 
                                 <br/>
@@ -193,7 +196,7 @@ export const GeneracionTicket = () => {
 
 
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button id='btnSiguiente' className='btn btn-primary' hidden={activeTab === 'pago'} disabled={activeTab === 'pago'} onClick={handleNextTabs}>Continuar</button>
+                <button id='btnSiguiente' type='button' className='btn btn-primary' hidden={activeTab === 'pago'} disabled={activeTab === 'pago'} onClick={handleNextTabs}>Continuar</button>
             </div>
             {   loading ? <Loader /> : 
                     <ModalTicket isOpen={isOpen} closeModal={closeModal} base64Pdf={base64Pdf} />

@@ -1,23 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react';
-import DataTable from 'react-data-table-component'; 
+import DataTable from 'react-data-table-component';
 import { FaTrashAlt, FaCheck, FaTimes, FaPen } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../../auth/authContext';
 import { environment } from '../../environment/environment.dev';
 import { MenuEditModal } from './MenuEditModal';
-import { Loader } from '../ui/loader/Loader';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { types } from '../../types/types';
 
-const endpoint = environment.UrlApiMenu; 
+const endpoint = environment.UrlApiMenu;
 
 export const MenuTable = ({menus, setMenus, page, setPage}) => {
     const { user, dispatch } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const [menuEdit, setMenuEdit] = useState({});
 
     const { data, meta } = menus;
 
-    const fetchMenus = async (page, row = 10) => {  
+    const fetchMenus = async (page, row = 10) => {
           await axios.get(endpoint + `${`?PageSize=${row}&PageNumber=${page}`}`, {
             headers: {
               'Accept': 'application/json',
@@ -29,19 +31,30 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
               setMenus(response.data);
           })
           .catch(err => {
-              console.error("Ha ocurrido un error al realizar la Petición a API", err);
+                console.error("Ha ocurrido un error al realizar la Petición a API", err);
+                Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
+
+                setTimeout(() => {
+                    handleLogout();
+                }, 1000)
           })
     }
 
+    const handleLogout = () => {
+        dispatch({ type: types.logout });
+
+        navigate("/login", {
+            replace: true 
+        });
+    }
+
     useEffect(() => {
-        if ( page != undefined) {
-            setPage(page);
-            fetchMenus(page);
-        }
-    }, [menuEdit]);
+        setPage(page);
+        fetchMenus(page);
+    }, [showMenu]);
 
     if ( meta == undefined) return 'Loading';
-    
+
     const handleDelete = (e, idMenu) => {
         e.preventDefault();
 
@@ -52,25 +65,25 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
             showCancelButton: true,
             confirmButtonText: 'Aceptar',
             cancelButtonText: 'Cancelar',
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                fetch(endpoint +  "/" + idMenu, {
-                    method: 'DELETE',
+                const response = await axios.delete(endpoint +"/"+ idMenu, {
                     headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user.token}`
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const temp = [...menus];
-                    const index = temp.findIndex(x => x.idMenu === idMenu);
-                    temp.splice(index, 1);
-                    setMenus(endpoint, user.token);
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${user.token}`
+                        },
+                });
+
+                const { data } = response.data;
+                
+                if(data) {
+                    fetchMenus(page);
                     Swal.fire('Eliminado!', '', 'success')
-                })
-                .catch(err => console.log(err)); 
+                } else {
+                    Swal.fire('No se pudo eliminar el Menú', '', 'error')
+                }
+
               }
         });
     }
@@ -80,6 +93,10 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
         setTimeout(() => {
              setShowMenu(true);
         }, 100);
+    }
+
+    const handleCloseEdit = () => {
+        setShowMenu(false)
     }
 
     const handlePageChange = page => {
@@ -152,8 +169,12 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
                 responsive
                 defaultSortAsc={true}
             />
-            <MenuEditModal show={showMenu} close={() => setShowMenu(false)} menuEdit={menuEdit} setMenuEdit={setMenuEdit}/>
+            {/* <MenuEditModal show={showMenu} close={() => setShowMenu(false)} menuEdit={menuEdit} setMenuEdit={setMenuEdit}/> */}
+
+            { showMenu && (
+                <MenuEditModal show={showMenu} handleClose={handleCloseEdit} menuEdit={menuEdit} /> 
+            )}
         </>
-        
+
     )
 }

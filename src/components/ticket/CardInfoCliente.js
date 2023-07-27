@@ -62,10 +62,6 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
         }
     }, [valueUsuario]);
 
-    const handleChange = (selectedOption) => {
-        setValueUsuario(selectedOption.value);
-    }
-
     const handleInputChange = (inputValue) => {
         setInputValue(inputValue);
         if (inputValue.length >= 3) 
@@ -89,11 +85,17 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
                                 className="custom-select form-control"
                                 classNamePrefix="select"
                                 value={valueUsuario}
-                                onChange={handleChange}
+                                onChange={(option) => setValueUsuario('idUsuario', option.value)}
                                 onInputChange={handleInputChange}
                                 inputValue={inputValue}
                                 name="idUsuario"
                                 options={options}
+                                placeholder="Escriba 3 caractéres para generar la búsqueda"
+                                noOptionsMessage={({ inputValue }) =>
+                                inputValue.length > 0
+                                    ? "No se encontraron resultados"
+                                    : "No hay opciones disponibles"
+                                }
                             />
                         </div>
 
