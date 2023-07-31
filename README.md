@@ -8,7 +8,7 @@ Proyecto Web React para Gestión y Generación de Tickets para Eventos.
 * React-bootstrap
 * Formik
 * React-Data-Table-Component
-* React-Router-Dom
+* React-Router-Dom 
 * React-Select
 * Yup
 * Docker
