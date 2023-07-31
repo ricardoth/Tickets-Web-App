@@ -5,7 +5,7 @@ import { useFetch } from '../../../hooks/useFetch';
 import { types } from '../../../types/types';
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-import { NavDropdown } from "react-bootstrap";
+import { Container, NavDropdown } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { environment } from '../../../environment/environment.dev';
 import { NavItemChild } from '../nav/NavItemChild';
@@ -41,9 +41,12 @@ const NavSidebar = () => {
         setExpanded(false)
     }
 
+    //expanded={expanded} en expand="lg"
     return ( 
         <>
-            <Navbar collapseOnSelect expanded={expanded} bg="dark" variant="dark" className='lg ps-3'>
+
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='lg ps-3'>
+            <Container>
             <Navbar.Brand as={Link} to="dashboard" >Dashboard</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
@@ -89,7 +92,6 @@ const NavSidebar = () => {
                     
                 }
                 </Nav>
-            </Navbar.Collapse>
 
                 <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                     <ul className='navbar-nav ml-auto'>
@@ -105,6 +107,10 @@ const NavSidebar = () => {
                         </button>
                     </ul>
                 </div>
+            </Navbar.Collapse>
+
+                
+                </Container>
             </Navbar>
         </>
     )
