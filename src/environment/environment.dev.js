@@ -33,4 +33,7 @@ export const environment = {
     UrlGetSectoresByEvento: "https://localhost:7100/api/Sector/GetSectoresByEvento/",
     UrlGetMedioPagos: "https://localhost:7100/api/MedioPago",
 
+    //Validar Ticket
+    UrlValidarAccesoTicket: "https://localhost:7100/api/TicketScanner/ValidarAccesoTicket"
+
 };

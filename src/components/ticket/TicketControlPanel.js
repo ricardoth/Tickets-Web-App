@@ -214,8 +214,8 @@ export const TicketControlPanel = () => {
                     defaultSortAsc={true}
                 />
 
-            <ModalTicketControlPanel isOpen={isOpen} closeModal={closeModal} ticketObj={ticket} />
-            <ModalTicket isOpen={isOpenVoucher} closeModal={closeModalVoucher} base64Pdf={base64Voucher}/>
+                <ModalTicketControlPanel isOpen={isOpen} closeModal={closeModal} ticketObj={ticket} />
+                <ModalTicket isOpen={isOpenVoucher} closeModal={closeModalVoucher} base64Pdf={base64Voucher}/>
         </div>
         
     )
