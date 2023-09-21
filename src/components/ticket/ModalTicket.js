@@ -21,14 +21,14 @@ export const ModalTicket = ({ isOpen, closeModal, base64Pdf}) => {
             </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                       
-                <object 
-                    data  = {`data:application/pdf;base64,${base64Pdf}`} 
-                    style = {{width:"98%", height:"550px", }} 
+                <figure>
+                    <object 
+                        data  = {`data:application/pdf;base64,${base64Pdf}`} 
+                        style = {{width:"98%", height:"550px", }} 
 
-                    type  = "application/pdf">
-                </object>
-                    
+                        type  = "application/pdf">
+                    </object>
+                </figure>       
             </Modal.Body>
             <Modal.Footer>
                 <button onClick={closeModal} className="btn btn-danger">Cerrar</button>

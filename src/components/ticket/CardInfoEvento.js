@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {parserEvento, parserSector} from '../../types/parsers';
+import {parserEvento} from '../../types/parsers';
 import { environment } from '../../environment/environment.dev';
 import { Combobox } from '../ui/combobox/Combobox';
 import { basicAuth} from '../../types/basicAuth';

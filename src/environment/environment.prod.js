@@ -22,8 +22,17 @@ export const environment = {
 
     //Tickets Eventos
     UrlGeneracionTicket: "https://localhost:7100/api/Ticket",
+    UrlGetTicketQR: "https://localhost:7100/api/Ticket/GetTicketQR",
+    UrlGetTicketVoucherPDF: "https://localhost:7100/api/Ticket/GetTicketVoucherPDF",
+    UrlGeneracionManyTickets: "https://localhost:7100/api/Ticket/GenerarTickets",
     UrlGetUsuarios: "https://localhost:7100/api/Usuario",
+    UrlGetUsuariosFilter: "https://localhost:7100/api/Usuario/GetUsersFilter",
+    UrlGetUsuario: "https://localhost:7100/api/Usuario/",
     UrlGetEventos: "https://localhost:7100/api/Evento",
     UrlGetSectores: "https://localhost:7100/api/Sector",
+    UrlGetSectoresByEvento: "https://localhost:7100/api/Sector/GetSectoresByEvento/",
     UrlGetMedioPagos: "https://localhost:7100/api/MedioPago",
+
+    //Validar Ticket
+    UrlValidarAccesoTicket: "https://localhost:7100/api/TicketScanner/ValidarAccesoTicket"
 };

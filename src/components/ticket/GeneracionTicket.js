@@ -96,8 +96,6 @@ export const GeneracionTicket = () => {
                 console.error('API error:', error);
                 setLoading(false);
             }
-        
-
         },
     });
 
