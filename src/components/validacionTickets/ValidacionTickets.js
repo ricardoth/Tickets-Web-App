@@ -6,12 +6,11 @@ import {parserEvento} from '../../types/parsers';
 import {Buffer} from 'buffer';
 import axios from 'axios';
 import { basicAuth } from '../../types/basicAuth';
-import { Card } from 'react-bootstrap';
+import { Badge } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { decrypAES } from '../../selectors/decriptarAES';
 import { getColorStatusCode } from '../../selectors/getStatusCodeIcon';
 import DataTable from 'react-data-table-component';
-import { FaCheck, FaTimes } from 'react-icons/fa';
 import { types } from '../../types/types';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
@@ -41,32 +40,64 @@ const columns = [
         selector: row => row.nombres + ' ' + row.apellidoP
     },
     {
+        name: 'Rut',
+        selector: row => row.rut + '-' + row.dv 
+    },
+    {
         name: 'Fecha Entrada',
         selector: row => row.fechaHoraEntrada
     },
     {
         name: 'Fecha Salida',
-        selector: row => row.fechaHoraSalida
+        selector: row =>  row.fechaHoraSalida == null ? '-' : row.fechaHoraSalida
     },
-    // {
-    //     name: 'Vigente',
-    //     selector: row => (
-    //         row.esActivo === true ? <FaCheck /> : <FaTimes />
-    //     )
-    // },
-   
+    {
+        name: 'Estado Ticket',
+        selector: row => 
+        {
+            let color = getColorStatusCode(row.idEstadoTicket);
+            return  <h5>
+                        <Badge pill bg={color}>
+                            {row.estadoTicket}
+                        </Badge>
+                    </h5>
+        }
+    }
 ];
 
 export const ValidacionTicket = () => {
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const [ accesosTickets, setAccesosTickets ] = useState([]);
+    const [ page, setPage ] = useState(1);
+    const [ meta, setMeta] = useState({});
 
     useEffect(() => {
-        fetchMenus();
-        console.log('cargo')
+        setPage(page);
+        fetchAccesosTickets(page);
     }, []);
 
+    const fetchAccesosTickets = async (page, row = 10) => {
+        await axios.get(UrlGetAccesosEventosTicket + `${`?PageSize=${row}&PageNumber=${page}`}`, {
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            },
+        })
+        .then(response => {
+            setAccesosTickets(response.data.data)
+            setMeta(response.data.meta)
+        })
+        .catch(err => {
+              console.error("Ha ocurrido un error al realizar la Petición a API", err);
+              Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
+
+              setTimeout(() => {
+                  handleLogout();
+              }, 1000)
+        })
+    }
+
+    
     const formik = useFormik({
         initialValues: {
             dataJson: "",
@@ -94,34 +125,16 @@ export const ValidacionTicket = () => {
             });
 
             const { data } = response.data;
-
+ 
             if(response.status === 200) {
                 let color = getColorStatusCode(data.statusCode);
                 Swal.fire(`${data.outputMessage}`, '', color);
+                handlePageChange(page);
                 formik.resetForm();
             }
             
         },
     });
-
-    const fetchMenus = async () => {
-        await axios.get(UrlGetAccesosEventosTicket, {
-            headers: {
-                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-            },
-        })
-        .then(response => {
-            setAccesosTickets(response.data.data)
-        })
-        .catch(err => {
-              console.error("Ha ocurrido un error al realizar la Petición a API", err);
-              Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
-
-              setTimeout(() => {
-                  handleLogout();
-              }, 1000)
-        })
-    }
 
     const handleLogout = () => {
         dispatch({ type: types.logout });
@@ -130,6 +143,16 @@ export const ValidacionTicket = () => {
             replace: true 
         });
     }
+
+    const handlePageChange = page => {
+        setPage(page);
+        fetchAccesosTickets(page);
+    }
+
+    const handleRowsChange = row => {
+        fetchAccesosTickets(1, row);
+    }
+
 
     return (
         <div className='row mt-5'>
@@ -181,6 +204,10 @@ export const ValidacionTicket = () => {
                         responsive
                         defaultSortAsc={true}
                         pagination
+                        paginationServer
+                        paginationTotalRows={meta.totalCount}
+                        onChangePage={handlePageChange}
+                        onChangeRowsPerPage={handleRowsChange}
                     />
 
                 </div>
