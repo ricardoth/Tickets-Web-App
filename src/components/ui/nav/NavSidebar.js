@@ -46,11 +46,11 @@ const NavSidebar = () => {
         <>
 
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='lg ps-3'>
-            <Container>
+            {/* <Container> */}
             <Navbar.Brand as={Link} to="dashboard" >Dashboard</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
-                <Nav className="mr-auto">
+                <Nav className="ml-auto">
                 {
                     padres.map( (menu) => {
                         if(!menu.tieneHijos) {
@@ -93,24 +93,27 @@ const NavSidebar = () => {
                 }
                 </Nav>
 
-                <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
-                    <ul className='navbar-nav ml-auto'>
+          
+                <Nav className="ms-auto">
+                    <Nav.Item className="ms-auto">
                         <span className='nav-item nav-link text-info'>
                                 {user.user}
                         </span>
+                    </Nav.Item>
 
+                    <Nav.Item className="ms-auto">
                         <button 
                                 className="nav-item nav-link btn" 
                                 onClick={handleLogout}
                         >
                             Logout
                         </button>
-                    </ul>
-                </div>
+                    </Nav.Item>
+                </Nav>
             </Navbar.Collapse>
 
                 
-                </Container>
+                {/* </Container> */}
             </Navbar>
         </>
     )

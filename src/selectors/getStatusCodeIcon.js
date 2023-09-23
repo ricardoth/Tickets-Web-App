@@ -6,7 +6,7 @@ export const getColorStatusCode = (statusCode) => {
             break;
 
         case 2: 
-            outputStatus = 'error';
+            outputStatus = 'danger';
             break;
     
         case 3: 

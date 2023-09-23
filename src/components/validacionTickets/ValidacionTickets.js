@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { environment } from '../../environment/environment.dev';
 import { Combobox } from '../ui/combobox/Combobox';
-import {parserEvento} from '../../types/parsers';
-import {Buffer} from 'buffer';
+import { parserEvento } from '../../types/parsers';
+import { Buffer } from 'buffer';
 import axios from 'axios';
 import { basicAuth } from '../../types/basicAuth';
 import { Badge } from 'react-bootstrap';
@@ -14,6 +14,8 @@ import DataTable from 'react-data-table-component';
 import { types } from '../../types/types';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
+import { Loader } from '../ui/loader/Loader';
+import { Scanner } from '../ui/scanner/Scanner';
 
 const urlValidarTicket = environment.UrlValidarAccesoTicket;
 const UrlGetEventos = environment.UrlGetEventos;
@@ -71,6 +73,7 @@ export const ValidacionTicket = () => {
     const [ accesosTickets, setAccesosTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
     const [ meta, setMeta] = useState({});
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setPage(page);
@@ -78,14 +81,17 @@ export const ValidacionTicket = () => {
     }, []);
 
     const fetchAccesosTickets = async (page, row = 10) => {
+        setLoading(true);
         await axios.get(UrlGetAccesosEventosTicket + `${`?PageSize=${row}&PageNumber=${page}`}`, {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
         })
         .then(response => {
-            setAccesosTickets(response.data.data)
-            setMeta(response.data.meta)
+
+            setAccesosTickets(response.data.data);
+            setMeta(response.data.meta);
+            setLoading(false);
         })
         .catch(err => {
               console.error("Ha ocurrido un error al realizar la Petición a API", err);
@@ -111,6 +117,8 @@ export const ValidacionTicket = () => {
             let rut = rutDv[0];
             let dv = rutDv[1];
            
+            console.log(jsonParam)
+
             let accesoEventoTicket = {
                 idTicket: jsonParam.IdTicket,
                 rut: rut,
@@ -118,6 +126,7 @@ export const ValidacionTicket = () => {
                 idEvento: values.idEvento
             };
 
+            setLoading(true);
             let response = await axios.post(urlValidarTicket, accesoEventoTicket, {
                 headers: {
                     Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
@@ -128,10 +137,11 @@ export const ValidacionTicket = () => {
  
             if(response.status === 200) {
                 let color = getColorStatusCode(data.statusCode);
-                Swal.fire(`${data.outputMessage}`, '', color);
+                Swal.fire(`${data.outputMessage}`, `Ticket N° ${accesoEventoTicket.idTicket}`, color);
                 handlePageChange(page);
                 formik.resetForm();
             }
+            setLoading(false);
             
         },
     });
@@ -153,6 +163,9 @@ export const ValidacionTicket = () => {
         fetchAccesosTickets(1, row);
     }
 
+    const handleScanSuccess = (scannedValue) => {
+        formik.setFieldValue('dataJson', scannedValue);
+    };
 
     return (
         <div className='row mt-5'>
@@ -179,36 +192,55 @@ export const ValidacionTicket = () => {
 
                         <div className='col-lg-8'>
                             <label>Ticket</label>
+                            
+                            <Scanner 
+                                onScanSuccess={handleScanSuccess}
+                            />
+
                             <input 
                                 type="text" 
                                 placeholder="Ticket" 
                                 className="form-control" 
-                                onChange={formik.handleChange} 
+                                // onChange={formik.handleChange} 
                                 name="dataJson"
                                 value={formik.values.dataJson} 
                             />
                         </div>
+
+
+
                     </div>
-                    
+                    <div className='row'>
+                        <div className='reader'>
+
+                        </div>
+                    </div>
+
+                    <button className='btn btn-primary'>Validar</button>
                 </form>
             </section>
 
+            
+
             <section>
                 <div className='row mt-3'>
+                    {   loading ? <Loader /> : 
+                        
+                        <DataTable
+                            title="Tickets Validados"
+                            className='animate__animated animate__fadeIn'
+                            columns={columns}
+                            data={accesosTickets}
+                            responsive
+                            defaultSortAsc={true}
+                            pagination
+                            paginationServer
+                            paginationTotalRows={meta.totalCount}
+                            onChangePage={handlePageChange}
+                            onChangeRowsPerPage={handleRowsChange}
+                        />
+                    }
                     
-                    <DataTable
-                        title="Tickets Validados"
-                        className='animate__animated animate__fadeIn'
-                        columns={columns}
-                        data={accesosTickets}
-                        responsive
-                        defaultSortAsc={true}
-                        pagination
-                        paginationServer
-                        paginationTotalRows={meta.totalCount}
-                        onChangePage={handlePageChange}
-                        onChangeRowsPerPage={handleRowsChange}
-                    />
 
                 </div>
             </section>
