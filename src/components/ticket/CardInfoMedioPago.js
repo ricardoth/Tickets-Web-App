@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Combobox } from '../ui/combobox/Combobox';
 import { environment } from '../../environment/environment.dev';
 import { parserMedioPago} from '../../types/parsers';

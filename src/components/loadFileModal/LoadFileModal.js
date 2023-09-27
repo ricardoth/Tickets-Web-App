@@ -56,7 +56,7 @@ export const LoadFileModal = ({show, close}) => {
     }
 
     const loadFile = async () => {
-        let processFile = document.getElementById("inputFile").value;
+        // let processFile = document.getElementById("inputFile").value;
         let excelFields = Object.entries(excel);
 
         if(excelFields.length === 0)

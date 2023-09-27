@@ -93,7 +93,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
 
     useEffect(() => {
 
-         if (valueEvento !== undefined && valueEvento != 0)
+         if (valueEvento !== undefined && valueEvento !== 0)
          {
             fetchSectorsByEvent();
              fetchEventoById();
@@ -104,7 +104,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     }, [valueEvento]);
 
     useEffect(() => {
-        if (valueEvento !== undefined && valueEvento != 0)
+        if (valueEvento !== undefined && valueEvento !== 0)
         {
             fetchSectorById();
         }
@@ -150,7 +150,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                             
                             {
 
-                                valueEvento == 0 ? "" : (
+                                valueEvento === 0 ? "" : (
                                     <div className='row'>
                                         <div className='col-lg-6'>
                                             <div className='card'>
@@ -183,7 +183,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                         </div>
                         <div className="col-lg-6">
                             {
-                                 valueEvento == 0 ? "" : (
+                                 valueEvento === 0 ? "" : (
                                     <div>
                                         <label>Selecciona tu Sector</label>
                                         <select id="idSector" value={valueSector} onChange={setValueSector} className='custom-select form-control'>
@@ -194,7 +194,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                         </select>
 
                                         {
-                                            valueSector == 0 ? "" : (
+                                            valueSector === 0 ? "" : (
                                                 <div className='row mt-3'>
                                                     <div className='col-lg-12'>
                                                         <div className='card'>

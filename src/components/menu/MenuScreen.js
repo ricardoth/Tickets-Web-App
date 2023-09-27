@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { environment } from '../../environment/environment.dev';
 import { MenuTable } from './MenuTable';
 import { MenuAddModal } from './MenuAddModal';
@@ -9,13 +9,14 @@ import { Loader } from '../ui/loader/Loader';
 const endpoint = environment.UrlApiMenu;
 
 const MenuScreen = () => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [ showMenu, setShowMenu ] = useState(false);
     const [ page, setPage ] = useState(1);
     const [ menus, setMenus ] = useState([]);
     const [ loading, setLoading ] = useState(false);
 
     const fetchMenus = async (page) => {  
+      console.log('llama API')
         setLoading(true);
           await axios.get(endpoint + `${`?PageSize=10&PageNumber=${page}`}`, {
             headers: {

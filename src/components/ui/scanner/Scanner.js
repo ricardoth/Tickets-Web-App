@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export const Scanner = ({onScanSuccess}) => {
     useEffect(() => {
         const scanner = new Html5QrcodeScanner('reader', {
             qrbox: {
-                width: 500,
-                height: 500
+                width: 600,
+                height: 600
             },
             fps: 5,
         });
@@ -18,13 +18,11 @@ export const Scanner = ({onScanSuccess}) => {
             if(onScanSuccess) {
                 onScanSuccess(result);
             }
-            
         }
 
         function error(err) {
             console.warn(err);
         }
-       
     }, [onScanSuccess]);
 
     

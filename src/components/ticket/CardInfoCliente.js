@@ -5,7 +5,7 @@ import {Buffer} from 'buffer';
 import axios from 'axios';
 import Select from 'react-select';
 
-const UrlGetUsuarios = environment.UrlGetUsuarios;
+// const UrlGetUsuarios = environment.UrlGetUsuarios;
 const UrlGetUsuarioTicket = environment.UrlGetUsuario;
 const UrlGetUsuariosFilter = environment.UrlGetUsuariosFilter;
 

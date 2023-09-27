@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useForm } from '../../hooks/useForm';
+import React, { useContext, useEffect } from 'react';
 import { Modal} from  'react-bootstrap';
 import Swal from 'sweetalert2';
 import { environment } from '../../environment/environment.dev';
@@ -26,7 +25,7 @@ const parser = json =>
 
 
 export const MenuAddModal = ({show, close, setMenus}) => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         formik.resetForm();

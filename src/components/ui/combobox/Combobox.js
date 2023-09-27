@@ -11,7 +11,7 @@ const basicAuth = {
 };
 
 export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([{label: "loading", value: "loading"}]);
 
@@ -23,13 +23,13 @@ export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
         let unmounted = false;
         let headerAuth = null;
 
-        if (tipoAuth == jwtAuthType) {
+        if (tipoAuth === jwtAuthType) {
             headerAuth = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             }
-        }  else if (tipoAuth == basicAuthType){
+        }  else if (tipoAuth === basicAuthType){
 
             headerAuth = {
                 Authorization: `Basic ${Buffer.from(`${basicAuth.username}:${basicAuth.password}`).toString('base64')}`,
@@ -40,7 +40,7 @@ export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
           const response = await fetch(url, {
             headers: headerAuth
           });
-          const {data, meta} = await response.json();
+          const {data } = await response.json();
           if (!unmounted) {
             setItems(parser(data));
             setLoading(false);

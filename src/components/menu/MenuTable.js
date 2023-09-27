@@ -53,7 +53,7 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
         fetchMenus(page);
     }, [showMenu]);
 
-    if ( meta == undefined) return 'Loading';
+    if ( meta === undefined) return 'Loading';
 
     const handleDelete = (e, idMenu) => {
         e.preventDefault();

@@ -6,7 +6,7 @@ import { parserEvento } from '../../types/parsers';
 import { Buffer } from 'buffer';
 import axios from 'axios';
 import { basicAuth } from '../../types/basicAuth';
-import { Badge } from 'react-bootstrap';
+import { Accordion, Badge } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { decrypAES } from '../../selectors/decriptarAES';
 import { getColorStatusCode } from '../../selectors/getStatusCodeIcon';
@@ -16,8 +16,9 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { Loader } from '../ui/loader/Loader';
 import { Scanner } from '../ui/scanner/Scanner';
+import * as Yup from 'yup';
 
-const urlValidarTicket = environment.UrlValidarAccesoTicket;
+const UrlValidarTicket = environment.UrlValidarAccesoTicket;
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetAccesosEventosTicket = environment.UrlGetAccesosEventosTicket;
 
@@ -67,18 +68,19 @@ const columns = [
     }
 ];
 
+const validationSchema = Yup.object().shape({
+    dataJson: Yup.string().required('El QR del Ticket es requetido'),
+    idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
+  });
+
 export const ValidacionTicket = () => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const [ accesosTickets, setAccesosTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
-    const [ meta, setMeta] = useState({});
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        setPage(page);
-        fetchAccesosTickets(page);
-    }, []);
+    // const [ meta, setMeta] = useState({});
+    const [ loading, setLoading ] = useState(false);
+    const { data, meta } = accesosTickets;
 
     const fetchAccesosTickets = async (page, row = 10) => {
         setLoading(true);
@@ -88,9 +90,8 @@ export const ValidacionTicket = () => {
             },
         })
         .then(response => {
-
-            setAccesosTickets(response.data.data);
-            setMeta(response.data.meta);
+            let datos = response.data;
+            setAccesosTickets(datos);
             setLoading(false);
         })
         .catch(err => {
@@ -102,13 +103,13 @@ export const ValidacionTicket = () => {
               }, 1000)
         })
     }
-
     
     const formik = useFormik({
         initialValues: {
             dataJson: "",
             idEvento: 0,
         },
+        validationSchema: validationSchema,
         onSubmit: async (values) => {
             // E6n0y5Lg5/jS79jUs4wLjUGXxspn8NztRKOIC73n0WSFSdeSJ7x9EUZT2Yn5zbNtKQkdCmlCjkUYjLhjnxcfJDVRMOCi+Ko/+PKDru71zuGZi+bRXuQgu+3+2EkJpe4TKFJ/pr+gQVPcyyoTVdp1D50D5hCL/BN/aOsN6WYI9LZgdnwnk88MefACCU7vACJNT7KPxF81aeji7Dk25WRSHpRej9UPyubUd4OW7lXo4Wi1Hi3YHCUK5XTigoSZEjWB7jMZb7c2qXH2JglaJaz9eKrd6uCxozU3FK5wT6nmdJg=
             const decryptado = decrypAES(values.dataJson, key, iv);
@@ -117,8 +118,6 @@ export const ValidacionTicket = () => {
             let rut = rutDv[0];
             let dv = rutDv[1];
            
-            console.log(jsonParam)
-
             let accesoEventoTicket = {
                 idTicket: jsonParam.IdTicket,
                 rut: rut,
@@ -127,7 +126,7 @@ export const ValidacionTicket = () => {
             };
 
             setLoading(true);
-            let response = await axios.post(urlValidarTicket, accesoEventoTicket, {
+            let response = await axios.post(UrlValidarTicket, accesoEventoTicket, {
                 headers: {
                     Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                 },
@@ -146,6 +145,12 @@ export const ValidacionTicket = () => {
         },
     });
 
+    useEffect(() => {
+        fetchAccesosTickets(page);
+    }, [page]);
+
+    if ( meta === undefined || data === undefined) return <Loader />;
+
     const handleLogout = () => {
         dispatch({ type: types.logout });
 
@@ -156,7 +161,6 @@ export const ValidacionTicket = () => {
 
     const handlePageChange = page => {
         setPage(page);
-        fetchAccesosTickets(page);
     }
 
     const handleRowsChange = row => {
@@ -175,71 +179,89 @@ export const ValidacionTicket = () => {
             <hr/>
 
             <section>
-                <form className="container animate__animated animate__fadeIn"  onSubmit={formik.handleSubmit} >
-                    <div className='row'>
-                        <div className='col-lg-8'>
-                        <label>Evento</label>
-                            <Combobox
-                                id="idEvento"
-                                name="idEvento"
-                                value={formik.values.idEvento} 
-                                setValue={formik.handleChange} 
-                                url={UrlGetEventos}
-                                parser={parserEvento}
-                                tipoAuth={environment.BasicAuthType}
-                            /> 
-                        </div>
+                <Accordion defaultActiveKey={0}>
+                    <Accordion.Item eventKey='0'>
+                        <Accordion.Header>Presione Aquí para validar un ticket manualmente</Accordion.Header> 
 
-                        <div className='col-lg-8'>
-                            <label>Ticket</label>
-                            
-                            <Scanner 
-                                onScanSuccess={handleScanSuccess}
-                            />
+                        <Accordion.Body>
+                            <form className="container animate__animated animate__fadeIn"  onSubmit={formik.handleSubmit} >
+                                <div className='row' >
+                                    <div className='col-lg-12'>
+                                    <label>Evento</label>
+                                        <Combobox
+                                            id="idEvento"
+                                            name="idEvento"
+                                            value={formik.values.idEvento} 
+                                            setValue={formik.handleChange} 
+                                            url={UrlGetEventos}
+                                            parser={parserEvento}
+                                            tipoAuth={environment.BasicAuthType}
+                                        /> 
+                                        {formik.touched.idEvento && formik.errors.idEvento ? (
+                                            <div style={{color:'red'}}>{formik.errors.idEvento}</div>
+                                        ) : null}
 
-                            <input 
-                                type="text" 
-                                placeholder="Ticket" 
-                                className="form-control" 
-                                // onChange={formik.handleChange} 
-                                name="dataJson"
-                                value={formik.values.dataJson} 
-                            />
-                        </div>
+                                    </div>
 
+                                    <div className='col-lg-12'>
+                                        <label>Ticket</label>
+                                        
+                                        <Scanner 
+                                            onScanSuccess={handleScanSuccess}
+                                        />
 
+                                        <br/>
+                                        <input 
+                                            type="password" 
+                                            placeholder="QR Ticket" 
+                                            className="form-control" 
+                                            name="dataJson"
+                                            value={formik.values.dataJson} 
+                                            disabled
+                                        />
 
-                    </div>
-                    <div className='row'>
-                        <div className='reader'>
+                                        {formik.touched.dataJson && formik.errors.dataJson ? (
+                                            <div style={{color:'red'}}>{formik.errors.dataJson}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                <br/>
+                                <div className='row'>
+                                    <div className='col-lg-12'>
+                                        <div className='reader'>
 
-                        </div>
-                    </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div className='d-grid gap-2'>
+                                    <button className='btn btn-primary btn-lg'>Validar</button>
+                                </div>
+                            </form>
+                        </Accordion.Body>
+                        
+                    </Accordion.Item>
+                </Accordion>
 
-                    <button className='btn btn-primary'>Validar</button>
-                </form>
+              
             </section>
-
-            
 
             <section>
                 <div className='row mt-3'>
-                    {   loading ? <Loader /> : 
-                        
-                        <DataTable
-                            title="Tickets Validados"
-                            className='animate__animated animate__fadeIn'
-                            columns={columns}
-                            data={accesosTickets}
-                            responsive
-                            defaultSortAsc={true}
-                            pagination
-                            paginationServer
-                            paginationTotalRows={meta.totalCount}
-                            onChangePage={handlePageChange}
-                            onChangeRowsPerPage={handleRowsChange}
-                        />
-                    }
+                    <DataTable
+                        title="Tickets Validados"
+                        className='animate__animated animate__fadeIn'
+                        columns={columns}
+                        data={data}
+                        pagination
+                        paginationServer
+                        paginationTotalRows={meta.totalCount}
+                        onChangePage={handlePageChange}
+                        onChangeRowsPerPage={handleRowsChange}
+                        responsive
+                        defaultSortAsc={true}
+                    />
+                
                     
 
                 </div>

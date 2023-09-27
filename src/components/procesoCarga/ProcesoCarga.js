@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { LoadFileModal } from '../loadFileModal/LoadFileModal';
 
 export const ProcesoCarga = () => {

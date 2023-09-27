@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 import { environment } from '../../environment/environment.dev';
 import { Loader } from '../ui/loader/Loader';
 import DataTable from 'react-data-table-component';
-import { FaCheck, FaSearch, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 import { ModalTicketControlPanel } from './ModalTicketControlPanel';
 import Swal from 'sweetalert2';
 import { ModalTicket } from './ModalTicket';
@@ -19,7 +19,7 @@ const URL_TICKET = environment.UrlGeneracionTicket;
 const URL_TICKET_VOUCHER_PDF = environment.UrlGetTicketVoucherPDF;
 
 export const TicketControlPanel = () => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const [ tickets, setTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
@@ -39,7 +39,7 @@ export const TicketControlPanel = () => {
     }
 
     const fetchTickets = async (page, row = 10) => {
-        setLoading(true);
+        setLoading(!loading);
         await axios.get(URL_TICKET + `?PageSize=${row}&PageNumber=${page}`, {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
@@ -50,7 +50,7 @@ export const TicketControlPanel = () => {
             setLoading(false);
         })
         .catch( err => {
-            Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
+            Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
 
             setTimeout(() => {
                 handleLogout();
@@ -64,7 +64,7 @@ export const TicketControlPanel = () => {
     }, [page]);
 
 
-    if ( meta == undefined || data == undefined) return <Loader />;
+    if ( meta === undefined || data === undefined) return <Loader />;
 
     const handlePageChange = page => {
         setPage(page);
@@ -128,7 +128,7 @@ export const TicketControlPanel = () => {
                         Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                     },
                 });
-                if(responseDelete.status != 200) {
+                if(responseDelete.status !== 200) {
                     Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
 
                     setTimeout(() => {

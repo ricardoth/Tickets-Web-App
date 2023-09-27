@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tab, Nav, Button } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 
 export const TabsStepsTickets = ({activeTab, setActiveTab}) => {
   return (

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ErrorMessage, move, useFormik } from 'formik';
+import React, { useState } from 'react';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import {Buffer} from 'buffer';
@@ -13,16 +13,13 @@ import { Loader } from '../ui/loader/Loader';
 import { TabsStepsTickets } from './TabsStepsTickets';
 import { Tab } from 'react-bootstrap';
 import { useCounter } from '../../hooks/useCounter';
-import Swal from 'sweetalert2';
 
-const UrlGeneracionTicket = environment.UrlGeneracionTicket;
+// const UrlGeneracionTicket = environment.UrlGeneracionTicket;
 const UrlGeneracionTickets = environment.UrlGeneracionManyTickets;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object().shape({
-    // Agrega tus reglas de validación aquí, si las necesitas
-    // montoPago: Yup.number().moreThan(0, 'Debe seleccionar a lo menos 1 entrada')
     idUsuario: Yup.number().required('El Usuario es requerido').min(1, 'Debe seleccionar un Usuario'),
     idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
     idSector: Yup.number().required('El Sector es requerido').min(1, 'Debe seleccionar un Sector'),

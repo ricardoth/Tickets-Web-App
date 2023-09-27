@@ -19,7 +19,7 @@ export const ModalTicketControlPanel = ({isOpen, closeModal, ticketObj}) => {
     const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
-        if(ticketObj != undefined) {
+        if(ticketObj !== undefined) {
             setLoading(true);
             fetchTicketQR(); 
             let auxDateEvent = formatDateLocaleString(ticketObj.evento.fecha);
@@ -30,9 +30,9 @@ export const ModalTicketControlPanel = ({isOpen, closeModal, ticketObj}) => {
         }
     }, [ticketObj]);
 
-    if (ticketObj == undefined) return '';
+    if (ticketObj === undefined) return '';
 
-    const { evento, medioPago, sector, usuario} = ticketObj;
+    const { evento, sector, usuario} = ticketObj;
     const { lugar } = evento;
     const { comuna } = lugar;
 
