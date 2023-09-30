@@ -22,9 +22,9 @@ const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object().shape({
     idUsuario: Yup.number().required('El Usuario es requerido').min(1, 'Debe seleccionar un Usuario'),
-    // idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
-    // idSector: Yup.number().required('El Sector es requerido').min(1, 'Debe seleccionar un Sector'),
-    // idMedioPago: Yup.number().required('El Medio Pago es Requerido').min(1, 'Debe seleccionar un Medio Pago'),
+    idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
+    idSector: Yup.number().required('El Sector es requerido').min(1, 'Debe seleccionar un Sector'),
+    idMedioPago: Yup.number().required('El Medio Pago es Requerido').min(1, 'Debe seleccionar un Medio Pago'),
     montoPago: Yup.number().required().min(1, 'Debe seleccionar a lo menos 1 ticket para generar el proceso')
     
   });
@@ -54,47 +54,47 @@ export const GeneracionTicket = () => {
         initialValues: ticketState.formValues,
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            // values.montoTotal = values.montoPago;
-            // let fecha = new Date();
-            // values.fechaTicket = fecha;
+            values.montoTotal = values.montoPago;
+            let fecha = new Date();
+            values.fechaTicket = fecha;
             
-            // let ticketList = [];
+            let ticketList = [];
 
-            // for (let i = 0; i < counter; i++) {
-            //     let ticket = {
-            //         idUsuario: values.idUsuario,
-            //         idEvento: values.idEvento,
-            //         idSector: values.idSector,
-            //         idMedioPago: values.idMedioPago,
-            //         montoPago: values.montoPago / counter,
-            //         montoTotal: values.montoPago / counter,
-            //         fechaTicket: values.fechaTicket,
-            //         activo: values.activo
-            //     };
-            //     ticketList.push(ticket);
-            // }
+            for (let i = 0; i < counter; i++) {
+                let ticket = {
+                    idUsuario: values.idUsuario,
+                    idEvento: values.idEvento,
+                    idSector: values.idSector,
+                    idMedioPago: values.idMedioPago,
+                    montoPago: values.montoPago / counter,
+                    montoTotal: values.montoPago / counter,
+                    fechaTicket: values.fechaTicket,
+                    activo: values.activo
+                };
+                ticketList.push(ticket);
+            }
 
             // ticketDispatch({ type: types.updateFormValues, payload: {...values} });
 
             console.log(ticketState.formValues)
             console.log('Formulario' , values)
          
-            //setLoading(true);
-            // try {
-            //     const response = await axios.post(UrlGeneracionTickets, ticketList, {
-            //         headers: {
-            //             Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-            //         },
-            //     });
+            setLoading(true);
+            try {
+                const response = await axios.post(UrlGeneracionTickets, ticketList, {
+                    headers: {
+                        Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                    },
+                });
 
-            //     openModal();
-            //     setBase64Pdf(response.data);
-            //     setLoading(false);
-            //     formik.resetForm();
-            // } catch (error) {
-            //     console.error('API error:', error);
-            //     setLoading(false);
-            // }
+                openModal();
+                setBase64Pdf(response.data);
+                setLoading(false);
+                formik.resetForm();
+            } catch (error) {
+                console.error('API error:', error);
+                setLoading(false);
+            }
         },
     });
 
@@ -133,8 +133,6 @@ export const GeneracionTicket = () => {
 
                         <Tab.Pane eventKey="tickets">
                             <CardInfoEvento 
-                                total={formik.values.montoPago}
-                                setTotal={formik.setFieldValue}
                                 counter={counter}
                                 increment={increment}
                                 decrement={decrement}
@@ -163,7 +161,7 @@ export const GeneracionTicket = () => {
                                         value={formik.values.montoPago}
                                         onChange={formik.handleChange}
                                         className="form-control" 
-                                        // disabled={true}
+                                        disabled={true}
                                     />
                                     {formik.touched.montoPago && formik.errors.montoPago ? (
                                         <div style={{color:'red'}}>{formik.errors.montoPago}</div>

@@ -10,4 +10,5 @@ export const types = {
     updateIdMedioPagoValue: '[ticket] Update Form Values ID Medio Pago',
     updateIdEventoValue: '[ticket] Update Form Values ID Evento',
     updateIdSectorValue: '[ticket] Update Form Values ID Sector',
+    updateMontoPagoValue: '[ticket] Update Form Values Monto Pago',
 };

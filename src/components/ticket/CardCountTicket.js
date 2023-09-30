@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { TicketContext } from '../../context/ticketContext';
+import { types } from '../../types/types';
 
-export const CardCountTicket = ({ sectorValue, counter, increment, decrement, total, setTotal}) => {
+export const CardCountTicket = ({ sectorValue, counter, increment, decrement}) => {
     const [ isDisabled, setIsDisabled] = useState(false);
+    const { ticketState, ticketDispatch } = useContext(TicketContext);
 
     useEffect(() => {
        setIsDisabled(false);
@@ -9,7 +12,7 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement, to
     
 
     const addTicketCounter = (e) => {
-        setTotal('montoPago', counter * sectorValue.precio)
+        ticketDispatch({type: types.updateMontoPagoValue, payload: counter * sectorValue.precio})
         setIsDisabled(true);
     }
 
@@ -66,7 +69,7 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement, to
                 </div>
                 <div className="row my-3">
                     <div className="col-12 text-end text-md-right">
-                        <p className='fw-bold'>Total: ${total} </p>
+                        <p className='fw-bold'>Total: ${ticketState.formValues.montoPago} </p>
                     </div>
                 </div>
             </div>

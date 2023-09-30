@@ -61,6 +61,14 @@ export const ticketReducer = (state = initialState, action) => {
                     idSector: action.payload 
                 }
             };
+        case types.updateMontoPagoValue:
+            return {
+                ...state,
+                formValues: {
+                    ...state.formValues,
+                    montoPago: action.payload 
+                }
+            };
         default:
             return state;
     }

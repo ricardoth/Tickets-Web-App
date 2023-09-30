@@ -8,8 +8,8 @@ import { TicketProvider } from './context/ticketContext';
 const init = () => {
   // localStorage.setItem('user', JSON.stringify(user));
   // console.log(localStorage.getItem('user'));
-  return JSON.parse(localStorage.getItem('user')) || { logged: false };
-  // return { logged: false };
+  // return JSON.parse(localStorage.getItem('user')) || { logged: false };
+  return { logged: false };
 }
 
 AxiosInterceptor();

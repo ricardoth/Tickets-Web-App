@@ -17,7 +17,7 @@ const UrlGetSectoresByEvento = environment.UrlGetSectoresByEvento;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
-export const CardInfoEvento = ({total, setTotal, counter, increment, decrement}) => {
+export const CardInfoEvento = ({total,setTotal, counter, increment, decrement}) => {
     const { ticketState, ticketDispatch } = useContext(TicketContext);
     const [sectores, setSectores] = useState([]);
     const [evento, setEvento] = useState({
@@ -95,11 +95,11 @@ export const CardInfoEvento = ({total, setTotal, counter, increment, decrement})
     }
 
     useEffect(() => {
-         if (ticketState.formValues.idEvento !== undefined && ticketState.formValues.idEvento !== 0)
-         {
+        if (ticketState.formValues.idEvento !== undefined && ticketState.formValues.idEvento !== 0)
+        {
             fetchSectorsByEvent();
-             fetchEventoById();
-         } else {
+            fetchEventoById();
+        } else {
             // resetStateEvento();
             setIsVisibleFlyer(true);
         }
@@ -130,14 +130,10 @@ export const CardInfoEvento = ({total, setTotal, counter, increment, decrement})
         });
     }
 
-    const handleChange = ({target}) => {
-        ticketDispatch({type: types.updateIdEventoValue, payload: target.value});
-    }
-
-    const handleChangeSector = ({target}) => {
-        ticketDispatch({type: types.updateIdSectorValue, payload: target.value});
-    }
-
+    const handleChangeEvento = ({target}) => ticketDispatch({type: types.updateIdEventoValue, payload: target.value});
+    
+    const handleChangeSector = ({target}) => ticketDispatch({type: types.updateIdSectorValue, payload: target.value});
+    
     return (
         <>
             <div className="card">
@@ -152,7 +148,7 @@ export const CardInfoEvento = ({total, setTotal, counter, increment, decrement})
                                 id="idEvento"
                                 name="idEvento"
                                 value={ticketState.formValues.idEvento}
-                                setValue={handleChange}
+                                setValue={handleChangeEvento}
                                 url={UrlGetEventos}
                                 parser={parserEvento}
                                 tipoAuth={environment.BasicAuthType}
@@ -219,8 +215,6 @@ export const CardInfoEvento = ({total, setTotal, counter, increment, decrement})
                                                                             counter={counter} 
                                                                             increment={increment} 
                                                                             decrement={decrement} 
-                                                                            total={total}
-                                                                            setTotal={setTotal}
                                                                         />
 
                                                                     </div>
@@ -232,7 +226,6 @@ export const CardInfoEvento = ({total, setTotal, counter, increment, decrement})
 
                                             )
                                         }
-                                        
                                     </div>    
                                 )
                             }
