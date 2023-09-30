@@ -36,5 +36,6 @@ export const environment = {
     //Validar Ticket
     UrlValidarAccesoTicket: "https://localhost:7100/api/TicketScanner/ValidarAccesoTicket",
     UrlGetAccesosEventosTicket: "https://localhost:7100/api/TicketScanner",
+    UrlSalidaAccesoEvento: "https://localhost:7100/api/TicketScanner/SalidaAccesoEvento"
 
 };

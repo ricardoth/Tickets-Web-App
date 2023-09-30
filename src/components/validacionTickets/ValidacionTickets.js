@@ -12,61 +12,22 @@ import { decrypAES } from '../../selectors/decriptarAES';
 import { getColorStatusCode } from '../../selectors/getStatusCodeIcon';
 import DataTable from 'react-data-table-component';
 import { types } from '../../types/types';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { Loader } from '../ui/loader/Loader';
 import { Scanner } from '../ui/scanner/Scanner';
 import * as Yup from 'yup';
+import { formatDateDayMonthYear } from '../../types/formatDate';
 
 const UrlValidarTicket = environment.UrlValidarAccesoTicket;
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetAccesosEventosTicket = environment.UrlGetAccesosEventosTicket;
+const UrlSalidaAccesoEvento = environment.UrlSalidaAccesoEvento;
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
 const key = "claveAESparaDerivar";
 const iv = "claveAESparaDerivar";
-
-const columns = [
-    {
-        name: '#',
-        selector: row => row.idAccesoEvento,
-        sortable: true
-    },
-    {
-        name: 'N° Ticket',
-        selector: row => row.idTicket,
-    },
-    {
-        name: 'Usuario',
-        selector: row => row.nombres + ' ' + row.apellidoP
-    },
-    {
-        name: 'Rut',
-        selector: row => row.rut + '-' + row.dv 
-    },
-    {
-        name: 'Fecha Entrada',
-        selector: row => row.fechaHoraEntrada
-    },
-    {
-        name: 'Fecha Salida',
-        selector: row =>  row.fechaHoraSalida == null ? '-' : row.fechaHoraSalida
-    },
-    {
-        name: 'Estado Ticket',
-        selector: row => 
-        {
-            let color = getColorStatusCode(row.idEstadoTicket);
-            return  <h5>
-                        <Badge pill bg={color}>
-                            {row.estadoTicket}
-                        </Badge>
-                    </h5>
-        }
-    }
-];
 
 const validationSchema = Yup.object().shape({
     dataJson: Yup.string().required('El QR del Ticket es requetido'),
@@ -75,10 +36,8 @@ const validationSchema = Yup.object().shape({
 
 export const ValidacionTicket = () => {
     const { dispatch } = useContext(AuthContext);
-    const navigate = useNavigate();
     const [ accesosTickets, setAccesosTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
-    // const [ meta, setMeta] = useState({});
     const [ loading, setLoading ] = useState(false);
     const { data, meta } = accesosTickets;
 
@@ -99,7 +58,7 @@ export const ValidacionTicket = () => {
               Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
 
               setTimeout(() => {
-                  handleLogout();
+                    dispatch({ type: types.logout });
               }, 1000)
         })
     }
@@ -137,7 +96,7 @@ export const ValidacionTicket = () => {
             if(response.status === 200) {
                 let color = getColorStatusCode(data.statusCode);
                 Swal.fire(`${data.outputMessage}`, `Ticket N° ${accesoEventoTicket.idTicket}`, color);
-                handlePageChange(page);
+                fetchAccesosTickets(page);
                 formik.resetForm();
             }
             setLoading(false);
@@ -151,13 +110,21 @@ export const ValidacionTicket = () => {
 
     if ( meta === undefined || data === undefined) return <Loader />;
 
-    const handleLogout = () => {
-        dispatch({ type: types.logout });
-
-        navigate("/login", {
-            replace: true 
+    const salidaAccesoEvento = async (param) => {
+        setLoading(true);
+        let response = await axios.put(`${UrlSalidaAccesoEvento}?idAccesoEvento=${param.idAccesoEvento}`, null, {
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            },
         });
-    }
+
+        if(response.status === 200) {
+            Swal.fire(`Salida del Evento`, `Ticket N° ${param.idTicket}`, 'success');
+
+        }
+        fetchAccesosTickets(page);
+        setLoading(false);
+    }    
 
     const handlePageChange = page => {
         setPage(page);
@@ -170,6 +137,56 @@ export const ValidacionTicket = () => {
     const handleScanSuccess = (scannedValue) => {
         formik.setFieldValue('dataJson', scannedValue);
     };
+
+    const columns = [
+        {
+            name: '#',
+            selector: row => row.idAccesoEvento,
+            sortable: true
+        },
+        {
+            name: 'N° Ticket',
+            selector: row => row.idTicket,
+        },
+        {
+            name: 'Usuario',
+            selector: row => row.nombres + ' ' + row.apellidoP
+        },
+        {
+            name: 'Rut',
+            selector: row => row.rut + '-' + row.dv 
+        },
+        {
+            name: 'Fecha Entrada',
+            selector: row => formatDateDayMonthYear(row.fechaHoraEntrada)
+        },
+        {
+            name: 'Fecha Salida',
+            selector: row =>  {
+                let celda = "";
+                if( row.idEstadoTicket == 1) {
+                    celda = row.fechaHoraSalida === null ? 
+                        <button className='btn text-info bg-dark' onClick={() => salidaAccesoEvento(row)}>Marcar Salida</button> : formatDateDayMonthYear(row.fechaHoraSalida);
+                } else {
+                    celda = row.fechaHoraSalida === null ? '-' :  formatDateDayMonthYear(row.fechaHoraSalida);
+                }
+                 
+                return celda;
+            } 
+        },
+        {
+            name: 'Estado Ticket',
+            selector: row => 
+            {
+                let color = getColorStatusCode(row.idEstadoTicket);
+                return  <h5>
+                            <Badge pill bg={color}>
+                                {row.estadoTicket}
+                            </Badge>
+                        </h5>
+            }
+        }
+    ];
 
     return (
         <div className='row mt-5'>

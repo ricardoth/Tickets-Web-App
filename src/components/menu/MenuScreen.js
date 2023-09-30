@@ -16,7 +16,6 @@ const MenuScreen = () => {
     const [ loading, setLoading ] = useState(false);
 
     const fetchMenus = async (page) => {  
-      console.log('llama API')
         setLoading(true);
           await axios.get(endpoint + `${`?PageSize=10&PageNumber=${page}`}`, {
             headers: {

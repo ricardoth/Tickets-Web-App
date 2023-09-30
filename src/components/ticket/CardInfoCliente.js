@@ -1,18 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { environment } from '../../environment/environment.dev';
 import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
 import axios from 'axios';
 import Select from 'react-select';
+import { TicketContext } from '../../context/ticketContext';
+import { types } from '../../types/types';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../../auth/authContext';
 
-// const UrlGetUsuarios = environment.UrlGetUsuarios;
 const UrlGetUsuarioTicket = environment.UrlGetUsuario;
 const UrlGetUsuariosFilter = environment.UrlGetUsuariosFilter;
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
-export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setContinuar}) => {
+export const CardInfoCliente = () => {
+    const { user, dispatch } = useContext(AuthContext);
+    const { ticketState, ticketDispatch } = useContext(TicketContext);
+    
     const [correoUser, setCorreoUser] = useState("");
     const [telefonoUser, setTelefonoUser] = useState("");
     const [direccionUser, setDireccionUser] = useState("");
@@ -36,31 +42,13 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
             setOptions(newOptions);
         } catch (error) {
             console.error('Ha ocurrido un error al realizar la Petición a API:', error);
+            Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${error}`, 'error');
+
+            setTimeout(() => {
+                dispatch({ type: types.logout });
+            }, 1000)
         }
     } 
-
-    useEffect(() => {
-        if (valueUsuario !== undefined && valueUsuario !== 0) {
-            
-            axios.get(UrlGetUsuarioTicket + `${valueUsuario}`, {
-                headers: {
-                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                },
-            })
-            .then(response => {
-                let {data} = response.data;
-                let { idUsuario, correo, telefono, direccion} = data;
-                setValueUsuario(idUsuario);
-                setCorreoUser(correo);
-                setTelefonoUser(telefono);
-                setDireccionUser(direccion);
-                setContinuar(false);
-            })
-            .catch(err => {
-                console.error("Ha ocurrido un error al realizar la Petición a API", err);
-            });
-        }
-    }, [valueUsuario]);
 
     const handleInputChange = (inputValue) => {
         setInputValue(inputValue);
@@ -68,6 +56,35 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
             fetchUsuarios(inputValue);
 
         return inputValue;
+    }
+
+    const onChangeValue = (optionValue) => {
+        if(optionValue > 0) {
+            axios.get(UrlGetUsuarioTicket + `${optionValue}`, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            })
+            .then(response => {
+                let {data} = response.data;
+                let { idUsuario, correo, telefono, direccion} = data;
+    
+                ticketDispatch({type: types.updateIdUsuarioValue, payload: idUsuario});
+                setCorreoUser(correo);
+                setTelefonoUser(telefono);
+                setDireccionUser(direccion);
+            })
+            .catch(err => {
+                console.error("Ha ocurrido un error al realizar la Petición a API", err);
+                Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
+
+                setTimeout(() => {
+                    dispatch({ type: types.logout });
+                }, 1000)
+            });
+        } else {
+            console.log("Debe seleccionar un elemento");
+        }
     }
 
     return (
@@ -84,8 +101,8 @@ export const CardInfoCliente = ({valueUsuario, setValueUsuario, continuar, setCo
                             <Select
                                 className="custom-select form-control"
                                 classNamePrefix="select"
-                                value={valueUsuario}
-                                onChange={(option) => setValueUsuario('idUsuario', option.value)}
+                                value={ticketState.formValues.idUsuario}
+                                onChange={(option) => onChangeValue(option.value)}
                                 onInputChange={handleInputChange}
                                 inputValue={inputValue}
                                 name="idUsuario"

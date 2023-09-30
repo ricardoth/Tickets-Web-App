@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -7,12 +7,14 @@ import { ModalTicket } from './ModalTicket';
 import { environment } from '../../environment/environment.dev';
 import { basicAuth} from '../../types/basicAuth';
 import { CardInfoCliente } from './CardInfoCliente';
-import { CardInfoEvento } from './CardInfoEvento';
+import { CardInfoEvento } from './CardInfoEvento2';
 import { CardInfoMedioPago } from './CardInfoMedioPago';
 import { Loader } from '../ui/loader/Loader';
 import { TabsStepsTickets } from './TabsStepsTickets';
 import { Tab } from 'react-bootstrap';
 import { useCounter } from '../../hooks/useCounter';
+import { TicketContext } from '../../context/ticketContext';
+import { types } from '../../types/types';
 
 const UrlGeneracionTickets = environment.UrlGeneracionManyTickets;
 const userBasicAuth = basicAuth.username;
@@ -20,20 +22,25 @@ const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object().shape({
     idUsuario: Yup.number().required('El Usuario es requerido').min(1, 'Debe seleccionar un Usuario'),
-    idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
-    idSector: Yup.number().required('El Sector es requerido').min(1, 'Debe seleccionar un Sector'),
-    idMedioPago: Yup.number().required('El Medio Pago es Requerido').min(1, 'Debe seleccionar un Medio Pago'),
+    // idEvento: Yup.number().required('El Evento es requerido').min(1, 'Debe seleccionar un Evento'),
+    // idSector: Yup.number().required('El Sector es requerido').min(1, 'Debe seleccionar un Sector'),
+    // idMedioPago: Yup.number().required('El Medio Pago es Requerido').min(1, 'Debe seleccionar un Medio Pago'),
     montoPago: Yup.number().required().min(1, 'Debe seleccionar a lo menos 1 ticket para generar el proceso')
     
   });
 
 export const GeneracionTicket = () => {
+    const { ticketState, ticketDispatch} = useContext(TicketContext);
     const [base64Pdf, setBase64Pdf] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [continuar, setContinuar] = useState(true);
     const [activeTab, setActiveTab] = useState('cliente');
     const { counter, increment, decrement } = useCounter(0);
+
+    useEffect(() => {
+        formik.setValues(ticketState.formValues); 
+    }, [ticketState.formValues]);
 
     const closeModal = () => {
         setIsOpen(false);
@@ -44,54 +51,50 @@ export const GeneracionTicket = () => {
     };
     
     const formik = useFormik({
-        initialValues: {
-            idUsuario: 0,
-            idEvento: 0,
-            idSector: 0,
-            idMedioPago: 0,
-            montoPago: 0,
-            montoTotal: 0,
-            fechaTicket: '',
-            activo: true,
-        },
+        initialValues: ticketState.formValues,
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            values.montoTotal = values.montoPago;
-            let fecha = new Date();
-            values.fechaTicket = fecha;
+            // values.montoTotal = values.montoPago;
+            // let fecha = new Date();
+            // values.fechaTicket = fecha;
             
-            let ticketList = [];
+            // let ticketList = [];
 
-            for (let i = 0; i < counter; i++) {
-                let ticket = {
-                    idUsuario: values.idUsuario,
-                    idEvento: values.idEvento,
-                    idSector: values.idSector,
-                    idMedioPago: values.idMedioPago,
-                    montoPago: values.montoPago / counter,
-                    montoTotal: values.montoPago / counter,
-                    fechaTicket: values.fechaTicket,
-                    activo: values.activo
-                };
-                ticketList.push(ticket);
-            }
+            // for (let i = 0; i < counter; i++) {
+            //     let ticket = {
+            //         idUsuario: values.idUsuario,
+            //         idEvento: values.idEvento,
+            //         idSector: values.idSector,
+            //         idMedioPago: values.idMedioPago,
+            //         montoPago: values.montoPago / counter,
+            //         montoTotal: values.montoPago / counter,
+            //         fechaTicket: values.fechaTicket,
+            //         activo: values.activo
+            //     };
+            //     ticketList.push(ticket);
+            // }
+
+            // ticketDispatch({ type: types.updateFormValues, payload: {...values} });
+
+            console.log(ticketState.formValues)
+            console.log('Formulario' , values)
          
-            setLoading(true);
-            try {
-                const response = await axios.post(UrlGeneracionTickets, ticketList, {
-                    headers: {
-                        Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                    },
-                });
+            //setLoading(true);
+            // try {
+            //     const response = await axios.post(UrlGeneracionTickets, ticketList, {
+            //         headers: {
+            //             Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            //         },
+            //     });
 
-                openModal();
-                setBase64Pdf(response.data);
-                setLoading(false);
-                formik.resetForm();
-            } catch (error) {
-                console.error('API error:', error);
-                setLoading(false);
-            }
+            //     openModal();
+            //     setBase64Pdf(response.data);
+            //     setLoading(false);
+            //     formik.resetForm();
+            // } catch (error) {
+            //     console.error('API error:', error);
+            //     setLoading(false);
+            // }
         },
     });
 
@@ -122,23 +125,14 @@ export const GeneracionTicket = () => {
                 <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                     <Tab.Content>
                         <Tab.Pane eventKey="cliente">
-                            <CardInfoCliente 
-                                valueUsuario={formik.values.idUsuario} 
-                                setValueUsuario={formik.setFieldValue} 
-                                continuar={continuar} 
-                                setContinuar={setContinuar}/>
+                            <CardInfoCliente  /> 
                             {formik.touched.idUsuario && formik.errors.idUsuario ? (
                                         <div style={{color:'red'}}>{formik.errors.idUsuario}</div>
                                         ) : null}
-
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="tickets">
                             <CardInfoEvento 
-                                valueEvento={formik.values.idEvento} 
-                                setValueEvento={formik.handleChange} 
-                                valueSector={formik.values.idSector} 
-                                setValueSector={formik.handleChange}
                                 total={formik.values.montoPago}
                                 setTotal={formik.setFieldValue}
                                 counter={counter}
@@ -155,14 +149,10 @@ export const GeneracionTicket = () => {
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="pago">
-                            <CardInfoMedioPago 
-                                valueMedioPago={formik.values.idMedioPago} 
-                                setValueMedioPago={formik.handleChange} 
-                            />
+                            <CardInfoMedioPago />
                             {formik.touched.idMedioPago && formik.errors.idMedioPago ? (
                                         <div style={{color:'red'}}>{formik.errors.idMedioPago}</div>
                                         ) : null}
-
                                 <br/>
                                 <div className="col-lg-12">
                                     <label>Valor</label>
@@ -173,14 +163,12 @@ export const GeneracionTicket = () => {
                                         value={formik.values.montoPago}
                                         onChange={formik.handleChange}
                                         className="form-control" 
-                                        disabled={true}
+                                        // disabled={true}
                                     />
                                     {formik.touched.montoPago && formik.errors.montoPago ? (
                                         <div style={{color:'red'}}>{formik.errors.montoPago}</div>
                                         ) : null}
-                                    
-                                </div>
-                                
+                                </div> 
                                 <br/>
                                 <div className="d-grid gap-2 ">
                                     <button type="submit" className="btn btn-outline-info" disabled={loading}><i className="bi bi-save2"></i> Generar </button>
@@ -188,10 +176,8 @@ export const GeneracionTicket = () => {
                         </Tab.Pane>
                     </Tab.Content>
                     <br />
-
                 </form>
             </Tab.Container>
-
 
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <button id='btnSiguiente' type='button' className='btn btn-primary' hidden={activeTab === 'pago'} disabled={activeTab === 'pago'} onClick={handleNextTabs}>Continuar</button>

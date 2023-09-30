@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Combobox } from '../ui/combobox/Combobox';
 import { environment } from '../../environment/environment.dev';
 import { parserMedioPago} from '../../types/parsers';
+import { TicketContext } from '../../context/ticketContext';
+import { types } from '../../types/types';
 const UrlGetMedioPagos = environment.UrlGetMedioPagos;
 
-export const CardInfoMedioPago = ({valueMedioPago, setValueMedioPago}) => {
-    const handleChange = (e) => {
-        setValueMedioPago(e);
+export const CardInfoMedioPago = () => {
+    const { ticketState, ticketDispatch } = useContext(TicketContext);
+    
+    const handleChange = ({target}) => {
+        ticketDispatch({type: types.updateIdMedioPagoValue, payload: target.value});
     }
   
     return (
@@ -21,7 +25,7 @@ export const CardInfoMedioPago = ({valueMedioPago, setValueMedioPago}) => {
                         <Combobox
                             id="idMedioPago"
                             name="idMedioPago"
-                            value={valueMedioPago}
+                            value={ticketState.formValues.idMedioPago}
                             setValue={handleChange}
                             url={UrlGetMedioPagos}
                             parser={parserMedioPago}

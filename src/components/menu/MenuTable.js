@@ -6,14 +6,12 @@ import { AuthContext } from '../../auth/authContext';
 import { environment } from '../../environment/environment.dev';
 import { MenuEditModal } from './MenuEditModal';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { types } from '../../types/types';
 
 const endpoint = environment.UrlApiMenu;
 
 export const MenuTable = ({menus, setMenus, page, setPage}) => {
     const { user, dispatch } = useContext(AuthContext);
-    const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const [menuEdit, setMenuEdit] = useState({});
 
@@ -35,17 +33,9 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
                 Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
 
                 setTimeout(() => {
-                    handleLogout();
+                    dispatch({ type: types.logout });
                 }, 1000)
           })
-    }
-
-    const handleLogout = () => {
-        dispatch({ type: types.logout });
-
-        navigate("/login", {
-            replace: true 
-        });
     }
 
     useEffect(() => {
@@ -142,7 +132,7 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
                 <div key={row.idMenu}>
                     <button className='btn btn-danger' onClick={ (e) => handleDelete(e,row.idMenu)}>
                         <FaTrashAlt />
-                    </button>,
+                    </button>&nbsp;
                     <button className='btn btn-primary' onClick={ () => handleEdit(row.idMenu, row)}>
                         <FaPen />
                     </button>
@@ -169,7 +159,6 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
                 responsive
                 defaultSortAsc={true}
             />
-            {/* <MenuEditModal show={showMenu} close={() => setShowMenu(false)} menuEdit={menuEdit} setMenuEdit={setMenuEdit}/> */}
 
             { showMenu && (
                 <MenuEditModal show={showMenu} handleClose={handleCloseEdit} menuEdit={menuEdit} /> 

@@ -10,7 +10,6 @@ import { ModalTicketControlPanel } from './ModalTicketControlPanel';
 import Swal from 'sweetalert2';
 import { ModalTicket } from './ModalTicket';
 import { types } from '../../types/types';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 
 const userBasicAuth = basicAuth.username;
@@ -20,7 +19,6 @@ const URL_TICKET_VOUCHER_PDF = environment.UrlGetTicketVoucherPDF;
 
 export const TicketControlPanel = () => {
     const { dispatch } = useContext(AuthContext);
-    const navigate = useNavigate();
     const [ tickets, setTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
     const [ loading, setLoading ] = useState(false);
@@ -29,14 +27,6 @@ export const TicketControlPanel = () => {
     const [ ticket, setTicket ] = useState();
     const [ base64Voucher , setBase64Voucher ] = useState("");
     const { data, meta } = tickets;
-
-    const handleLogout = () => {
-        dispatch({ type: types.logout });
-
-        navigate("/login", {
-            replace: true 
-        });
-    }
 
     const fetchTickets = async (page, row = 10) => {
         setLoading(!loading);
@@ -53,8 +43,7 @@ export const TicketControlPanel = () => {
             Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
 
             setTimeout(() => {
-                handleLogout();
-
+                dispatch({ type: types.logout });
             }, 1000)
         });
     }
@@ -102,7 +91,7 @@ export const TicketControlPanel = () => {
             Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
 
             setTimeout(() => {
-                handleLogout();
+                dispatch({ type: types.logout });
             }, 1000)
         });
 
@@ -132,7 +121,7 @@ export const TicketControlPanel = () => {
                     Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos', 'error');
 
                     setTimeout(() => {
-                        handleLogout();
+                        dispatch({ type: types.logout });
                     }, 1000)
                 }
 
