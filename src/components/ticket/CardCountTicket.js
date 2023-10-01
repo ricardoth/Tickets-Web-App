@@ -11,7 +11,7 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement}) =
     }, [counter]);
     
 
-    const addTicketCounter = (e) => {
+    const addTicketCounter = () => {
         ticketDispatch({type: types.updateMontoPagoValue, payload: counter * sectorValue.precio})
         setIsDisabled(true);
     }

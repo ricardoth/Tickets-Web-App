@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {parserEvento} from '../../types/parsers';
 import { environment } from '../../environment/environment.dev';
 import { Combobox } from '../ui/combobox/Combobox';
@@ -7,6 +7,8 @@ import {Buffer} from 'buffer';
 import axios from 'axios';
 import { CardCountTicket } from './CardCountTicket';
 import { formatDateLocaleString } from '../../types/formatDate';
+import { TicketContext } from '../../context/ticketContext';
+import { types } from '../../types/types';
 
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetSectores = environment.UrlGetSectores;
@@ -15,7 +17,8 @@ const UrlGetSectoresByEvento = environment.UrlGetSectoresByEvento;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
-export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setValueSector, total, setTotal, counter, increment, decrement}) => {
+export const CardInfoEvento = ({counter, increment, decrement}) => {
+    const { ticketState, ticketDispatch } = useContext(TicketContext);
     const [sectores, setSectores] = useState([]);
     const [evento, setEvento] = useState({
         idEvento: '',
@@ -43,8 +46,8 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
     });
     const [ isVisibleFlyer, setIsVisibleFlyer ] = useState(true);
 
-    const fetchSectorsByEvent = async () => {
-        await axios.get(UrlGetSectoresByEvento + `${valueEvento}`, {
+    const fetchSectorsByEvent = async (id) => {
+        await axios.get(UrlGetSectoresByEvento + `${id}`, {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
@@ -57,8 +60,8 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
         });
 
     }
-    const fetchEventoById = async () => {
-        await axios.get(UrlGetEventos + `/${valueEvento}`, {
+    const fetchEventoById = async (id) => {
+        await axios.get(UrlGetEventos + `/${id}`, {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
@@ -75,8 +78,8 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
         });
     }
 
-    const fetchSectorById = async () => {
-        await axios.get(UrlGetSectores + `/${valueSector}`, {
+    const fetchSectorById = async (id) => {
+        await axios.get(UrlGetSectores + `/${id}`, {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
@@ -88,29 +91,8 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
         .catch(err => {
             console.error("Ha ocurrido un error al realizar la Petición a API", err);
         });
-
     }
-
-    useEffect(() => {
-
-         if (valueEvento !== undefined && valueEvento !== 0)
-         {
-            fetchSectorsByEvent();
-             fetchEventoById();
-         } else {
-            // resetStateEvento();
-            setIsVisibleFlyer(true);
-        }
-    }, [valueEvento]);
-
-    useEffect(() => {
-        if (valueEvento !== undefined && valueEvento !== 0)
-        {
-            fetchSectorById();
-        }
-        
-    }, [valueSector]);
-
+  
     const resetStateEvento = () => {
         setEvento({
             idEvento: '',
@@ -128,6 +110,25 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
         });
     }
 
+    const handleChangeEvento = ({target}) => {
+        ticketDispatch({type: types.updateIdEventoValue, payload: target.value});
+        if (target.value > 0) {
+            fetchSectorsByEvent(target.value);
+            fetchEventoById(target.value);
+        } else 
+            setIsVisibleFlyer(true);
+        
+    };
+    
+    const handleChangeSector = ({target}) => {
+        ticketDispatch({type: types.updateIdSectorValue, payload: target.value})
+        if (target.value > 0) {
+            fetchSectorById(target.value);
+        } else 
+            ticketDispatch({type: types.updateIdSectorValue, payload: 0})
+
+    };
+
     return (
         <>
             <div className="card">
@@ -141,16 +142,15 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                             <Combobox
                                 id="idEvento"
                                 name="idEvento"
-                                value={valueEvento}
-                                setValue={setValueEvento}
+                                value={ticketState.formValues.idEvento}
+                                setValue={handleChangeEvento}
                                 url={UrlGetEventos}
                                 parser={parserEvento}
                                 tipoAuth={environment.BasicAuthType}
                             /> 
                             
                             {
-
-                                valueEvento === 0 ? "" : (
+                                ticketState.formValues.idEvento === 0 ? "" : (
                                     <div className='row'>
                                         <div className='col-lg-6'>
                                             <div className='card'>
@@ -183,10 +183,10 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                         </div>
                         <div className="col-lg-6">
                             {
-                                 valueEvento === 0 ? "" : (
+                                 ticketState.formValues.idEvento === 0 ? "" : (
                                     <div>
                                         <label>Selecciona tu Sector</label>
-                                        <select id="idSector" value={valueSector} onChange={setValueSector} className='custom-select form-control'>
+                                        <select id="idSector" value={ticketState.formValues.idSector} onChange={handleChangeSector} className='custom-select form-control'>
                                             <option value="">---Seleccione---</option>
                                             { sectores.map((sector) => (
                                                 <option key={sector.idSector} value={sector.idSector}>{sector.nombreSector}</option>
@@ -194,14 +194,13 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                         </select>
 
                                         {
-                                            valueSector === 0 ? "" : (
+                                            ticketState.formValues.idSector === 0 ? "" : (
                                                 <div className='row mt-3'>
                                                     <div className='col-lg-12'>
                                                         <div className='card'>
                                                             <div className="card-body">
                                                                 <div>
                                                                     <p className="card-text"> <span className='fw-bold'>Sector:</span> {sector.nombreSector}</p>
-                                                                    
                                                                     <div className="row align-items-center mt-2 d-none d-sm-flex">
                                                                         <p className="card-text">Capacidad Máxima: {sector.capacidadTotal}</p>
                                                                         <CardCountTicket 
@@ -209,10 +208,7 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
                                                                             counter={counter} 
                                                                             increment={increment} 
                                                                             decrement={decrement} 
-                                                                            total={total}
-                                                                            setTotal={setTotal}
                                                                         />
-
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -222,7 +218,6 @@ export const CardInfoEvento = ({valueEvento, setValueEvento, valueSector, setVal
 
                                             )
                                         }
-                                        
                                     </div>    
                                 )
                             }

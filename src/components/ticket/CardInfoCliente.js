@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { environment } from '../../environment/environment.dev';
 import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
@@ -16,7 +16,7 @@ const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
 export const CardInfoCliente = () => {
-    const { user, dispatch } = useContext(AuthContext);
+    const { dispatch } = useContext(AuthContext);
     const { ticketState, ticketDispatch } = useContext(TicketContext);
     
     const [correoUser, setCorreoUser] = useState("");
@@ -97,7 +97,6 @@ export const CardInfoCliente = () => {
                     <div className="row">
                         <div className='col-lg-6'>
                             <label>Usuario</label>
-
                             <Select
                                 className="custom-select form-control"
                                 classNamePrefix="select"
@@ -108,11 +107,9 @@ export const CardInfoCliente = () => {
                                 name="idUsuario"
                                 options={options}
                                 placeholder="Escriba 3 caractéres para generar la búsqueda"
-                                noOptionsMessage={({ inputValue }) =>
-                                inputValue.length > 0
-                                    ? "No se encontraron resultados"
-                                    : "No hay opciones disponibles"
-                                }
+                                noOptionsMessage={({ inputValue }) =>   inputValue.length > 0
+                                                                        ? "No se encontraron resultados"
+                                                                        : "No hay opciones disponibles" }
                             />
                         </div>
 

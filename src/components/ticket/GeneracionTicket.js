@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -13,6 +13,8 @@ import { Loader } from '../ui/loader/Loader';
 import { TabsStepsTickets } from './TabsStepsTickets';
 import { Tab } from 'react-bootstrap';
 import { useCounter } from '../../hooks/useCounter';
+import { TicketContext } from '../../context/ticketContext';
+import { types } from '../../types/types';
 
 const UrlGeneracionTickets = environment.UrlGeneracionManyTickets;
 const userBasicAuth = basicAuth.username;
@@ -28,12 +30,16 @@ const validationSchema = Yup.object().shape({
   });
 
 export const GeneracionTicket = () => {
+    const { ticketState, ticketDispatch} = useContext(TicketContext);
     const [base64Pdf, setBase64Pdf] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [continuar, setContinuar] = useState(true);
     const [activeTab, setActiveTab] = useState('cliente');
     const { counter, increment, decrement } = useCounter(0);
+
+    useEffect(() => {
+        formik.setValues(ticketState.formValues); 
+    }, [ticketState.formValues]);
 
     const closeModal = () => {
         setIsOpen(false);
@@ -44,16 +50,7 @@ export const GeneracionTicket = () => {
     };
     
     const formik = useFormik({
-        initialValues: {
-            idUsuario: 0,
-            idEvento: 0,
-            idSector: 0,
-            idMedioPago: 0,
-            montoPago: 0,
-            montoTotal: 0,
-            fechaTicket: '',
-            activo: true,
-        },
+        initialValues: ticketState.formValues,
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             values.montoTotal = values.montoPago;
@@ -75,7 +72,6 @@ export const GeneracionTicket = () => {
                 };
                 ticketList.push(ticket);
             }
-         
             setLoading(true);
             try {
                 const response = await axios.post(UrlGeneracionTickets, ticketList, {
@@ -84,10 +80,13 @@ export const GeneracionTicket = () => {
                     },
                 });
 
-                openModal();
-                setBase64Pdf(response.data);
-                setLoading(false);
-                formik.resetForm();
+                if (response.status === 200) {
+                    openModal();
+                    setBase64Pdf(response.data);
+                    setLoading(false);
+                    formik.resetForm();
+                    ticketDispatch({type: types.resetFormValues});
+                }
             } catch (error) {
                 console.error('API error:', error);
                 setLoading(false);
@@ -96,7 +95,6 @@ export const GeneracionTicket = () => {
     });
 
     const handleNextTabs = () => {
-        setContinuar(true);
         switch (activeTab) {
             case 'cliente':
                 setActiveTab('tickets');                
@@ -122,25 +120,14 @@ export const GeneracionTicket = () => {
                 <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                     <Tab.Content>
                         <Tab.Pane eventKey="cliente">
-                            <CardInfoCliente 
-                                valueUsuario={formik.values.idUsuario} 
-                                setValueUsuario={formik.setFieldValue} 
-                                continuar={continuar} 
-                                setContinuar={setContinuar}/>
+                            <CardInfoCliente  /> 
                             {formik.touched.idUsuario && formik.errors.idUsuario ? (
                                         <div style={{color:'red'}}>{formik.errors.idUsuario}</div>
                                         ) : null}
-
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="tickets">
                             <CardInfoEvento 
-                                valueEvento={formik.values.idEvento} 
-                                setValueEvento={formik.handleChange} 
-                                valueSector={formik.values.idSector} 
-                                setValueSector={formik.handleChange}
-                                total={formik.values.montoPago}
-                                setTotal={formik.setFieldValue}
                                 counter={counter}
                                 increment={increment}
                                 decrement={decrement}
@@ -155,14 +142,10 @@ export const GeneracionTicket = () => {
                         </Tab.Pane>
 
                         <Tab.Pane eventKey="pago">
-                            <CardInfoMedioPago 
-                                valueMedioPago={formik.values.idMedioPago} 
-                                setValueMedioPago={formik.handleChange} 
-                            />
+                            <CardInfoMedioPago />
                             {formik.touched.idMedioPago && formik.errors.idMedioPago ? (
                                         <div style={{color:'red'}}>{formik.errors.idMedioPago}</div>
                                         ) : null}
-
                                 <br/>
                                 <div className="col-lg-12">
                                     <label>Valor</label>
@@ -178,9 +161,7 @@ export const GeneracionTicket = () => {
                                     {formik.touched.montoPago && formik.errors.montoPago ? (
                                         <div style={{color:'red'}}>{formik.errors.montoPago}</div>
                                         ) : null}
-                                    
-                                </div>
-                                
+                                </div> 
                                 <br/>
                                 <div className="d-grid gap-2 ">
                                     <button type="submit" className="btn btn-outline-info" disabled={loading}><i className="bi bi-save2"></i> Generar </button>
@@ -188,10 +169,8 @@ export const GeneracionTicket = () => {
                         </Tab.Pane>
                     </Tab.Content>
                     <br />
-
                 </form>
             </Tab.Container>
-
 
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <button id='btnSiguiente' type='button' className='btn btn-primary' hidden={activeTab === 'pago'} disabled={activeTab === 'pago'} onClick={handleNextTabs}>Continuar</button>
