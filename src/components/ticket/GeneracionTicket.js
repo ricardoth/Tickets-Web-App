@@ -27,27 +27,22 @@ const validationSchema = Yup.object().shape({
     idMedioPago: Yup.number().required('El Medio Pago es Requerido').min(1, 'Debe seleccionar un Medio Pago'),
     montoPago: Yup.number().required().min(1, 'Debe seleccionar a lo menos 1 ticket para generar el proceso')
     
-  });
+});
 
 export const GeneracionTicket = () => {
-    const { ticketState, ticketDispatch} = useContext(TicketContext);
-    const [base64Pdf, setBase64Pdf] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('cliente');
+    const { ticketState, ticketDispatch } = useContext(TicketContext);
+    const [ base64Pdf, setBase64Pdf ] = useState("");
+    const [ isOpen, setIsOpen ] = useState(false);
+    const [ loading, setLoading ] = useState(false);
+    const [ activeTab, setActiveTab ] = useState('cliente');
     const { counter, increment, decrement } = useCounter(0);
 
     useEffect(() => {
         formik.setValues(ticketState.formValues); 
     }, [ticketState.formValues]);
 
-    const closeModal = () => {
-        setIsOpen(false);
-    };
-  
-    const openModal = () => {
-        setIsOpen(true);
-    };
+    const closeModal = () => setIsOpen(false);
+    const openModal = () => setIsOpen(true);
     
     const formik = useFormik({
         initialValues: ticketState.formValues,

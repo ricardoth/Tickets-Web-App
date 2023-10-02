@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { environment } from '../../environment/environment.dev';
 import { basicAuth} from '../../types/basicAuth';
 import {Buffer} from 'buffer';
@@ -24,6 +24,16 @@ export const CardInfoCliente = () => {
     const [direccionUser, setDireccionUser] = useState("");
     const [inputValue, setInputValue] = useState("");
     const [options, setOptions] = useState([]);
+
+    useEffect(() => {
+      if(ticketState.formValues.idUsuario <= 0) {
+        setCorreoUser("");
+        setTelefonoUser("");
+        setDireccionUser("");
+        setInputValue("");
+        setOptions([]);
+      } 
+    }, [ticketState.formValues.idUsuario]);
 
     const fetchUsuarios = async (inputValue) => {
         try {

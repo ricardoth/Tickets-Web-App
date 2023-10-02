@@ -12,7 +12,7 @@ export const TabsStepsTickets = ({activeTab, setActiveTab}) => {
               <Nav.Link eventKey="tickets">Tickets</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="pago">Confirmación</Nav.Link>
+              <Nav.Link eventKey="pago">Pago y Confirmación</Nav.Link>
             </Nav.Item>
         </Nav>
     </>
