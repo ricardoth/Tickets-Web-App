@@ -12,7 +12,7 @@ import * as Yup from 'yup';
 const validationSchema = Yup.object().shape({
     nombre: Yup.string().required('El Nombre es requerido'),
     url: Yup.string().required('El URL es requerido'),
-  });
+});
 
 
 const endpoint = environment.UrlApiMenu;
@@ -101,7 +101,7 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                     onHide={close}
                 >
                     <Modal.Header closeButton>
-                    <Modal.Title>Agregar Menú</Modal.Title>
+                        <Modal.Title>Agregar Menú</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                     <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>

@@ -40,9 +40,27 @@ export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
           const response = await fetch(url, {
             headers: headerAuth
           });
-          const {data } = await response.json();
+          const { data } = await response.json();
           if (!unmounted) {
-            setItems(parser(data));
+            const active = data.some(o => 'activo' in o);
+            const isActive = data.some(o => 'esActivo' in o);
+        
+            if(active) {
+                let listActives = data.filter((row) => {
+                    if(row.activo) {
+                        return row;
+                    }
+                });
+                setItems(parser(listActives));
+            }
+            
+            if(isActive) {
+                let listIsActives = data.filter((row) => {
+                    if(row.esActivo)
+                        return row;
+                });
+                setItems(parser(listIsActives));
+            }
             setLoading(false);
           }
         }
@@ -52,21 +70,21 @@ export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
     
 
     return (
-        <div className="input-group mb-3">
-        <select
-            className="custom-select form-control"
-            id={id}
-            disabled={loading}
-            value={value}
-            onChange={onChange}
-        >
-            <option key={0} value={0}>--- Seleccionar ---</option>
-            {items && items.map(({ label, value }) => (
-                 <option key={value} value={value}>
-                    {value} - {label}
-                 </option>
-            ))}
-        </select>
-        </div>
+        <>
+            <select
+                className="custom-select form-control"
+                id={id}
+                disabled={loading}
+                value={value}
+                onChange={onChange}
+            >
+                <option key={0} value={0}>--- Seleccionar ---</option>
+                {items && items.map(({ label, value }) => (
+                    <option key={value} value={value}>
+                        {value} - {label}
+                    </option>
+                ))}
+            </select>
+        </>
     )
 }
