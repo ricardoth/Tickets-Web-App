@@ -9,6 +9,7 @@ import { Loader } from '../ui/loader/Loader';
 import { AuthContext } from '../../auth/authContext';
 import { types } from '../../types/types';
 import Swal from 'sweetalert2';
+import { EventoEditModal } from './EventoEditModal';
 
 const UrlGetEventos = environment.UrlGetEventos;
 const userBasicAuth = basicAuth.username;
@@ -18,11 +19,13 @@ export const EventoTable = ({changeAddForm}) => {
     const { dispatch } = useContext(AuthContext);
     const [ eventos, setEventos ] = useState([]);
     const [ loading, setLoading ] = useState(false);
+    const [ showEditMenu, setShowEditMenu ] = useState(false);
+    const [ eventoEdit, setEventoEdit ] = useState({});
     const { data } = eventos;
 
     useEffect(() => {
         fetchEventos();
-    }, [changeAddForm]);
+    }, [changeAddForm, eventoEdit]);
  
     const fetchEventos = async () => {
         setLoading(!loading);
@@ -31,7 +34,6 @@ export const EventoTable = ({changeAddForm}) => {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
         });
-
         if(response.status === 200) {
             setEventos(response.data);
             setLoading(loading);
@@ -66,14 +68,14 @@ export const EventoTable = ({changeAddForm}) => {
             } else {
                 Swal.fire("Ha ocurrido un error", "No se pudo eliminar el elemento", "error");
             }
-
         });
-
-        
     }
 
     const handleEdit = (element) => {
-        console.log(element);
+        setEventoEdit(element);
+        setTimeout(() => {
+            setShowEditMenu(true);
+        }, 100);
     }
 
     const columns = [
@@ -140,7 +142,9 @@ export const EventoTable = ({changeAddForm}) => {
                 responsive
                 defaultSortAsc={true}
             />
-
+            {showEditMenu && (
+                <EventoEditModal show={showEditMenu} close={() => setShowEditMenu(false)} eventoEdit={eventoEdit} />
+            ) }
         </>
     )
 }

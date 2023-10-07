@@ -11,6 +11,7 @@ import { basicAuth } from '../../types/basicAuth';
 import { Buffer } from 'buffer';
 import { parserLugar } from '../../types/parsers';
 import { Loader } from '../ui/loader/Loader';
+import { FcAddImage } from "react-icons/fc";
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlEvento = environment.UrlGetEventos;
@@ -38,6 +39,7 @@ export const EventoAddModal = ({show, close}) => {
             direccion: '',
             fecha: '',
             flyer: '',
+            contenidoFlyer: '',
             activo: true
           
         },
@@ -45,7 +47,6 @@ export const EventoAddModal = ({show, close}) => {
         onSubmit: async (values) => {
             let fechaEvento = new Date(values.fecha);
             values.fecha = fechaEvento;
-           
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Evento?',
@@ -67,6 +68,7 @@ export const EventoAddModal = ({show, close}) => {
                         formik.resetForm();
                         close();
                     } else {
+                        setLoading(false);
                         Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                     }
                 }
@@ -78,10 +80,12 @@ export const EventoAddModal = ({show, close}) => {
         const file = target.files[0];
         if (file) {
             const reader = new FileReader();
+            const fileName = file.name.split('.')[0];
             reader.readAsDataURL(file);
             reader.onload = () => {
                 const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-                formik.setFieldValue('flyer', base64String);
+                formik.setFieldValue('flyer', fileName);
+                formik.setFieldValue('contenidoFlyer', base64String);
             }
             reader.onerror = (error) => {
                 console.log('Error al convertir a Base64:', error);
@@ -175,9 +179,11 @@ export const EventoAddModal = ({show, close}) => {
                                     onChange={onFileChange}
                                     accept='image/*'
                                     autoComplete='off'
-                                    name="flyer"
-                                    defaultValue={formik.values.flyer}
+                                    name="contenidoFlyer"
+                                    defaultValue={formik.values.contenidoFlyer}
                                 />
+                                <br/>
+                              
                             </div>
 
                             <div className="col-lg-6">
@@ -188,6 +194,18 @@ export const EventoAddModal = ({show, close}) => {
                                     onToggle={formik.handleChange}
                                 />
                                 
+                            </div>
+                            <div className='row'>
+                                <div className='col-lg-6'>
+                                    { 
+                                        formik.values.contenidoFlyer == '' ? 
+                                            <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
+                                                <FcAddImage />
+                                            </div>
+                                            : 
+                                            <img src={`data:image/jpg;base64,${formik.values.contenidoFlyer}`}  style = {{width:"80%", height:"80%"}} />     
+                                    }
+                                </div>
                             </div>
 
                         </div>
