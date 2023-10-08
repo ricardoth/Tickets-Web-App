@@ -3,10 +3,10 @@ import { EventoTable } from "./EventoTable";
 import { EventoAddModal } from "./EventoAddModal";
 
 export const EventoScreen = () => {
-    const [ showMenu, setShowMenu ] = useState(false);
+    const [ showAddModal, setShowAddModal ] = useState(false);
 
     const handleAdd = () => {
-        setShowMenu(true);
+      setShowAddModal(true);
     }
 
     return (
@@ -19,9 +19,9 @@ export const EventoScreen = () => {
         </div>
 
         <hr/>
-         <EventoTable changeAddForm={showMenu}/>
+         <EventoTable changeAddForm={showAddModal}/>
 
-        <EventoAddModal show={showMenu} close={() => setShowMenu(false)} />
+        <EventoAddModal show={showAddModal} close={() => setShowAddModal(false)} />
     </div>
     )
 }

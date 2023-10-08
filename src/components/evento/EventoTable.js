@@ -19,13 +19,13 @@ export const EventoTable = ({changeAddForm}) => {
     const { dispatch } = useContext(AuthContext);
     const [ eventos, setEventos ] = useState([]);
     const [ loading, setLoading ] = useState(false);
-    const [ showEditMenu, setShowEditMenu ] = useState(false);
+    const [ showEditEvento, setShowEditEvento ] = useState(false);
     const [ eventoEdit, setEventoEdit ] = useState({});
     const { data } = eventos;
 
     useEffect(() => {
         fetchEventos();
-    }, [changeAddForm, eventoEdit]);
+    }, [changeAddForm, showEditEvento]);
  
     const fetchEventos = async () => {
         setLoading(!loading);
@@ -71,10 +71,10 @@ export const EventoTable = ({changeAddForm}) => {
         });
     }
 
-    const handleEdit = (element) => {
-        setEventoEdit(element);
+    const handleEdit = (eventoParam) => {
+        setEventoEdit(eventoParam);
         setTimeout(() => {
-            setShowEditMenu(true);
+            setShowEditEvento(true);
         }, 100);
     }
 
@@ -142,8 +142,8 @@ export const EventoTable = ({changeAddForm}) => {
                 responsive
                 defaultSortAsc={true}
             />
-            {showEditMenu && (
-                <EventoEditModal show={showEditMenu} close={() => setShowEditMenu(false)} eventoEdit={eventoEdit} />
+            {showEditEvento && (
+                <EventoEditModal show={showEditEvento} close={() => setShowEditEvento(false)} eventoEdit={eventoEdit} />
             ) }
         </>
     )
