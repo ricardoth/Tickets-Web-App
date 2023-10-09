@@ -158,6 +158,7 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
                 onChangeRowsPerPage={handleRowsChange}
                 responsive
                 defaultSortAsc={true}
+                noDataComponent={`No hay registros para mostrar`}
             />
 
             { showMenu && (

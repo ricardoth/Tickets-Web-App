@@ -141,6 +141,7 @@ export const EventoTable = ({changeAddForm}) => {
                 paginationTotalRows={eventos.length}
                 responsive
                 defaultSortAsc={true}
+                noDataComponent={`No hay registros para mostrar`}
             />
             {showEditEvento && (
                 <EventoEditModal show={showEditEvento} close={() => setShowEditEvento(false)} eventoEdit={eventoEdit} />

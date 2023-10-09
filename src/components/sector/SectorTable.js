@@ -25,9 +25,7 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
     const { data } = sectores;
 
     useEffect(() => {
-        if (idEvento > 0) {
-            fetchSectores(idEvento);
-        }
+        fetchSectores(idEvento);
         setLoading(false);
     }, [changeAddForm, idEvento]);
 
@@ -39,8 +37,6 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
         })
-
-        console.log(response)
 
         if (response.status === 200) {
             let datos = response.data;
@@ -130,6 +126,7 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
                 paginationTotalRows={sectores.length}
                 responsive
                 defaultSortAsc={true}
+                noDataComponent={`No hay registros para mostrar`}
             />
             {/* {showEditEvento && (
                 <EventoEditModal show={showEditEvento} close={() => setShowEditEvento(false)} eventoEdit={eventoEdit} />

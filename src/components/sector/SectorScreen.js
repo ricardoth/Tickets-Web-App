@@ -3,6 +3,7 @@ import { SectorTable } from "./SectorTable";
 import { Combobox } from "../ui/combobox/Combobox";
 import { parserEvento } from "../../types/parsers";
 import { environment } from "../../environment/environment.dev";
+import { SectorAddModal } from "./SectorAddModal";
 
 const UrlGetEventos = environment.UrlGetEventos;
 
@@ -12,7 +13,6 @@ export const SectorScreen = () => {
 
     const handleAdd = () => {
         setShowAddModal(true);
-        console.log(idEvento)
     }
 
     const handleChangeEvento = ({target}) => {
@@ -43,11 +43,10 @@ export const SectorScreen = () => {
                 
             </div>
 
-                
 
-
-                <SectorTable changeAddForm={showAddModal} idEvento={idEvento}/>
-
+            <SectorTable changeAddForm={showAddModal} idEvento={idEvento}/>
+            {/* { showAddModal} */}
+            <SectorAddModal show={showAddModal} close={() => setShowAddModal(false)} />
 
             <hr/>
         </div>

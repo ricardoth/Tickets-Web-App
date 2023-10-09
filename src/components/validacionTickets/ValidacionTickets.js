@@ -277,6 +277,7 @@ export const ValidacionTicket = () => {
                         onChangeRowsPerPage={handleRowsChange}
                         responsive
                         defaultSortAsc={true}
+                        noDataComponent={`No hay registros para mostrar`}
                     />
                 
                     

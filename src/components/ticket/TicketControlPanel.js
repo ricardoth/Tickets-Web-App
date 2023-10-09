@@ -201,6 +201,7 @@ export const TicketControlPanel = () => {
                     onChangeRowsPerPage={handleRowsChange}
                     responsive
                     defaultSortAsc={true}
+                    noDataComponent={`No hay registros para mostrar`}
                 />
 
                 <ModalTicketControlPanel isOpen={isOpen} closeModal={closeModal} ticketObj={ticket} />
