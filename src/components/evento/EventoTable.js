@@ -51,11 +51,11 @@ export const EventoTable = ({changeAddForm}) => {
     const handleDelete = async (idEvento) => {
         Swal.fire({
             title: 'Atención',
-                text: '¿Desea Desactivar el Evento?',
-                icon: 'error',
-                showCancelButton: true,
-                confirmButtonText: 'Aceptar',
-                cancelButtonText: 'Cancelar',
+            text: '¿Desea Desactivar el Evento?',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
         }).then(async (values) => {
             let response = await axios.delete(`${UrlGetEventos}/${idEvento}`  , {
                 headers: {

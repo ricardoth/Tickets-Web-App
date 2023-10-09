@@ -19,7 +19,6 @@ const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object().shape({
     nombreSector: Yup.string().required('El Nombre es requerido'),
-    
 });
 
 export const SectorAddModal = ({show, close}) => {
@@ -42,8 +41,6 @@ export const SectorAddModal = ({show, close}) => {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            console.log(values)
-
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Sector?',
@@ -172,8 +169,6 @@ export const SectorAddModal = ({show, close}) => {
                         </div>
                         <br/>
                         <div className="row">
-                            
-
                             <div className="col-lg-6">
                                 <label>Precio</label>
                                 <input 
@@ -199,10 +194,6 @@ export const SectorAddModal = ({show, close}) => {
                                 />
                             </div>
                         </div>
-
-                       
-
-                            
                     </Modal.Body>
 
                     <Modal.Footer>

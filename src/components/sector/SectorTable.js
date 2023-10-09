@@ -10,9 +10,11 @@ import { types } from "../../types/types";
 import axios from "axios";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
+import { SectorEditModal } from "./SectorEditModal";
 
 
 const UrlGetSectoresByEvento = environment.UrlGetSectoresByEvento;
+const UrlSector = environment.UrlGetSectores;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
@@ -27,7 +29,7 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
     useEffect(() => {
         fetchSectores(idEvento);
         setLoading(false);
-    }, [changeAddForm, idEvento]);
+    }, [changeAddForm, showEditSector, idEvento]);
 
     const fetchSectores = async (row) => {
         setLoading(!loading);
@@ -46,19 +48,45 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
             Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos, se cerrará la sesión automáticamente', 'error');
             setLoading(false);
 
-            // setTimeout(() => {
-            //     dispatch({ type: types.logout });
-            // }, 1000);
+            setTimeout(() => {
+                dispatch({ type: types.logout });
+            }, 1000);
         }
     }
 
     if (data === undefined) return <Loader />;
 
     const handleEdit = (sectorParam) => {
-
+        setSectorEdit(sectorParam);
+        setTimeout(() => {
+            setShowEditSector(true);
+        }, 100);
     }
 
     const handleDelete = async (idSectorParam) => {
+        Swal.fire({
+            title: 'Atención',
+            text: '¿Desea Desactivar el Sector?',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then(async () => {
+            setLoading(true);
+            let response = await axios.delete(`${UrlSector}/${idSectorParam}`,{
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            });
+
+            if (response.status === 200) {
+                fetchSectores(idEvento);
+            } else {
+                Swal.fire('Ha ocurrido un error', 'No se pudo eliminar el elemento', 'error');
+            }
+
+            setLoading(false);
+        });
 
     }
     
@@ -128,9 +156,9 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
                 defaultSortAsc={true}
                 noDataComponent={`No hay registros para mostrar`}
             />
-            {/* {showEditEvento && (
-                <EventoEditModal show={showEditEvento} close={() => setShowEditEvento(false)} eventoEdit={eventoEdit} />
-            ) } */}
+            {showEditSector && (
+                <SectorEditModal show={showEditSector} close={() => setShowEditSector(false)} sectorEdit={sectorEdit} />
+            ) }
         </>
     )
 }
