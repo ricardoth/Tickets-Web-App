@@ -4,7 +4,7 @@
     text-align: center;
     width: 70wv;
     justify-content: flex-end;
-    margin-right: 2rem;
+    margin-right: 5rem;
 } 
 
 .nav-item {
@@ -16,7 +16,7 @@
     text-decoration: none;
     color: white;
     font-size: 1.1rem;
-    margin-right: 2rem;
+    margin-right: 5rem;
     margin-top: 20px;
     border-radius: 10px;
 }

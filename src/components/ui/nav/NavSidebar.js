@@ -9,13 +9,15 @@ import { NavDropdown } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { environment } from '../../../environment/environment.dev';
 import { NavItemChild } from '../nav/NavItemChild';
+import { FaTicketAlt } from 'react-icons/fa';
+import { MdOutlineExitToApp } from "react-icons/md";
 
 const NavSidebar = () => {
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
     const [ state, fetchData ] = useFetch(endpoint);
-    const [expanded, setExpanded] = useState(false);
+    const [ activeMenu, setActiveMenu ] = useState(null);
     
     useEffect(() => {
       fetchData(endpoint, user.token )
@@ -37,84 +39,107 @@ const NavSidebar = () => {
         });
     }
 
-    const closeNav = () => {
-        setExpanded(false)
-    }
+    const onMouseEnter = (e, menuId) => {
+        if (window.innerWidth < 960) {
+            setActiveMenu(null);
+        } else {
+            setActiveMenu(menuId);
+        }
+      };
+    
+      const onMouseLeave = () => {
+        if (window.innerWidth < 960) {
+            setActiveMenu(null);
+        } else {
+            setActiveMenu(null);
+        }
+      };
 
-    //expanded={expanded} en expand="lg"
     return ( 
         <>
 
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='lg ps-3'>
-            {/* <Container> */}
-            <Navbar.Brand as={Link} to="dashboard" >Dashboard</Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse id="responsive-navbar-nav">
-                <Nav className="ml-auto">
-                {
-                    padres.map( (menu) => {
-                        if(!menu.tieneHijos) {
-                            return <NavItemChild key={menu.idMenu} menuPadre={menu}/>
-                        } else {
-                            return (
-                                <NavDropdownMenu key={menu.idMenu} title={menu.nombre} id="collasible-nav-dropdown">
-                                    { 
-                                        hijos.map((child) => {
-                                            if(child.padre === menu.idMenu) {
-                                                if(child.esPadre) {
-                                                    return (
-                                                        <DropdownSubmenu as={NavLink} key={menu.idMenu} to={menu.url} title={child.nombre}>
-                                                            { 
-                                                                nietos.map((nieto) => {
-                                                                    if(nieto.padre === child.idMenu) {
-                                                                        return (
-                                                                            <NavDropdown.Item onSelect={closeNav} as={NavLink} key={nieto.idMenu} to={nieto.url}>{nieto.nombre}</NavDropdown.Item>
-                                                                        );
+                <Navbar.Brand as={Link} to="dashboard" ><FaTicketAlt />  &nbsp; Ticketera</Navbar.Brand>
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Nav className="ml-auto">
+                    {
+                        padres.map( (menu) => {
+                            if(!menu.tieneHijos) {
+                                return <NavItemChild key={menu.idMenu} menuPadre={menu}/>
+                            } else {
+                                return (
+                                    <div 
+                                        key={menu.idMenu}
+                                        onMouseEnter={(e) => onMouseEnter(e, menu.idMenu)}
+                                        onMouseLeave={onMouseLeave}
+                                    >
+                                        <NavDropdownMenu 
+                                            show={activeMenu === menu.idMenu} 
+                                            key={menu.idMenu} 
+                                            title={menu.nombre} 
+                                            id={`collasible-nav-dropdown-${menu.idMenu}`}
+                                        >
+                                            { 
+                                                hijos.map((child) => {
+                                                    if(child.padre === menu.idMenu) {
+                                                        if(child.esPadre) {
+                                                            return (
+                                                                <DropdownSubmenu as={NavLink} key={menu.idMenu} to={menu.url} title={child.nombre}>
+                                                                    { 
+                                                                        nietos.map((nieto) => {
+                                                                            if(nieto.padre === child.idMenu) {
+                                                                                return (
+                                                                                    <NavDropdown.Item as={NavLink} key={nieto.idMenu} to={nieto.url}>{nieto.nombre}</NavDropdown.Item>
+                                                                                );
 
+                                                                            }
+                                                                        })
                                                                     }
-                                                                })
-                                                            }
-                                                        </DropdownSubmenu>
-                                                    )
-                                                } else {
-                                                    return (
-                                                        <NavDropdown.Item as={NavLink} key={child.idMenu} to={child.url}>{child.nombre}</NavDropdown.Item>
-                                                    )
-                                                } 
-                                            } 
-                                          
-                                        }) 
-                                    }
-                                </NavDropdownMenu>
-                            )
-                        }
-                    })
-                    
-                }
-                </Nav>
+                                                                </DropdownSubmenu>
+                                                            )
+                                                        } else {
+                                                            return (
+                                                                <NavDropdown.Item as={NavLink} key={child.idMenu} to={child.url}>{child.nombre}</NavDropdown.Item>
+                                                            )
+                                                        } 
+                                                    } 
+                                                
+                                                }) 
+                                            }
+                                        </NavDropdownMenu>
+                                    </div>
+                                )
+                            }
+                        })
+                        
+                    }
+                    </Nav>
 
-          
-                <Nav className="ms-auto">
-                    <Nav.Item className="ms-auto">
-                        <span className='nav-item nav-link text-info'>
-                                {user.user}
-                        </span>
-                    </Nav.Item>
+            
+                    <Nav className="ms-auto">
+                        <Nav.Item className="ms-auto">
+                            <span className='nav-item nav-link text-info'>
+                                    {user.user}
+                            </span>
+                        </Nav.Item>
 
-                    <Nav.Item className="ms-auto">
-                        <button 
-                                className="nav-item nav-link btn" 
-                                onClick={handleLogout}
-                        >
-                            Logout
-                        </button>
-                    </Nav.Item>
-                </Nav>
-            </Navbar.Collapse>
+                        <Nav.Item className="ms-auto">
+                            <button 
+                                    className="btn btn-lg" 
+                                    onClick={handleLogout}
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Salir"
+                                    style={{color: 'white', backgroundColor: '#212529'}}
+                            >
+                                <MdOutlineExitToApp/>
+                            </button>
 
-                
-                {/* </Container> */}
+                        </Nav.Item>
+                    </Nav>
+                </Navbar.Collapse>
             </Navbar>
+
+            
         </>
     )
 }
