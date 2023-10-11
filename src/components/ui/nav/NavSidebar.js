@@ -41,7 +41,7 @@ const NavSidebar = () => {
 
     const onMouseEnter = (e, menuId) => {
         if (window.innerWidth < 960) {
-            setActiveMenu(null);
+            setActiveMenu(menuId);
         } else {
             setActiveMenu(menuId);
         }
@@ -73,6 +73,7 @@ const NavSidebar = () => {
                                         key={menu.idMenu}
                                         onMouseEnter={(e) => onMouseEnter(e, menu.idMenu)}
                                         onMouseLeave={onMouseLeave}
+                                        onClick={(e) => onMouseEnter(e, menu.idMenu)}
                                     >
                                         <NavDropdownMenu 
                                             show={activeMenu === menu.idMenu} 
@@ -115,7 +116,6 @@ const NavSidebar = () => {
                         
                     }
                     </Nav>
-
             
                     <Nav className="ms-auto">
                         <Nav.Item className="ms-auto">
@@ -125,11 +125,16 @@ const NavSidebar = () => {
                         </Nav.Item>
 
                         <Nav.Item className="ms-auto">
+                          
                             <button 
                                     className="btn btn-lg" 
                                     onClick={handleLogout}
-                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Salir"
-                                    style={{color: 'white', backgroundColor: '#212529'}}
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Salir"
+                                    style={{color: 'white', backgroundColor: '#212529', display: 'flex',
+                                        alignItems: 'center', justifyContent: 'flex-end'
+                                    }}
                             >
                                 <MdOutlineExitToApp/>
                             </button>
@@ -138,8 +143,6 @@ const NavSidebar = () => {
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
-
-            
         </>
     )
 }

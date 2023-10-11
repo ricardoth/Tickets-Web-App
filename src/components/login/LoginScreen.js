@@ -4,10 +4,11 @@ import { AuthContext } from '../../auth/authContext';
 import { useForm } from '../../hooks/useForm';
 import { types} from '../../types/types';
 import { environment } from '../../environment/environment.dev';
-import './LoginScreen.css'
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { Loader } from '../ui/loader/Loader';
+import './Form.css'
+import { FaLock, FaTicketAlt, FaUser } from 'react-icons/fa';
 
 const urlLogin = environment.UrlApiToken;
 const urlInfoUser = environment.urlApiInfoUsuario;
@@ -85,70 +86,58 @@ export const LoginScreen = () => {
     }
 
     return (
-      
-      <div className='container mt-5'>
-
-          <div id="contenedorcentrado" className='card'>
-            <div id="login" className='card-body'>
-              <form id="loginform" className='form-group' >
-                <div className='row'>
-                  <div className="col-lg-12">
-                    <label>Usuario</label>
+      <div className=''>
+      <section id='section'>
+        <div className="login-box">
+            <form action="">
+                <h2>Ticketera <FaTicketAlt /></h2>
+                <div className="input-box">
+                    <span className="icon">
+                        <FaUser />
+                    </span>
                     <input 
                       type="text" 
                       name='usuario' 
-                      className='form-control ' 
                       placeholder='Usuario' 
                       autoComplete="off" 
                       onChange={handleInputChange} 
                       value={formValues.usuario}
                       required
                     />
-                  </div>
                 </div>
-                <br/>
-                <div className='row'>
-                  <div className="col-lg-12">
-                    <label>Contraseña</label>
+                <div className="input-box">
+                    <span className="icon">
+                      <FaLock />
+                    </span>
                     <input 
                       type="password"
                       name='password' 
-                      className='form-control' 
-                      placeholder='Contraseña' 
                       autoComplete="off" 
                       onChange={handleInputChange} 
                       value={formValues.password}
                       required
                     />
-                  </div>
+                    <label>Contraseña</label>
                 </div>
-                <br />
-               
-                <div className='d-grid gap-2 col-12 mx-auto'>
-                { loading ? <Loader /> : 
-                  <button className='btn btn-primary' onClick={handleLogin}>
-                      Iniciar
-                  </button>}
-                  
+                <div className="remember-forgot">
+                    {/* <label>
+                        <input type="checkbox" />
+                        Recuerdame
+                    </label>  */}
+                    <a href="#">¿Olvidaste tu Contraseña?</a>
                 </div>
-                
-              </form>
-            </div>
 
-            <div id="derecho">
-                    <div className="titulo">
-                        Tickets App
-                    </div>
-                    <hr/>
-                    <div className="pie-form">
-                        <a href="#">¿Perdiste tu contraseña?</a>
-                        <a href="#">¿No tienes Cuenta? Registrate</a>
-                        <hr/>
-                        {/* <a href="#">« Volver</a> */}
-                    </div>
+                { loading ? <Loader /> : 
+                  <button className='button-login' onClick={handleLogin}>
+                      Login
+                  </button>}
+                <div className="register-link">
+                    <p>¿No tienes una cuenta? <a href="">Registrate</a></p>
                 </div>
-          </div>
-            
+
+            </form>
+        </div>
+        </section>
       </div>
     )
 }
