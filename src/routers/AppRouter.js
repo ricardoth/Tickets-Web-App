@@ -4,6 +4,8 @@ import { LoginScreen } from '../components/login/LoginScreen';
 import { DashboardRoutes } from './DashboardRoutes';
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
+import { RequestChangePassword } from '../components/login/RequestChangePassword';
+import { ChangePassword } from '../components/login/ChangePassword';
 
 export const AppRouter = () => {
   return (
@@ -12,6 +14,18 @@ export const AppRouter = () => {
             <Route path='/login' element={
               <PublicRoute>
                 <LoginScreen />
+              </PublicRoute>
+            }/>
+
+            <Route path='/resetPassword' element={
+              <PublicRoute>
+                <RequestChangePassword />
+              </PublicRoute>
+            }/>
+
+            <Route path='/changePassword' element={
+              <PublicRoute>
+                <ChangePassword />
               </PublicRoute>
             }/>
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { useForm } from '../../hooks/useForm';
 import { types} from '../../types/types';
@@ -29,7 +29,7 @@ export const LoginScreen = () => {
           User: formValues.usuario,
           Password: formValues.password
         }
-
+        setLoading(true);
          await fetch(urlLogin, {
           method: 'POST',
           headers: {
@@ -44,6 +44,7 @@ export const LoginScreen = () => {
           } 
          })
          .then(data => {
+            setLoading(false);
            if (data != null) {
             handleInfoUser(userLogin.User, data.token);
            } else {
@@ -124,18 +125,15 @@ export const LoginScreen = () => {
                         <input type="checkbox" />
                         Recuerdame
                     </label>  */}
-                    <a href="#">¿Olvidaste tu Contraseña?</a>
+                    <Link to={'/resetPassword'}>¿Olvidaste tu Contraseña?</Link>
                 </div>
 
                 { loading ? <Loader /> : 
                   <button className='button-login' onClick={handleLogin}>
                       Login
                   </button>}
-                <div className="register-link">
-                    <p>¿No tienes una cuenta? <a href="">Registrate</a></p>
-                </div>
-
             </form>
+                
         </div>
         </section>
       </div>

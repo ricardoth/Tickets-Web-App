@@ -19,6 +19,7 @@ export const BibliotecaApp = () => {
 
   useEffect(() => {
     if (!user) return;
+    
     localStorage.setItem('user', JSON.stringify(user));
   }, [user])
   
@@ -27,7 +28,7 @@ export const BibliotecaApp = () => {
     <div>
         <AuthProvider>
             <TicketProvider>  
-              <AppRouter />
+                <AppRouter />
             </TicketProvider> 
         </AuthProvider> 
     </div>

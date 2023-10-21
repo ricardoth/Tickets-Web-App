@@ -15,6 +15,7 @@ import { Tab } from 'react-bootstrap';
 import { useCounter } from '../../hooks/useCounter';
 import { TicketContext } from '../../context/ticketContext';
 import { types } from '../../types/types';
+import './GeneracionTicket.css';
 
 const UrlGeneracionTickets = environment.UrlGeneracionManyTickets;
 const userBasicAuth = basicAuth.username;

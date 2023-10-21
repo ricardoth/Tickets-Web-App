@@ -26,13 +26,13 @@ export const CardInfoCliente = () => {
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
-      if(ticketState.formValues.idUsuario <= 0) {
-        setCorreoUser("");
-        setTelefonoUser("");
-        setDireccionUser("");
-        setInputValue("");
-        setOptions([]);
-      } 
+        if(ticketState.formValues.idUsuario <= 0) {
+            setCorreoUser("");
+            setTelefonoUser("");
+            setDireccionUser("");
+            setInputValue("");
+            setOptions([]);
+        } 
     }, [ticketState.formValues.idUsuario]);
 
     const fetchUsuarios = async (inputValue) => {
@@ -78,7 +78,6 @@ export const CardInfoCliente = () => {
             .then(response => {
                 let {data} = response.data;
                 let { idUsuario, correo, telefono, direccion} = data;
-    
                 ticketDispatch({type: types.updateIdUsuarioValue, payload: idUsuario});
                 setCorreoUser(correo);
                 setTelefonoUser(telefono);
@@ -102,7 +101,7 @@ export const CardInfoCliente = () => {
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title">Información del Cliente</h5>
-                    <p className="card-text">Complete para continuar con la compra</p>
+                    {/* <p className="card-text">Complete para continuar con la compra</p> */}
 
                     <div className="row">
                         <div className='col-lg-6'>
