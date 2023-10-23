@@ -9,12 +9,12 @@ export const environment = {
     PasswordBasicAuth: 'a13997423b6df6a7131981d215f1d3bb',
 
     //Login https://localhost:44383
-    UrlApiToken: "http://localhost:8086/api/Token",
-    UrlResetPassword: "http://localhost:8086/api/Autentication/ResetPassword",
-    UrlRequestChangePassword: "http://localhost:8086/api/Autentication/RequestChangePassword",
-    // UrlApiToken: "https://localhost:44383/api/Token",
-    // UrlResetPassword: "https://localhost:44383/api/Autentication/ResetPassword",
-    // UrlRequestChangePassword: "https://localhost:44383/api/Autentication/RequestChangePassword",
+    // UrlApiToken: "http://localhost:8086/api/Token",
+    // UrlResetPassword: "http://localhost:8086/api/Autentication/ResetPassword",
+    // UrlRequestChangePassword: "http://localhost:8086/api/Autentication/RequestChangePassword",
+    UrlApiToken: "https://localhost:44383/api/Token",
+    UrlResetPassword: "https://localhost:44383/api/Autentication/ResetPassword",
+    UrlRequestChangePassword: "https://localhost:44383/api/Autentication/RequestChangePassword",
 
     //IdentificationServerAPI
     UrlApiMenu: "http://localhost:8086/api/Menu",

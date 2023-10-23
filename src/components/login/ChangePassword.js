@@ -1,90 +1,117 @@
 import { useFormik } from 'formik';
-import './Form.css';
 import { MdPassword } from 'react-icons/md';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { environment } from '../../environment/environment.dev';
+
+import './Form.css';
+import * as Yup from 'yup';
+import axios from 'axios';
+import { Loader } from '../ui/loader/Loader';
+import Swal from 'sweetalert2';
+
+const UrlResetPassword = environment.UrlResetPassword;
+
+const validationSchema = Yup.object().shape({
+    newPassword: Yup.string().required('La Contraseña es requerida'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('newPassword'), null], 'Las contraseñas deben ser iguales').required('La Confirmación de Contraseña es requerida')
+});
+
 
 const init = {
     correo: localStorage.getItem('correo') || null
 }
 
+
 export const ChangePassword = () => {
     const [ dialogConfirmPassword, setDialogConfirmPassword ] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
-            oldPassword: '',
             newPassword: '',
             confirmPassword: ''
         },
-        validationSchema: '',
+        validationSchema: validationSchema,
         onSubmit: async (values) => {
             let objValues = {
                 correo: init.correo,
-                oldPassword: values.oldPassword,
-                newPassword: values.newPassword
+                newPassword: values.newPassword,
+                confirmPassword: values.confirmPassword
             }
-            setDialogConfirmPassword(true);
-            console.log(objValues)
+            setLoading(true);
+            
+            await axios.post(UrlResetPassword, objValues)
+            .then(res => {
+                console.log(res)
+                setDialogConfirmPassword(true);
+                setLoading(false);
+            })
+            .catch(err => {
+                setLoading(false);
+                Swal.fire('Ha ocurrido un error al cambiar la contraseña',`${err}}`,'error');
+            });
 
         }
     });
 
-    return (
+    return (    
         <div>
             <section id='section'>
                 <div className="login-box">
                     <form onSubmit={formik.handleSubmit}>
                     <h4>Restablece tu Contraseña</h4>
-                        <div className="input-box">
-                            <span className="icon">
-                                <MdPassword />
-                            </span>
-                            <input 
-                                type="password" 
-                                name='oldPassword' 
-                                placeholder='Contraseña Actual' 
-                                autoComplete="off" 
-                                onChange={formik.handleChange} 
-                                value={formik.values.oldPassword}
-                                required
-                            />
+                    {
+                        !dialogConfirmPassword && 
+                        <div>
+
+                            <div className="input-box">
+                                <span className="icon">
+                                    <MdPassword />
+                                </span>
+                                <input 
+                                    type="password" 
+                                    name='newPassword' 
+                                    placeholder='Contraseña Nueva' 
+                                    autoComplete="off" 
+                                    onChange={formik.handleChange} 
+                                    value={formik.values.newPassword}
+                                    required
+                                />
+                            </div>
+                                {formik.touched.newPassword && formik.errors.newPassword ? (
+                                        <p style={{color:'white'}}>{formik.errors.newPassword}</p>
+                                        ) : null}
+
+                            <div className="input-box">
+                                <span className="icon">
+                                    <MdPassword />
+                                </span>
+                                <input 
+                                    type="password" 
+                                    name='confirmPassword' 
+                                    placeholder='Repita su contraseña' 
+                                    autoComplete="off" 
+                                    onChange={formik.handleChange} 
+                                    value={formik.values.confirmPassword}
+                                    required
+                                />
+                            </div>
+                                {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+                                        <p style={{color:'white'}}>{formik.errors.confirmPassword}</p>
+                                        ) : null}
+
+
+                                {
+                                    loading ? <Loader/> : <button type='submit' className='button-login'>
+                                        Restablecer Contraseña
+                                    </button>
+                                }
+
+                            
                         </div>
-
-                        <div className="input-box">
-                            <span className="icon">
-                                <MdPassword />
-                            </span>
-                            <input 
-                                type="password" 
-                                name='newPassword' 
-                                placeholder='Contraseña Nueva' 
-                                autoComplete="off" 
-                                onChange={formik.handleChange} 
-                                value={formik.values.newPassword}
-                                required
-                            />
-                        </div>
-
-                        <div className="input-box">
-                            <span className="icon">
-                                <MdPassword />
-                            </span>
-                            <input 
-                                type="password" 
-                                name='confirmPassword' 
-                                placeholder='Repita su contraseña' 
-                                autoComplete="off" 
-                                onChange={formik.handleChange} 
-                                value={formik.values.confirmPassword}
-                                required
-                            />
-                        </div>
-
-                        <button type='submit' className='button-login'>
-                            Restablecer Contraseña
-                        </button>
-
+                    }
+                        
 
                         { dialogConfirmPassword && (
                             <div className="input-box">
