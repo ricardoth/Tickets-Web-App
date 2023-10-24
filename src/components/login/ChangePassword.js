@@ -107,7 +107,6 @@ export const ChangePassword = () => {
                                         Restablecer Contraseña
                                     </button>
                                 }
-
                             
                         </div>
                     }

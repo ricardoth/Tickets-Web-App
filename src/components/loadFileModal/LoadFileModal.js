@@ -4,6 +4,9 @@ import { Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import * as XLSX from "xlsx";
 import { AuthContext } from '../../auth/authContext';
+import { environment } from '../../environment/environment.dev';
+
+const UrlLoadProcessClientFile = environment.UrlLoadProcessClientFile;
 
 export const LoadFileModal = ({show, close}) => {
     const { user } = useContext(AuthContext);
@@ -62,7 +65,7 @@ export const LoadFileModal = ({show, close}) => {
         if(excelFields.length === 0)
             return false;
 
-        const result = await axios.post('https://localhost:44383/api/ProcesoCarga',JSON.stringify(excel), {
+        const result = await axios.post(UrlLoadProcessClientFile, JSON.stringify(excel), {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',

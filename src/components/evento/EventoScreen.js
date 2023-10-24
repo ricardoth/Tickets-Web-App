@@ -10,18 +10,18 @@ export const EventoScreen = () => {
     }
 
     return (
-        <div className='row mt-5'>
-        <div className='d-flex justify-content-between'>
-          <h1>Evento Screen</h1>
-          <div className="p-2">
-            <button className='btn btn-success' onClick={handleAdd}>Nuevo</button>
+      <div className='row mt-5'>
+          <div className='d-flex justify-content-between'>
+            <h1>Evento Screen</h1>
+            <div className="p-2">
+              <button className='btn btn-success' onClick={handleAdd}>Nuevo</button>
+            </div>
           </div>
-        </div>
 
         <hr/>
          <EventoTable changeAddForm={showAddModal}/>
 
         <EventoAddModal show={showAddModal} close={() => setShowAddModal(false)} />
-    </div>
+      </div>
     )
 }

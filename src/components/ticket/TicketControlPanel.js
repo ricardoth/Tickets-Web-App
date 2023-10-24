@@ -42,9 +42,9 @@ export const TicketControlPanel = () => {
         .catch( err => {
             Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
 
-            setTimeout(() => {
-                dispatch({ type: types.logout });
-            }, 1000)
+            // setTimeout(() => {
+            //     dispatch({ type: types.logout });
+            // }, 1000)
         });
     }
 
@@ -179,7 +179,7 @@ export const TicketControlPanel = () => {
             // ignoreRowClick: true,
             // allowOverflow: true,
             // button: true,
-          },
+        },
     ];
 
     return (

@@ -9,6 +9,7 @@ import { TicketControlPanel } from '../components/ticket/TicketControlPanel';
 import { ValidacionTicket } from '../components/validacionTickets/ValidacionTickets';
 import { EventoScreen } from '../components/evento/EventoScreen';
 import { SectorScreen } from '../components/sector/SectorScreen';
+import { UsuarioScreen } from '../components/usuario/UsuarioScreen';
 const LazyNavSidebar = lazy(() => import('../components/ui/nav/NavSidebar'));
 const LazyMenuScreen = lazy(() => import('../components/menu/MenuScreen'));
 
@@ -33,6 +34,7 @@ export const DashboardRoutes = () => {
             <Route path='validacionTickets' element={ <ValidacionTicket /> } />
             <Route path='evento' element={ <EventoScreen /> } />
             <Route path='sector' element={ <SectorScreen />} />
+            <Route path='usuario' element={ <UsuarioScreen />} />
             <Route path='/' element={ <DashboardScreen />} />
           </Routes>
         </div>

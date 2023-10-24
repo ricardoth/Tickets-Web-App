@@ -45,7 +45,7 @@ export const SectorScreen = () => {
 
 
             <SectorTable changeAddForm={showAddModal} idEvento={idEvento}/>
-            {/* { showAddModal} */}
+       
             <SectorAddModal show={showAddModal} close={() => setShowAddModal(false)} />
 
             <hr/>

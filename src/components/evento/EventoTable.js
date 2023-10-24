@@ -127,7 +127,7 @@ export const EventoTable = ({changeAddForm}) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-          },
+        },
     ];
 
     return (
