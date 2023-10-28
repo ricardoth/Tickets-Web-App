@@ -48,7 +48,8 @@ export const UsuarioTable = ({changeAddForm}) => {
 
     useEffect(() => {
         fetchUsuarios(page);
-    }, []);
+        setLoading(false);
+    }, [changeAddForm, showEditUser]);
     
 
     if ( meta === undefined || data === undefined) return <Loader />;
@@ -62,7 +63,29 @@ export const UsuarioTable = ({changeAddForm}) => {
     }
 
     const handleDelete = (paramIdUser) => {
-        console.log(paramIdUser)
+        Swal.fire({
+            title: 'Atención',
+            text: '¿Desea Desactivar el Usuario?',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then(async () => {
+            setLoading(true);
+            let response = await axios.delete(`${UrlGetUsuariosTicket}/${paramIdUser}`,{
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            });
+
+            if (response.status === 200) {
+                fetchUsuarios(1);
+            } else {
+                Swal.fire('Ha ocurrido un error', 'No se pudo eliminar el elemento', 'error');
+            }
+
+            setLoading(false);
+        });
     }
 
     const handleEdit = (paramUser) => {

@@ -4,13 +4,14 @@ import { Modal } from 'react-bootstrap';
 import { parserTipoUsuario } from '../../types/parsers';
 import { environment } from '../../environment/environment.dev';
 import { Combobox } from '../ui/combobox/Combobox';
-import * as Yup from 'yup';
 import {validarRutChileno } from '../../selectors/validarChileanRut';
 import { Switch } from '../ui/switch/Switch';
-import Swal from 'sweetalert2';
-import axios from 'axios';
 import { basicAuth } from '../../types/basicAuth';
 import { Buffer } from 'buffer';
+
+import * as Yup from 'yup';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 const UrlGetTiposUsuarios = environment.UrlGetTiposUsuarios;
 const UrlUsuario = environment.UrlGetUsuarios;
@@ -22,7 +23,12 @@ const validationSchema = Yup.object().shape({
         'Rut Válido', 
         'El Rut no es válido',
         value => validarRutChileno(value)),
-    nombre: Yup.string().required('El Nombre es requerido')
+    nombre: Yup.string().required('El Nombre es requerido'),
+    apellidoP: Yup.string().required('El Apellido Paterno es requerido'),
+    apellidoM: Yup.string().required('El Apellido Materno es requerido'),
+    direccion: Yup.string().required('La Dirección es requerido'),
+    correo: Yup.string().required('El Correo es requerido'),
+    telefono: Yup.string().required('El Teléfono es requerido'),
 });
 
 export const UsuarioAddModal = ({show, close}) => {
@@ -30,7 +36,7 @@ export const UsuarioAddModal = ({show, close}) => {
 
     useEffect(() => {
         formik.resetForm();
-    }, []);
+    }, [show]);
 
     const formik = useFormik({
         initialValues: {
@@ -63,7 +69,7 @@ export const UsuarioAddModal = ({show, close}) => {
                 telefono: values.telefono,
                 activo: values.activo
             }
-            
+
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Usuario?',
@@ -79,7 +85,6 @@ export const UsuarioAddModal = ({show, close}) => {
                             Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                         },
                     }).then(response => {
-                        console.log(response)
                         if(response.status === 200) {
                             setLoading(false);
                             formik.resetForm();
@@ -89,9 +94,8 @@ export const UsuarioAddModal = ({show, close}) => {
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
                     }).catch(err => {
-                        console.log(err)
+                        Swal.fire('Ha ocurrido un error', err, 'error');
                     });
-
                     
                 }
             });
