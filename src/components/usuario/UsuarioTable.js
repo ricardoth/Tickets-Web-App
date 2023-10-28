@@ -77,16 +77,23 @@ export const UsuarioTable = ({changeAddForm}) => {
             sortable: true
         },
         {
+            name: 'Tipo Usuario',
+            selector: row => row.tipoUsuario.nombreTipoUsuario,
+            sortable: true
+        },
+        {
             name: 'Rut',
             selector: row => row.rut + '-' + row.dv,
             sortable: true
         },
         {
             name: 'Nombre',
+            width: '180px',
             selector: row => row.nombres + " " + row.apellidoP,
         },
         {
             name: 'Correo',
+            width: '180px',
             selector: row => row.correo,
         },
         {
@@ -95,6 +102,7 @@ export const UsuarioTable = ({changeAddForm}) => {
         },
         {
             name: 'Dirección',
+            width: '180px',
             selector: row => row.direccion,
         },
         {

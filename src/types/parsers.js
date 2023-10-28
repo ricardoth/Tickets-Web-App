@@ -14,7 +14,11 @@ export const parserMedioPago = json =>
 json.map(({ nombreMedioPago, descripcion, idMedioPago }) => ({
     label: nombreMedioPago + " " + descripcion, value: idMedioPago }));
 
-
 export const parserLugar = json => 
 json.map(({ nombreLugar, idLugar }) => ({
     label: nombreLugar, value: idLugar }));
+
+export const parserTipoUsuario = json => 
+json.map(({ nombreTipoUsuario, idTipoUsuario }) => ({
+    label: nombreTipoUsuario, value: idTipoUsuario }));
+    

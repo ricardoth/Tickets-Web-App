@@ -41,6 +41,7 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
         })
 
         if (response.status === 200) {
+            console.log(response.data)
             let datos = response.data;
             setSectores(datos);
             setLoading(loading);
@@ -97,7 +98,7 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
         },
         {
             name: 'Evento',
-            selector: row => row.idEvento,
+            selector: row => row.evento.nombreEvento,
         },
         {
             name: 'Nombre',

@@ -85,7 +85,7 @@ export const EventoTable = ({changeAddForm}) => {
         },
         {
             name: 'Lugar',
-            selector: row => row.idLugar,
+            selector: row => row.lugar.nombreLugar,
         },
         {
             name: 'Nombre',
