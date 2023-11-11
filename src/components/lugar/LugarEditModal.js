@@ -14,7 +14,7 @@ import { Combobox } from "../ui/combobox/Combobox";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
-const UrlPostLugar = environment.UrlGetLugares;
+const UrlEditLugar = environment.UrlGetLugares; 
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
