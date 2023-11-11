@@ -60,7 +60,7 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             numeracion: lugarEdit.numeracion,
             activo: lugarEdit.activo
         },
-        // validationSchema: validationSchema,
+        validationSchema: validationSchema,
         onSubmit: async (values) => {
             
             const objLugar = {
