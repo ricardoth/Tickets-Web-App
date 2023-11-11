@@ -48,8 +48,10 @@ export const ChangePassword = () => {
                 setLoading(false);
             })
             .catch(err => {
+                const {response} = err;
+                const mensajesArray = response.data.map(x => x.errorMessage);
+                Swal.fire('Ha ocurrido un error al cambiar la contraseña', mensajesArray.toString(), 'error');
                 setLoading(false);
-                Swal.fire('Ha ocurrido un error al cambiar la contraseña',`${err}}`,'error');
             });
 
         }
@@ -112,13 +114,12 @@ export const ChangePassword = () => {
                     }
                         
 
-                        { dialogConfirmPassword && (
-                            <div className="input-box">
-                                <p>Tu Contraseña se ha cambiado exitosamente.</p>
-
-                                <Link to={'/login'} className='button-login'>Login</Link>
-                            </div>
-                        )}
+                    { dialogConfirmPassword && ( 
+                        <div className="input-box">
+                            <p>Tu Contraseña se ha cambiado exitosamente.</p>
+                            <button type='button' className='button-login'><Link to={'/login'}>Login</Link></button>
+                        </div>
+                    )} 
                     </form>
                 </div>
             </section>

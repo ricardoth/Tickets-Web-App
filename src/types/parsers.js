@@ -22,3 +22,11 @@ export const parserTipoUsuario = json =>
 json.map(({ nombreTipoUsuario, idTipoUsuario }) => ({
     label: nombreTipoUsuario, value: idTipoUsuario }));
     
+export const parserRegion = json => 
+json.map(({ nombreRegion, idRegion }) => ({
+    label: nombreRegion, value: idRegion }));
+
+export const parserComuna = json => 
+json.map(({ nombreComuna, idComuna }) => ({
+    label: nombreComuna, value: idComuna }));
+    

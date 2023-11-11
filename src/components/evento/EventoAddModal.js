@@ -73,7 +73,7 @@ export const EventoAddModal = ({show, close}) => {
                     }
                 }
             });
-      },
+        },
     });
 
     const onFileChange = ({target}) => {

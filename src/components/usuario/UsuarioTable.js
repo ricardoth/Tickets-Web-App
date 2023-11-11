@@ -49,7 +49,7 @@ export const UsuarioTable = ({changeAddForm}) => {
     useEffect(() => {
         fetchUsuarios(page);
         setLoading(false);
-    }, [changeAddForm, showEditUser]);
+    }, [changeAddForm, showEditUser, page]);
     
 
     if ( meta === undefined || data === undefined) return <Loader />;

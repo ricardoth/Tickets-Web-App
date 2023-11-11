@@ -93,7 +93,10 @@ export const UsuarioEditModal = ({show, close, userEdit}) => {
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
                     }).catch(err => {
-                        Swal.fire('Ha ocurrido un error', err, 'error');
+                        const {response} = err;
+                        const mensajesArray = response.data.map(x => x.errorMessage);
+                        Swal.fire('Ha ocurrido un error', mensajesArray.toString(), 'error');
+                        setLoading(false);
                     });
                     
                 }

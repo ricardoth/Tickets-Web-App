@@ -10,6 +10,7 @@ import { ValidacionTicket } from '../components/validacionTickets/ValidacionTick
 import { EventoScreen } from '../components/evento/EventoScreen';
 import { SectorScreen } from '../components/sector/SectorScreen';
 import { UsuarioScreen } from '../components/usuario/UsuarioScreen';
+import { LugarScreen } from '../components/lugar/LugarScreen';
 const LazyNavSidebar = lazy(() => import('../components/ui/nav/NavSidebar'));
 const LazyMenuScreen = lazy(() => import('../components/menu/MenuScreen'));
 
@@ -35,6 +36,7 @@ export const DashboardRoutes = () => {
             <Route path='evento' element={ <EventoScreen /> } />
             <Route path='sector' element={ <SectorScreen />} />
             <Route path='usuario' element={ <UsuarioScreen />} />
+            <Route path='lugar' element={ <LugarScreen /> } />
             <Route path='/' element={ <DashboardScreen />} />
           </Routes>
         </div>
