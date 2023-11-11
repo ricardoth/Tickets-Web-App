@@ -63,13 +63,13 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             
-            const objLugar = {
-                idComuna: values.idComuna,
-                nombreLugar: values.nombreLugar,
-                ubicacion: values.ubicacion,
-                numeracion: values.numeracion,
-                activo: values.activo
-            }
+            // const objLugar = {
+            //     idComuna: values.idComuna,
+            //     nombreLugar: values.nombreLugar,
+            //     ubicacion: values.ubicacion,
+            //     numeracion: values.numeracion,
+            //     activo: values.activo
+            // }
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Editar el Lugar?',
