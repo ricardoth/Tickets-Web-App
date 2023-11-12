@@ -9,15 +9,22 @@ import { environment } from "../../environment/environment.dev";
 import { basicAuth } from "../../types/basicAuth";
 import {Buffer} from 'buffer';
 import axios from "axios";
+import * as Yup from 'yup';
 import { parserRegion } from "../../types/parsers";
 import { Combobox } from "../ui/combobox/Combobox";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
-const UrlEditLugar = environment.UrlGetLugares; 
+const UrlPutLugar = environment.UrlGetLugares; 
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
+
+const validationSchema = Yup.object().shape({
+    nombreLugar: Yup.string().required('El Nombre es requerido'),
+    ubicacion: Yup.string().required('La Ubicación es requerido'),
+    numeracion: Yup.string().required('La Numeración es requerido'),
+});
 
 export const LugarEditModal = ({show, close, lugarEdit}) => {
     const [ comunas, setComunas] = useState([]);
@@ -27,7 +34,6 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
         fetchComunasByRegion(lugarEdit.comuna.idRegion);
         formik.setFieldValue('idComuna', lugarEdit.idComuna);
     }, [show, close]);
-
 
     const fetchComunasByRegion = async (paramRegion) => {
         try {
@@ -49,10 +55,10 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             Swal.fire('Ha ocurrido un error', response.data, 'error');
         }
     }
-    
 
     const formik = useFormik({
         initialValues: {
+            idLugar: lugarEdit.idLugar,
             idRegion: lugarEdit.comuna.idRegion,
             idComuna: lugarEdit.idComuna,
             nombreLugar: lugarEdit.nombreLugar,
@@ -60,10 +66,11 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             numeracion: lugarEdit.numeracion,
             activo: lugarEdit.activo
         },
-        // validationSchema: validationSchema,
+        validationSchema: validationSchema,
         onSubmit: async (values) => {
             
             const objLugar = {
+                idLugar: values.idLugar,
                 idComuna: values.idComuna,
                 nombreLugar: values.nombreLugar,
                 ubicacion: values.ubicacion,
@@ -79,21 +86,29 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                 cancelButtonText: 'Cancelar',
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    // setLoading(!loading);
-                    // let response = await axios.post(UrlPutLugar, objLugar, {
-                    //     headers: {
-                    //         Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                    //     },
-                    // });
+                    
+                    try {
+                        setLoading(!loading);
+                        let response = await axios.put(`${UrlPutLugar}?id=${values.idLugar}`, objLugar, {
+                            headers: {
+                                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                            },
+                        });
 
-                    // if(response.status === 200) {
-                    //     setLoading(false);
-                    //     formik.resetForm();
-                    //     close();
-                    // } else {
-                    //     setLoading(false);
-                    //     Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
-                    // }
+                        if(response.status === 200) {
+                            setLoading(false);
+                            formik.resetForm();
+                            close();
+                        } else {
+                            setLoading(false);
+                            Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
+                        }
+                    } catch (error) {
+                        setLoading(false);
+                        const {response} = error;
+                        Swal.fire('Ha ocurrido un error', response.data, 'error');
+                    }
+
                 }
             });
         } 
@@ -107,7 +122,6 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             setComunas([]);
         }
     }
-
 
     return (
         <Modal
