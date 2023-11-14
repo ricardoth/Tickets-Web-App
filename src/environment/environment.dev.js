@@ -28,25 +28,44 @@ export const environment = {
     UrlApiAutores: "https://localhost:7190/api/Autor",
 
     //Tickets Eventos
-    UrlGeneracionTicket: "https://localhost:7100/api/Ticket",
-    UrlGetTicketQR: "https://localhost:7100/api/Ticket/GetTicketQR",
-    UrlGetTicketVoucherPDF: "https://localhost:7100/api/Ticket/GetTicketVoucherPDF",
-    UrlGeneracionManyTickets: "https://localhost:7100/api/Ticket/GenerarTickets",
-    UrlGetUsuarios: "https://localhost:7100/api/Usuario",
-    UrlGetUsuariosFilter: "https://localhost:7100/api/Usuario/GetUsersFilter",
-    UrlGetUsuario: "https://localhost:7100/api/Usuario/",
-    UrlGetEventos: "https://localhost:7100/api/Evento",
-    UrlGetSectores: "https://localhost:7100/api/Sector",
-    UrlGetSectoresByEvento: "https://localhost:7100/api/Sector/GetSectoresByEvento/",
-    UrlGetMedioPagos: "https://localhost:7100/api/MedioPago",
-    UrlGetLugares: "https://localhost:7100/api/Lugar",
-    UrlGetTiposUsuarios: "https://localhost:7100/api/TipoUsuario",
-    UrlGetRegiones: "https://localhost:7100/api/Region",
-    UrlGetComunasByRegion: "https://localhost:7100/api/Comuna",
+    // UrlGeneracionTicket: "https://localhost:7100/api/Ticket",
+    // UrlGetTicketQR: "https://localhost:7100/api/Ticket/GetTicketQR",
+    // UrlGetTicketVoucherPDF: "https://localhost:7100/api/Ticket/GetTicketVoucherPDF",
+    // UrlGeneracionManyTickets: "https://localhost:7100/api/Ticket/GenerarTickets",
+    // UrlGetUsuarios: "https://localhost:7100/api/Usuario",
+    // UrlGetUsuariosFilter: "https://localhost:7100/api/Usuario/GetUsersFilter",
+    // UrlGetUsuario: "https://localhost:7100/api/Usuario/",
+    // UrlGetEventos: "https://localhost:7100/api/Evento",
+    // UrlGetSectores: "https://localhost:7100/api/Sector",
+    // UrlGetSectoresByEvento: "https://localhost:7100/api/Sector/GetSectoresByEvento/",
+    // UrlGetMedioPagos: "https://localhost:7100/api/MedioPago",
+    // UrlGetLugares: "https://localhost:7100/api/Lugar",
+    // UrlGetTiposUsuarios: "https://localhost:7100/api/TipoUsuario",
+    // UrlGetRegiones: "https://localhost:7100/api/Region",
+    // UrlGetComunasByRegion: "https://localhost:7100/api/Comuna",
+
+    // //Validar Ticket
+    // UrlValidarAccesoTicket: "https://localhost:7100/api/TicketScanner/ValidarAccesoTicket",
+    // UrlGetAccesosEventosTicket: "https://localhost:7100/api/TicketScanner",
+    // UrlSalidaAccesoEvento: "https://localhost:7100/api/TicketScanner/SalidaAccesoEvento"
+    UrlGeneracionTicket: "https://api-decimatio-dev.azurewebsites.net/api/Ticket",
+    UrlGetTicketQR: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GetTicketQR",
+    UrlGetTicketVoucherPDF: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GetTicketVoucherPDF",
+    UrlGeneracionManyTickets: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GenerarTickets",
+    UrlGetUsuarios: "https://api-decimatio-dev.azurewebsites.net/api/Usuario",
+    UrlGetUsuariosFilter: "https://api-decimatio-dev.azurewebsites.net/api/Usuario/GetUsersFilter",
+    UrlGetUsuario: "https://api-decimatio-dev.azurewebsites.net/api/Usuario/",
+    UrlGetEventos: "https://api-decimatio-dev.azurewebsites.net/api/Evento",
+    UrlGetSectores: "https://api-decimatio-dev.azurewebsites.net/api/Sector",
+    UrlGetSectoresByEvento: "https://api-decimatio-dev.azurewebsites.net/api/Sector/GetSectoresByEvento/",
+    UrlGetMedioPagos: "https://api-decimatio-dev.azurewebsites.net/api/MedioPago",
+    UrlGetLugares: "https://api-decimatio-dev.azurewebsites.net/api/Lugar",
+    UrlGetTiposUsuarios: "https://api-decimatio-dev.azurewebsites.net/api/TipoUsuario",
+    UrlGetRegiones: "https://api-decimatio-dev.azurewebsites.net/api/Region",
+    UrlGetComunasByRegion: "https://api-decimatio-dev.azurewebsites.net/api/Comuna",
 
     //Validar Ticket
-    UrlValidarAccesoTicket: "https://localhost:7100/api/TicketScanner/ValidarAccesoTicket",
-    UrlGetAccesosEventosTicket: "https://localhost:7100/api/TicketScanner",
-    UrlSalidaAccesoEvento: "https://localhost:7100/api/TicketScanner/SalidaAccesoEvento"
-
+    UrlValidarAccesoTicket: "https://api-decimatio-dev.azurewebsites.net/api/TicketScanner/ValidarAccesoTicket",
+    UrlGetAccesosEventosTicket: "https://api-decimatio-dev.azurewebsites.net/api/TicketScanner",
+    UrlSalidaAccesoEvento: "https://api-decimatio-dev.azurewebsites.net/api/TicketScanner/SalidaAccesoEvento"
 };
