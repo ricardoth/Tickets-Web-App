@@ -9,7 +9,6 @@ import { NavDropdown } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { environment } from '../../../environment/environment.dev';
 import { NavItemChild } from '../nav/NavItemChild';
-import { FaTicketAlt } from 'react-icons/fa';
 import { MdOutlineExitToApp } from "react-icons/md";
 
 const NavSidebar = () => {
@@ -57,9 +56,10 @@ const NavSidebar = () => {
 
     return ( 
         <>
-
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className='lg ps-3'>
-                <Navbar.Brand as={Link} to="dashboard" ><FaTicketAlt />  &nbsp; Ticketera</Navbar.Brand>
+                <Navbar.Brand as={Link} to="dashboard" >
+                    <img src='resonancePassBGWhite.png' width={70}/>
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="ml-auto">

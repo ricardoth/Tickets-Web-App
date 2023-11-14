@@ -91,7 +91,9 @@ export const LoginScreen = () => {
       <section id='section'>
         <div className="login-box">
             <form action="">
-                <h2>Ticketera <FaTicketAlt /></h2>
+                <center>
+                    <img src='resonancePassBGWhite.png' width={120}  />
+                </center>
                 <div className="input-box">
                     <span className="icon">
                         <FaUser />
