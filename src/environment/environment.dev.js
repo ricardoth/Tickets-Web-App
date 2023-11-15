@@ -9,20 +9,29 @@ export const environment = {
     PasswordBasicAuth: 'a13997423b6df6a7131981d215f1d3bb',
 
     //Login https://localhost:44383
-    UrlApiToken: "http://localhost:8086/api/Token",
-    UrlResetPassword: "http://localhost:8086/api/Autentication/ResetPassword",
-    UrlRequestChangePassword: "http://localhost:8086/api/Autentication/RequestChangePassword",
-    UrlLoadProcessClientFile: "http://localhost:8086/api/ProcesoCarga",
-    // UrlApiToken: "https://localhost:44383/api/Token",
-    // UrlResetPassword: "https://localhost:44383/api/Autentication/ResetPassword",
-    // UrlRequestChangePassword: "https://localhost:44383/api/Autentication/RequestChangePassword",
-    // UrlLoadProcessClientFile: "https://localhost:44383/api/ProcesoCarga",
+    // UrlApiToken: "http://localhost:8086/api/Token",
+    // UrlResetPassword: "http://localhost:8086/api/Autentication/ResetPassword",
+    // UrlRequestChangePassword: "http://localhost:8086/api/Autentication/RequestChangePassword",
+    // UrlLoadProcessClientFile: "http://localhost:8086/api/ProcesoCarga",
+  
+    // //IdentificationServerAPI
+    // UrlApiMenu: "http://localhost:8086/api/Menu",
+    // urlApiMenuUsuario: "http://localhost:8086/api/GetMenuUsuario",
+    // urlApiInfoUsuario: "http://localhost:8086/api/GetInfoUsuario/",
+    // UrlApiMenuPadre: "http://localhost:8086/api/GetMenuPadre",
 
+    UrlApiToken: "https://api-identification-sso.azurewebsites.net/api/Token",
+    UrlResetPassword: "https://api-identification-sso.azurewebsites.net/api/Autentication/ResetPassword",
+    UrlRequestChangePassword: "https://api-identification-sso.azurewebsites.net/api/Autentication/RequestChangePassword",
+    UrlLoadProcessClientFile: "https://api-identification-sso.azurewebsites.net/api/ProcesoCarga",
+  
     //IdentificationServerAPI
-    UrlApiMenu: "http://localhost:8086/api/Menu",
-    urlApiMenuUsuario: "http://localhost:8086/api/GetMenuUsuario",
-    urlApiInfoUsuario: "http://localhost:8086/api/GetInfoUsuario/",
-    UrlApiMenuPadre: "http://localhost:8086/api/GetMenuPadre",
+    UrlApiMenu: "https://api-identification-sso.azurewebsites.net/api/Menu",
+    urlApiMenuUsuario: "https://api-identification-sso.azurewebsites.net/api/GetMenuUsuario",
+    urlApiInfoUsuario: "https://api-identification-sso.azurewebsites.net/api/GetInfoUsuario/",
+    UrlApiMenuPadre: "https://api-identification-sso.azurewebsites.net/api/GetMenuPadre",
+
+
 
     //BibliotecaAPI
     UrlApiAutores: "https://localhost:7190/api/Autor",
