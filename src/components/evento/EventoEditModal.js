@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { FcAddImage } from 'react-icons/fc';
 import { Loader } from '../ui/loader/Loader';
+import { formatDateHourEventTicket } from '../../types/formatDate';
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlPutEvento = environment.UrlGetEventos;
@@ -28,12 +29,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const eventDate = new Date(eventoEdit.fecha);
-        const yearEvent = eventDate.getFullYear();
-        const monthEvent = (eventDate.getMonth() + 1).toString().padStart(2, '0');
-        const dayEvent = eventDate.getDate().toString().padStart(2, '0');
-        const dateString = `${yearEvent}-${monthEvent}-${dayEvent}`;
-        formik.setFieldValue('fecha', dateString);
+        formik.setFieldValue('fecha', formatDateHourEventTicket(eventoEdit.fecha));
         formik.setFieldValue('contenidoFlyer', eventoEdit.contenidoFlyer);
     }, [eventoEdit]);
     
@@ -62,21 +58,28 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
             }).then(async (result)=> {
                 if (result.isConfirmed) { 
                     setLoading(!loading);
-                    let response = await axios.put(`${UrlPutEvento}?id=${values.idEvento}`, values, {
-                        headers: {
-                            Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                    try {
+                        let response = await axios.put(`${UrlPutEvento}?id=${values.idEvento}`, values, {
+                            headers: {
+                                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                            }
+                        });
+    
+                        if(response.status === 200) {
+                            setLoading(false);
+                            formik.resetForm();
+                            close();
+                            Swal.fire('Información', 'Se ha actualizado el evento correctamente', 'success');
+                        } else { 
+                            setLoading(false);
+                            Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
-                    });
-
-                    if(response.status === 200) {
+                    } catch (error) {
                         setLoading(false);
-                        formik.resetForm();
-                        close();
-                        Swal.fire('Información', 'Se ha actualizado el evento correctamente', 'success');
-                    } else { 
-                        setLoading(false);
-                        Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
-                    }
+                        const {response} = error;
+                        Swal.fire('Ha ocurrido un error', response.data, 'error');
+                    } 
+                    
                 }
             })
 
@@ -99,7 +102,6 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
             }
         }
     }
-
   
     return (
         <>
@@ -167,7 +169,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                     <div className='col-lg-6'>
                                         <label>Fecha Evento</label>
                                         <input 
-                                            type="date" 
+                                            type="datetime-local" 
                                             placeholder="Fecha Evento" 
                                             className="form-control" 
                                             onChange={formik.handleChange} 

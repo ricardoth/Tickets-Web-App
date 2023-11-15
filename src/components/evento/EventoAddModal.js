@@ -57,19 +57,25 @@ export const EventoAddModal = ({show, close}) => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     setLoading(!loading);
-                    let response = await axios.post(UrlEvento, values, {
-                        headers: {
-                            Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                        },
-                    });
-
-                    if(response.status === 200) {
+                    try {
+                        let response = await axios.post(UrlEvento, values, {
+                            headers: {
+                                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                            },
+                        });
+    
+                        if(response.status === 200) {
+                            setLoading(false);
+                            formik.resetForm();
+                            close();
+                        } else {
+                            setLoading(false);
+                            Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
+                        }
+                    } catch (error) {
                         setLoading(false);
-                        formik.resetForm();
-                        close();
-                    } else {
-                        setLoading(false);
-                        Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
+                        const {response} = error;
+                        Swal.fire('Ha ocurrido un error', response.data, 'error');
                     }
                 }
             });
@@ -155,7 +161,7 @@ export const EventoAddModal = ({show, close}) => {
                             <div className='col-lg-6'>
                                 <label>Fecha Evento</label>
                                 <input 
-                                    type="date" 
+                                    type="datetime-local" 
                                     placeholder="Fecha Evento" 
                                     className="form-control" 
                                     onChange={formik.handleChange} 

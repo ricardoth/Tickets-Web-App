@@ -21,3 +21,18 @@ export const formatDateDayMonthYear = (paramDate) =>  {
     return fechaFormateada;
 
 }
+
+export const formatDateHourEventTicket = (paramDate) => {
+    const eventDate = new Date(paramDate);
+    const hourDate = paramDate.split('T');
+    const horaEvento = hourDate[1].split(':');
+    const horaUno = horaEvento[0];
+    const minutosEvento = horaEvento[1];
+    
+    const yearEvent = eventDate.getFullYear();
+    const monthEvent = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+    const dayEvent = eventDate.getDate().toString().padStart(2, '0');
+
+    const dateString = `${yearEvent}-${monthEvent}-${dayEvent}T${horaUno}:${minutosEvento}`;
+    return dateString;
+}
