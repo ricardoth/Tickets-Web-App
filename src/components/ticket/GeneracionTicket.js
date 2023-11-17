@@ -39,6 +39,10 @@ export const GeneracionTicket = () => {
     const { counter, increment, decrement } = useCounter(0);
 
     useEffect(() => {
+        ticketDispatch({type: types.resetFormValues});
+    }, []);
+
+    useEffect(() => {
         formik.setValues(ticketState.formValues); 
     }, [ticketState.formValues]);
 

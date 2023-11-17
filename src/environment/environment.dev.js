@@ -31,11 +31,6 @@ export const environment = {
     urlApiInfoUsuario: "https://api-identification-sso.azurewebsites.net/api/GetInfoUsuario/",
     UrlApiMenuPadre: "https://api-identification-sso.azurewebsites.net/api/GetMenuPadre",
 
-
-
-    //BibliotecaAPI
-    UrlApiAutores: "https://localhost:7190/api/Autor",
-
     //Tickets Eventos
     // UrlGeneracionTicket: "https://localhost:7100/api/Ticket",
     // UrlGetTicketQR: "https://localhost:7100/api/Ticket/GetTicketQR",
