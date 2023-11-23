@@ -12,7 +12,7 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement}) =
     
 
     const addTicketCounter = () => {
-        ticketDispatch({type: types.updateMontoPagoValue, payload: counter * sectorValue.precio})
+        ticketDispatch({type: types.updateMontoPagoValue, payload: counter * sectorValue.total})
         setIsDisabled(true);
     }
 
@@ -39,7 +39,7 @@ export const CardCountTicket = ({ sectorValue, counter, increment, decrement}) =
                     <div className="col-12 col-sm-7 col-md-8">
                         <div className="row justify-content-between">
                             <div className="col-auto col-sm-4"> {sectorValue.nombreSector} </div>
-                            <div className="col-auto col-sm-4 price">${sectorValue.precio} </div>
+                            <div className="col-auto col-sm-4 price">${sectorValue.total} </div>
                         </div>
                     </div>
 
