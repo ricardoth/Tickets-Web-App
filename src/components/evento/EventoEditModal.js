@@ -21,6 +21,7 @@ const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object().shape({
     nombreEvento: Yup.string().required('El Nombre es requerido'),
+    descripcion: Yup.string().required('La Descripción es requerida'),
     direccion: Yup.string().required('La Dirección es requerido'),
     fecha: Yup.string().required('La Fecha es obligatoria')
 });
@@ -38,10 +39,13 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
             idEvento: eventoEdit.idEvento,
             idLugar: eventoEdit.idLugar,
             nombreEvento: eventoEdit.nombreEvento,
+            descripcion: eventoEdit.descripcion,
             direccion: eventoEdit.direccion,
             fecha: '',
             flyer: eventoEdit.flyer,
             contenidoFlyer: '',
+            observacion: eventoEdit.observacion,
+            productoraResponsable: eventoEdit.productoraResponsable,
             activo: eventoEdit.activo
         },
         validationSchema: validationSchema,
@@ -118,7 +122,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                             <Modal.Body>
 
                                 <div className='row'>
-                                    <div className="col-lg-6">
+                                    <div className="col-lg-12">
                                         <label>Lugar</label>
                                         <Combobox
                                             id={"idLugar"}
@@ -129,6 +133,10 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                             tipoAuth={environment.BasicAuthType}
                                         />
                                     </div>
+                                    
+                                </div>
+                                <br/>
+                                <div className='row'>
                                     <div className='col-lg-6'>
                                         <label>Nombre</label>
                                         <input 
@@ -143,6 +151,23 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
 
                                         {formik.touched.nombreEvento && formik.errors.nombreEvento ? (
                                                 <div style={{color:'red'}}>{formik.errors.nombreEvento}</div>
+                                                ) : null}
+                                    </div>
+
+                                    <div className='col-lg-6'>
+                                        <label>Descripción</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Descripción" 
+                                            className="form-control" 
+                                            onChange={formik.handleChange} 
+                                            name="descripcion" 
+                                            value={formik.values.descripcion} 
+                                            autoComplete="off"
+                                        />
+
+                                        {formik.touched.descripcion && formik.errors.descripcion ? (
+                                                <div style={{color:'red'}}>{formik.errors.descripcion}</div>
                                                 ) : null}
                                     </div>
                                 </div>
@@ -181,6 +206,35 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                         {formik.touched.fecha && formik.errors.fecha ? (
                                                 <div style={{color:'red'}}>{formik.errors.fecha}</div>
                                                 ) : null}
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div className='row'>
+                                    <div className='col-lg-6'>
+                                        <label>Observación</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Observación" 
+                                            className="form-control" 
+                                            onChange={formik.handleChange} 
+                                            name="observacion" 
+                                            value={formik.values.observacion} 
+                                            autoComplete="off"
+                                        />
+                                    </div>
+
+                                    <div className='col-lg-6'>
+                                        <label>Productora Responsable</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Productora Responsable" 
+                                            className="form-control" 
+                                            onChange={formik.handleChange} 
+                                            name="productoraResponsable" 
+                                            value={formik.values.productoraResponsable} 
+                                            autoComplete="off"
+                                        />
                                     </div>
                                 </div>
                                 <br/>

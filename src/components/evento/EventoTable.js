@@ -92,6 +92,10 @@ export const EventoTable = ({changeAddForm}) => {
             selector: row => row.nombreEvento,
         },
         {
+            name: 'Descripción',
+            selector: row => row.descripcion,
+        },
+        {
             name: 'Dirección',
             selector: row => row.direccion,
         },
@@ -105,6 +109,14 @@ export const EventoTable = ({changeAddForm}) => {
                     }).format(new Date(row.fecha));
                 return formatFechaEvento;
             },
+        },
+        {
+            name: 'Observación',
+            selector: row => row.observacion,
+        },
+        {
+            name: 'Productora Responsable',
+            selector: row => row.productoraResponsable,
         },
         {
             name: 'Vigente',

@@ -111,7 +111,7 @@ export const ModalTicketControlPanel = ({isOpen, closeModal, ticketObj}) => {
                                             
                                             <div className="list-group">
                                                 <div className='list-group-item list-group-item-action'>
-                                                        <img src={`data:image/png;base64,${base64QRTicket}`}  style = {{width:"100%", height:"100%", }} />
+                                                    <img src={`data:image/png;base64,${base64QRTicket}`}  style = {{width:"100%", height:"100%", }} />
                                                 </div>
                                             </div>
                                         </div>

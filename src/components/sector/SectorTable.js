@@ -93,31 +93,43 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
     const columns = [
         {
             name: '#',
-            selector: row => row.idSector,
+            selector: row => row.idSector
         },
         {
             name: 'Evento',
-            selector: row => row.evento.nombreEvento,
+            selector: row => row.evento.nombreEvento
         },
         {
             name: 'Nombre',
-            selector: row => row.nombreSector,
+            selector: row => row.nombreSector
         },
         {
             name: 'Capacidad Total',
-            selector: row => row.capacidadTotal,
+            selector: row => row.capacidadTotal
         },
         {
             name: 'Capacidad Actual',
-            selector: row => row.capacidadActual,
+            selector: row => row.capacidadActual
         },
         {
             name: 'Capacidad Disponible',
-            selector: row => row.capacidadDisponible,
+            selector: row => row.capacidadDisponible
         },
         {
             name: 'Precio',
-            selector: row =>  `${row.precio} CLP`,
+            selector: row =>  `${row.precio}`
+        },
+        {
+            name: 'Cargo',
+            selector: row =>  `${row.cargo}`
+        },
+        {
+            name: 'Total',
+            selector: row =>  `${row.total}`
+        },
+        {
+            name: 'Color',
+            selector: row =>  <span className="badge" style={{backgroundColor: row.colorHexa}}>{row.colorHexa}</span>
         },
         {
             name: 'Vigente',

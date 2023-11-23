@@ -12,6 +12,7 @@ import { Switch } from "../ui/switch/Switch";
 import * as Yup from 'yup';
 import Swal from "sweetalert2";
 import { Loader } from "../ui/loader/Loader";
+import { FcAddImage } from "react-icons/fc";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
@@ -58,18 +59,20 @@ export const LugarAddModal = ({show, close}) => {
             nombreLugar: "",
             ubicacion: "",
             numeracion: "",
+            mapaReferencial: '',
             activo: true
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            
             const objLugar = {
                 idComuna: values.idComuna,
                 nombreLugar: values.nombreLugar,
                 ubicacion: values.ubicacion,
                 numeracion: values.numeracion,
+                mapaReferencial: values.mapaReferencial,
                 activo: values.activo
             }
+
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Lugar?',
@@ -109,6 +112,22 @@ export const LugarAddModal = ({show, close}) => {
             await fetchComunasByRegion(target.value);
         } else {
             setComunas([]);
+        }
+    }
+
+    const onFileChange = ({target}) => {
+        const file = target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            const fileName = file.name.split('.')[0];
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+                formik.setFieldValue('mapaReferencial', base64String);
+            }
+            reader.onerror = (error) => {
+                console.log('Error al convertir a Base64:', error);
+            }
         }
     }
 
@@ -153,7 +172,7 @@ export const LugarAddModal = ({show, close}) => {
                     <br/>
 
                     <div className="row">
-                        <div className="col-lg-6">
+                        <div className="col-lg-12">
                             <label>Nombre</label>
                             <Input 
                                 type="text"
@@ -168,6 +187,10 @@ export const LugarAddModal = ({show, close}) => {
                                     ) : null}
                         </div>     
 
+                        
+                    </div>
+                    <br />
+                    <div className="row">
                         <div className="col-lg-6">
                             <label>Ubicación</label>
                             <Input 
@@ -182,11 +205,8 @@ export const LugarAddModal = ({show, close}) => {
                             {formik.touched.ubicacion && formik.errors.ubicacion ? (
                                     <div style={{color:'red'}}>{formik.errors.ubicacion}</div>
                                     ) : null}
-                        </div>           
-                    </div>
-                    <br />
+                        </div>     
 
-                    <div className="row">
                         <div className="col-lg-6">
                             <label>Numeración</label>
                             <Input 
@@ -201,7 +221,24 @@ export const LugarAddModal = ({show, close}) => {
                                     <div style={{color:'red'}}>{formik.errors.numeracion}</div>
                                     ) : null}
                         </div>
+                    </div>
+                    <br/>
+                    <div className="row">
+                        <div className='col-lg-6'>
+                            <label>Mapa Referencial</label>
+                            <input 
+                                type='file'
+                                className='form-control'
+                                onChange={onFileChange}
+                                accept='image/*'
+                                autoComplete='off'
+                                name="mapaReferencial"
+                                defaultValue={formik.values.mapaReferencial}
+                            />
+                            <br/>
+                        </div>
 
+                        
                         <div className="col-lg-6">
                             <label>Vigencia</label>
                             <Switch
@@ -209,6 +246,19 @@ export const LugarAddModal = ({show, close}) => {
                                 isOn={formik.values.activo}
                                 onToggle={formik.handleChange}
                             />
+                        </div>
+
+                        <div className='row'>
+                            <div className='col-lg-6'>
+                                { 
+                                    formik.values.mapaReferencial == '' ? 
+                                        <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
+                                            <FcAddImage />
+                                        </div>
+                                        : 
+                                        <img src={`data:image/jpg;base64,${formik.values.mapaReferencial}`}  style = {{width:"80%", height:"80%"}} />     
+                                }
+                            </div>
                         </div>
                     </div>
                 </Modal.Body>

@@ -37,10 +37,15 @@ export const SectorEditModal = ({show, close, sectorEdit}) => {
             capacidadActual: sectorEdit.capacidadActual,
             capacidadDisponible: sectorEdit.capacidadDisponible,
             precio: sectorEdit.precio,
+            cargo: sectorEdit.cargo,
+            total: sectorEdit.total,
+            colorHexa: sectorEdit.colorHexa,
             activo: sectorEdit.activo
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
+            values.total = values.precio + values.cargo;
+
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Editar el Sector?',
@@ -51,20 +56,26 @@ export const SectorEditModal = ({show, close, sectorEdit}) => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     setLoading(!loading);
-                    let response = await axios.put(`${UrlSector}?id=${values.idSector}`, values, {
-                        headers: {
-                            Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                    try {
+                        let response = await axios.put(`${UrlSector}?id=${values.idSector}`, values, {
+                            headers: {
+                                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                            }
+                        });
+    
+                        if(response.status === 200) {
+                            setLoading(false);
+                            formik.resetForm();
+                            close();
+                            Swal.fire('Información', 'Se ha actualizado el evento correctamente', 'success');
+                        } else { 
+                            setLoading(false);
+                            Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
-                    });
-
-                    if(response.status === 200) {
+                    } catch (error) {
                         setLoading(false);
-                        formik.resetForm();
-                        close();
-                        Swal.fire('Información', 'Se ha actualizado el evento correctamente', 'success');
-                    } else { 
-                        setLoading(false);
-                        Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
+                        const {response} = error;
+                        Swal.fire('Ha ocurrido un error', response.data, 'error');
                     }
                 }
             });
@@ -171,7 +182,7 @@ export const SectorEditModal = ({show, close, sectorEdit}) => {
                             </div>
                             <br/>
                             <div className="row">
-                                <div className="col-lg-6">
+                                <div className="col-lg-4">
                                     <label>Precio</label>
                                     <input 
                                         type="number" 
@@ -185,6 +196,53 @@ export const SectorEditModal = ({show, close, sectorEdit}) => {
                                     {formik.touched.precio && formik.errors.precio ? (
                                             <div style={{color:'red'}}>{formik.errors.precio}</div>
                                             ) : null}
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label>Cargo</label>
+                                    <input 
+                                        type="number" 
+                                        placeholder="$" 
+                                        className="form-control" 
+                                        onChange={formik.handleChange} 
+                                        name="cargo" 
+                                        value={formik.values.cargo} 
+                                        autoComplete="off"
+                                    />
+                                    {formik.touched.cargo && formik.errors.cargo ? (
+                                            <div style={{color:'red'}}>{formik.errors.cargo}</div>
+                                            ) : null}
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label>Total</label>
+                                    <input 
+                                        type="number" 
+                                        placeholder="$" 
+                                        className="form-control" 
+                                        onChange={formik.handleChange} 
+                                        name="total" 
+                                        value={formik.values.precio + formik.values.cargo} 
+                                        autoComplete="off"
+                                        disabled
+                                    />
+                                
+                                </div>
+                            </div>
+                            <br/>
+
+                            <div className="row">
+                                <div className="col-lg-6">
+                                    <label>Color</label>
+                                    <input 
+                                        type="color" 
+                                        placeholder="Color" 
+                                        className="form-control" 
+                                        onChange={formik.handleChange} 
+                                        name="colorHexa" 
+                                        value={formik.values.colorHexa} 
+                                        autoComplete="off"
+                                    />
                                 </div>
 
                                 <div className="col-lg-6">

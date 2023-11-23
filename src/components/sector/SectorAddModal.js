@@ -27,7 +27,6 @@ export const SectorAddModal = ({show, close}) => {
     useEffect(() => {
         formik.resetForm();
     }, []);
-    
 
     const formik = useFormik({
         initialValues: {
@@ -37,10 +36,15 @@ export const SectorAddModal = ({show, close}) => {
             capacidadActual: 0,
             capacidadDisponible: 0,
             precio: 0,
+            cargo: 0,
+            total: 0,
+            colorHexa: '',
             activo: true
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
+            values.total = values.precio + values.cargo;
+
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Sector?',
@@ -51,20 +55,27 @@ export const SectorAddModal = ({show, close}) => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     setLoading(!loading);
-                    let response = await axios.post(UrlSector, values, {
-                        headers: {
-                            Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-                        },
-                    });
-
-                    if(response.status === 200) {
+                    try {
+                        let response = await axios.post(UrlSector, values, {
+                            headers: {
+                                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                            },
+                        });
+    
+                        if(response.status === 200) {
+                            setLoading(false);
+                            formik.resetForm();
+                            close();
+                        } else {
+                            setLoading(false);
+                            Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
+                        }
+                    } catch (error) {
                         setLoading(false);
-                        formik.resetForm();
-                        close();
-                    } else {
-                        setLoading(false);
-                        Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
+                        const {response} = error;
+                        Swal.fire('Ha ocurrido un error', response.data, 'error');
                     }
+                    
                 }
             });
         }
@@ -164,12 +175,10 @@ export const SectorAddModal = ({show, close}) => {
                                         <div style={{color:'red'}}>{formik.errors.capacidadDisponible}</div>
                                         ) : null}
                             </div>
-
-                        
                         </div>
                         <br/>
                         <div className="row">
-                            <div className="col-lg-6">
+                            <div className="col-lg-4">
                                 <label>Precio</label>
                                 <input 
                                     type="number" 
@@ -183,6 +192,53 @@ export const SectorAddModal = ({show, close}) => {
                                 {formik.touched.precio && formik.errors.precio ? (
                                         <div style={{color:'red'}}>{formik.errors.precio}</div>
                                         ) : null}
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label>Cargo</label>
+                                <input 
+                                    type="number" 
+                                    placeholder="$" 
+                                    className="form-control" 
+                                    onChange={formik.handleChange} 
+                                    name="cargo" 
+                                    value={formik.values.cargo} 
+                                    autoComplete="off"
+                                />
+                                {formik.touched.cargo && formik.errors.cargo ? (
+                                        <div style={{color:'red'}}>{formik.errors.cargo}</div>
+                                        ) : null}
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label>Total</label>
+                                <input 
+                                    type="number" 
+                                    placeholder="$" 
+                                    className="form-control" 
+                                    onChange={formik.handleChange} 
+                                    name="total" 
+                                    value={formik.values.precio + formik.values.cargo} 
+                                    autoComplete="off"
+                                    disabled
+                                />
+                             
+                            </div>
+                        </div>
+                        <br />
+                        <div className="row">
+                            <div className="col-lg-6">
+                                <label>Color</label>
+                                <input 
+                                    type="color" 
+                                    placeholder="Color" 
+                                    className="form-control" 
+                                    onChange={formik.handleChange} 
+                                    name="colorHexa" 
+                                    value={formik.values.colorHexa} 
+                                    autoComplete="off"
+                                />
+                                
                             </div>
 
                             <div className="col-lg-6">

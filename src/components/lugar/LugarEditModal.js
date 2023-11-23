@@ -12,6 +12,7 @@ import axios from "axios";
 import * as Yup from 'yup';
 import { parserRegion } from "../../types/parsers";
 import { Combobox } from "../ui/combobox/Combobox";
+import { FcAddImage } from "react-icons/fc";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
@@ -33,6 +34,7 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
     useEffect(() => {
         fetchComunasByRegion(lugarEdit.comuna.idRegion);
         formik.setFieldValue('idComuna', lugarEdit.idComuna);
+        formik.setFieldValue('mapaReferencial', lugarEdit.mapaReferencial);
     }, [show, close]);
 
     const fetchComunasByRegion = async (paramRegion) => {
@@ -64,19 +66,21 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             nombreLugar: lugarEdit.nombreLugar,
             ubicacion: lugarEdit.ubicacion,
             numeracion: lugarEdit.numeracion,
+            mapaReferencial: '',
             activo: lugarEdit.activo
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            
             const objLugar = {
                 idLugar: values.idLugar,
                 idComuna: values.idComuna,
                 nombreLugar: values.nombreLugar,
                 ubicacion: values.ubicacion,
                 numeracion: values.numeracion,
+                mapaReferencial: values.mapaReferencial,
                 activo: values.activo
             }
+
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Editar el Lugar?',
@@ -123,6 +127,22 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
         }
     }
 
+    const onFileChange = ({target}) => {
+        const file = target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+                formik.setFieldValue('mapaReferencial', base64String);
+            }
+            reader.onerror = (error) => {
+                console.log('Error al convertir a Base64:', error);
+            }
+        }
+    }
+
+
     return (
         <Modal
             show={show}
@@ -164,7 +184,7 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                     <br/>
 
                     <div className="row">
-                        <div className="col-lg-6">
+                        <div className="col-lg-12">
                             <label>Nombre</label>
                             <Input 
                                 type="text"
@@ -179,6 +199,10 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                                     ) : null}
                         </div>     
 
+                             
+                    </div>
+                    <br />
+                    <div className="row">
                         <div className="col-lg-6">
                             <label>Ubicación</label>
                             <Input 
@@ -193,11 +217,8 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                             {formik.touched.ubicacion && formik.errors.ubicacion ? (
                                     <div style={{color:'red'}}>{formik.errors.ubicacion}</div>
                                     ) : null}
-                        </div>           
-                    </div>
-                    <br />
+                        </div>    
 
-                    <div className="row">
                         <div className="col-lg-6">
                             <label>Numeración</label>
                             <Input 
@@ -211,6 +232,22 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                             {formik.touched.numeracion && formik.errors.numeracion ? (
                                     <div style={{color:'red'}}>{formik.errors.numeracion}</div>
                                     ) : null}
+                        </div>  
+                    </div>
+                    <br/>
+                    <div className="row">
+                        <div className='col-lg-6'>
+                            <label>Mapa Referencial</label>
+                            <input 
+                                type='file'
+                                className='form-control'
+                                onChange={onFileChange}
+                                accept='image/*'
+                                autoComplete='off'
+                                name="mapaReferencial"
+                                defaultValue={formik.values.mapaReferencial}
+                            />
+                            <br/>
                         </div>
 
                         <div className="col-lg-6">
@@ -220,6 +257,19 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                                 isOn={formik.values.activo}
                                 onToggle={formik.handleChange}
                             />
+                        </div>
+
+                        <div className='row'>
+                            <div className='col-lg-6'>
+                                { 
+                                    formik.values.mapaReferencial == '' ? 
+                                        <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
+                                            <FcAddImage />
+                                        </div>
+                                        : 
+                                        <img src={`data:image/jpg;base64,${formik.values.mapaReferencial}`}  style = {{width:"80%", height:"80%"}} />     
+                                }
+                            </div>
                         </div>
                     </div>
                 </Modal.Body>

@@ -12,6 +12,7 @@ import { AuthContext } from "../../auth/authContext";
 import { Loader } from "../ui/loader/Loader";
 import { ExpandedRowLugar } from "./ExpandedRowLugar";
 import { LugarEditModal } from "./LugarEditModal";
+import { ReferencialMapModal } from "./ReferencialMapModal";
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlDeleteLugar = environment.UrlGetLugares;
@@ -25,7 +26,11 @@ export const LugarTable = ({changeAddForm}) => {
     const [ lugares, setLugares ] = useState([]);
     const [ showEditLugar, setShowEditLugar ] = useState(false);
     const [ lugarEdit, setLugarEdit ] = useState({});
+
+    const [ showReferencialMapModal, setShowReferencialMapModal ] = useState(false);
+    const [ referencialMap, setReferencialMap ] = useState("");
     const { data, meta } = lugares;
+
 
     const fetchLugares = async () => {
         setLoading(true);
@@ -89,6 +94,11 @@ export const LugarTable = ({changeAddForm}) => {
         setLugarEdit(paramLugar);
     }
 
+    const handleWatchReferencialMap = (paramLugar) => {
+        setReferencialMap(paramLugar.mapaReferencial);
+        setShowReferencialMapModal(true);
+    }
+
     const columns = [
         {
             name: '#',
@@ -102,6 +112,12 @@ export const LugarTable = ({changeAddForm}) => {
         {
             name: 'Ubicación',
             selector: row => row.ubicacion + ' ' + row.numeracion 
+        },
+        {
+            name: 'Mapa Referencial',
+            selector: row => (
+                <button className="btn btn-outline-success" onClick={() => handleWatchReferencialMap(row)}>Ver Mapa</button>
+            )
         },
         {
             name: 'Vigente',
@@ -149,6 +165,12 @@ export const LugarTable = ({changeAddForm}) => {
             {showEditLugar && (
                 <LugarEditModal show={showEditLugar} close={() => setShowEditLugar(false)} lugarEdit={lugarEdit} />
             ) }
+
+            {
+                showReferencialMapModal && (
+                    <ReferencialMapModal show={showReferencialMapModal} close={() => setShowReferencialMapModal(false)} referencialMap={referencialMap} />
+                )
+            }
         </>
     )
 }
