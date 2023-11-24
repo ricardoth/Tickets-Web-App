@@ -60,6 +60,7 @@ export const LugarAddModal = ({show, close}) => {
             ubicacion: "",
             numeracion: "",
             mapaReferencial: '',
+            nombreMapaReferencial: '',
             activo: true
         },
         validationSchema: validationSchema,
@@ -70,6 +71,7 @@ export const LugarAddModal = ({show, close}) => {
                 ubicacion: values.ubicacion,
                 numeracion: values.numeracion,
                 mapaReferencial: values.mapaReferencial,
+                nombreMapaReferencial: values.nombreMapaReferencial,
                 activo: values.activo
             }
 
@@ -124,6 +126,7 @@ export const LugarAddModal = ({show, close}) => {
             reader.onload = () => {
                 const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
                 formik.setFieldValue('mapaReferencial', base64String);
+                formik.setFieldValue('nombreMapaReferencial', fileName);
             }
             reader.onerror = (error) => {
                 console.log('Error al convertir a Base64:', error);
