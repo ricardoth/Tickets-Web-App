@@ -13,6 +13,7 @@ import * as Yup from 'yup';
 import Swal from "sweetalert2";
 import { Loader } from "../ui/loader/Loader";
 import { FcAddImage } from "react-icons/fc";
+import { ImageLoadAddEdit } from "../ui/imageLoad/ImageLoadAddEdit";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
@@ -259,7 +260,7 @@ export const LugarAddModal = ({show, close}) => {
                                             <FcAddImage />
                                         </div>
                                         : 
-                                        <img src={`data:image/jpg;base64,${formik.values.mapaReferencial}`}  style = {{width:"80%", height:"80%"}} />     
+                                        <ImageLoadAddEdit image={formik.values.mapaReferencial} />     
                                 }
                             </div>
                         </div>

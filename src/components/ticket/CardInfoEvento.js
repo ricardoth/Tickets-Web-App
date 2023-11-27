@@ -9,6 +9,7 @@ import { CardCountTicket } from './CardCountTicket';
 import { formatDateLocaleString } from '../../types/formatDate';
 import { TicketContext } from '../../context/ticketContext';
 import { types } from '../../types/types';
+import { ImageFlyer } from '../ui/imageLoad/ImageFlyer';
 
 const UrlGetEventos = environment.UrlGetEventos;
 const UrlGetSectores = environment.UrlGetSectores;
@@ -154,9 +155,7 @@ export const CardInfoEvento = ({counter, increment, decrement}) => {
                                     <div className='row'>
                                         <div className='col-lg-6'>
                                             <div className='card'>
-                                                <img hidden={isVisibleFlyer} src={`data:image/jpeg;base64, ${evento.flyer}`}  className='img-fluid img-thumbnail' alt="Imagen base64"  
-                                                    style = {{width:"100%", height:"100%",}} 
-                                                />
+                                                <ImageFlyer isVisible={isVisibleFlyer} image={evento.contenidoFlyer} classname={"img-fluid img-thumbnail"} style={{width:"100%", height:"100%",}} />
                                             </div>
                                         </div>
                                         <div className='col-lg-6'>

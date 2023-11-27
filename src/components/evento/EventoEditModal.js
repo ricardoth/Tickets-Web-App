@@ -13,6 +13,7 @@ import axios from 'axios';
 import { FcAddImage } from 'react-icons/fc';
 import { Loader } from '../ui/loader/Loader';
 import { formatDateHourEventTicket } from '../../types/formatDate';
+import { ImageLoadAddEdit } from '../ui/imageLoad/ImageLoadAddEdit';
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlPutEvento = environment.UrlGetEventos;
@@ -271,8 +272,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                                 <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
                                                     <FcAddImage />
                                                 </div>
-                                                : 
-                                                <img src={`data:image/jpg;base64,${formik.values.contenidoFlyer}`}  style = {{width:"80%", height:"80%"}} />     
+                                                : <ImageLoadAddEdit image={formik.values.contenidoFlyer} />     
                                         }
                                     </div>
                                 </div>

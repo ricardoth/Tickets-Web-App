@@ -12,7 +12,7 @@ export const ReferencialMapModal = ({show, close, referencialMap}) => {
             </Modal.Header>
 
             <Modal.Body>
-                <img src={`data:image/jpeg;base64,${referencialMap}`}  style = {{width:"100%", height:"100%", }} />
+                <img src={`${referencialMap}`}  style = {{width:"100%", height:"100%", }} />
             </Modal.Body>
 
             <Modal.Footer>

@@ -12,6 +12,7 @@ import { Buffer } from 'buffer';
 import { parserLugar } from '../../types/parsers';
 import { Loader } from '../ui/loader/Loader';
 import { FcAddImage } from "react-icons/fc";
+import { ImageLoadAddEdit } from '../ui/imageLoad/ImageLoadAddEdit';
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlEvento = environment.UrlGetEventos;
@@ -261,8 +262,7 @@ export const EventoAddModal = ({show, close}) => {
                                             <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
                                                 <FcAddImage />
                                             </div>
-                                            : 
-                                            <img src={`data:image/jpg;base64,${formik.values.contenidoFlyer}`}  style = {{width:"80%", height:"80%"}} />     
+                                            : <ImageLoadAddEdit image={formik.values.contenidoFlyer} />
                                     }
                                 </div>
                             </div>

@@ -13,6 +13,7 @@ import * as Yup from 'yup';
 import { parserRegion } from "../../types/parsers";
 import { Combobox } from "../ui/combobox/Combobox";
 import { FcAddImage } from "react-icons/fc";
+import { ImageLoadAddEdit } from "../ui/imageLoad/ImageLoadAddEdit";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
@@ -265,13 +266,12 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
 
                         <div className='row'>
                             <div className='col-lg-6'>
-                                { 
+                                {  
                                     formik.values.mapaReferencial == '' ? 
                                         <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
                                             <FcAddImage />
                                         </div>
-                                        : 
-                                        <img src={`data:image/jpg;base64,${formik.values.mapaReferencial}`}  style = {{width:"80%", height:"80%"}} />     
+                                        :  <ImageLoadAddEdit image={formik.values.mapaReferencial} />
                                 }
                             </div>
                         </div>
