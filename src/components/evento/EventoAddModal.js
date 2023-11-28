@@ -45,6 +45,8 @@ export const EventoAddModal = ({show, close}) => {
             contenidoFlyer: '',
             observacion: '',
             productoraResponsable: '',
+            banner: false,
+            contenidoBanner: '',
             activo: true
           
         },
@@ -231,6 +233,30 @@ export const EventoAddModal = ({show, close}) => {
                         </div>
                         <br/>
                         <div className='row'>
+                            <div className="col-lg-6">
+                                <label>Banner</label>
+                                <Switch
+                                    id="banner"
+                                    isOn={formik.values.banner}
+                                    onToggle={formik.handleChange}
+                                />
+                                
+                            </div>
+
+                            <div className="col-lg-6">
+                                <label>Vigencia</label>
+                                <Switch
+                                    id="activo"
+                                    isOn={formik.values.activo}
+                                    onToggle={formik.handleChange}
+                                />
+                                
+                            </div>
+
+                            
+                        </div>
+                        <br/>
+                        <div className='row'>
                             <div className='col-lg-6'>
                                 <label>Flyer</label>
                                 <input 
@@ -246,15 +272,20 @@ export const EventoAddModal = ({show, close}) => {
                               
                             </div>
 
-                            <div className="col-lg-6">
-                                <label>Vigencia</label>
-                                <Switch
-                                    id="activo"
-                                    isOn={formik.values.activo}
-                                    onToggle={formik.handleChange}
+                            <div className='col-lg-6'>
+                                <label>Contenido Banner</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Contenido Banner" 
+                                    className="form-control" 
+                                    onChange={formik.handleChange} 
+                                    name="contenidoBanner" 
+                                    value={formik.values.contenidoBanner} 
+                                    autoComplete="off"
                                 />
-                                
                             </div>
+
+                           
                             <div className='row'>
                                 <div className='col-lg-6'>
                                     { 

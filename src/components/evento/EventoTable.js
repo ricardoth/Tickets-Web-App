@@ -134,6 +134,13 @@ export const EventoTable = ({changeAddForm}) => {
             )
         },
         {
+            name: 'Banner',
+            width: '100px',
+            selector: row => (
+                row.banner === true ? <FaCheck /> : <FaTimes />
+            )
+        },
+        {
             name: "Acciones",
             width: '100px',
             cell: (row) => [

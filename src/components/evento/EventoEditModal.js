@@ -50,6 +50,8 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
             contenidoFlyer: '',
             observacion: eventoEdit.observacion,
             productoraResponsable: eventoEdit.productoraResponsable,
+            banner: eventoEdit.banner,
+            contenidoBanner: eventoEdit.contenidoBanner,
             activo: eventoEdit.activo
         },
         validationSchema: validationSchema,
@@ -243,6 +245,28 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                 </div>
                                 <br/>
                                 <div className='row'>
+                                    <div className="col-lg-6">
+                                        <label>Banner</label>
+                                        <Switch
+                                            id="banner"
+                                            isOn={formik.values.banner}
+                                            onToggle={formik.handleChange}
+                                        />
+                                        
+                                    </div>
+
+                                    <div className="col-lg-6">
+                                        <label>Vigencia</label>
+                                        <Switch
+                                            id="activo"
+                                            isOn={formik.values.activo}
+                                            onToggle={formik.handleChange}
+                                        />
+                                        
+                                    </div>
+                                </div>
+                                <br/>
+                                <div className='row'>
                                     <div className='col-lg-6'>
                                         <label>Flyer</label>
                                         <input 
@@ -257,14 +281,17 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                         <br/>
                                     </div>
 
-                                    <div className="col-lg-6">
-                                        <label>Vigencia</label>
-                                        <Switch
-                                            id="activo"
-                                            isOn={formik.values.activo}
-                                            onToggle={formik.handleChange}
+                                    <div className='col-lg-6'>
+                                        <label>Contenido Banner</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Contenido Banner" 
+                                            className="form-control" 
+                                            onChange={formik.handleChange} 
+                                            name="contenidoBanner" 
+                                            value={formik.values.contenidoBanner} 
+                                            autoComplete="off"
                                         />
-                                        
                                     </div>
 
                                 </div>
