@@ -14,6 +14,7 @@ import { parserRegion } from "../../types/parsers";
 import { Combobox } from "../ui/combobox/Combobox";
 import { FcAddImage } from "react-icons/fc";
 import { ImageLoadAddEdit } from "../ui/imageLoad/ImageLoadAddEdit";
+import { convertImageToBase64, formattedImageBase64 } from "../../selectors/imageToBase64";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
@@ -35,7 +36,11 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
     useEffect(() => {
         fetchComunasByRegion(lugarEdit.comuna.idRegion);
         formik.setFieldValue('idComuna', lugarEdit.idComuna);
-        formik.setFieldValue('mapaReferencial', lugarEdit.mapaReferencial);
+        convertImageToBase64(lugarEdit.mapaReferencial)
+            .then(base64String => {
+                formik.setFieldValue('mapaReferencial', formattedImageBase64(base64String));
+            })
+            .catch(error => console.error(error));
     }, [show, close]);
 
     const fetchComunasByRegion = async (paramRegion) => {

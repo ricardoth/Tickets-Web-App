@@ -82,25 +82,31 @@ export const EventoTable = ({changeAddForm}) => {
         {
             name: '#',
             selector: row => row.idEvento,
+            width: '100px',
         },
         {
             name: 'Lugar',
             selector: row => row.lugar.nombreLugar,
+            width: '200px',
         },
         {
             name: 'Nombre',
             selector: row => row.nombreEvento,
+            width: '300px',
         },
         {
             name: 'Descripción',
             selector: row => row.descripcion,
+            width: '300px',
         },
         {
             name: 'Dirección',
             selector: row => row.direccion,
+            width: '300px',
         },
         {
             name: 'Fecha Evento',
+            width: '200px',
             selector: row => {
                 let formatFechaEvento;
                     formatFechaEvento = new Intl.DateTimeFormat("es-ES", {
@@ -112,20 +118,24 @@ export const EventoTable = ({changeAddForm}) => {
         },
         {
             name: 'Observación',
+            width: '300px',
             selector: row => row.observacion,
         },
         {
             name: 'Productora Responsable',
+            width: '200px',
             selector: row => row.productoraResponsable,
         },
         {
             name: 'Vigente',
+            width: '100px',
             selector: row => (
                 row.activo === true ? <FaCheck /> : <FaTimes />
             )
         },
         {
             name: "Acciones",
+            width: '100px',
             cell: (row) => [
                 <div key={row.idEvento}>
                     <button className='btn btn-danger' onClick={ (e) => handleDelete(row.idEvento)}>

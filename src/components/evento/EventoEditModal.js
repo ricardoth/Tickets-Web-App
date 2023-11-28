@@ -14,6 +14,7 @@ import { FcAddImage } from 'react-icons/fc';
 import { Loader } from '../ui/loader/Loader';
 import { formatDateHourEventTicket } from '../../types/formatDate';
 import { ImageLoadAddEdit } from '../ui/imageLoad/ImageLoadAddEdit';
+import { convertImageToBase64, formattedImageBase64 } from '../../selectors/imageToBase64';
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlPutEvento = environment.UrlGetEventos;
@@ -32,7 +33,9 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
 
     useEffect(() => {
         formik.setFieldValue('fecha', formatDateHourEventTicket(eventoEdit.fecha));
-        formik.setFieldValue('contenidoFlyer', eventoEdit.contenidoFlyer);
+        convertImageToBase64(eventoEdit.contenidoFlyer)
+            .then(base64String => formik.setFieldValue('contenidoFlyer', formattedImageBase64(base64String)))
+            .catch(error => console.error(error));
     }, [eventoEdit]);
     
     const formik = useFormik({
@@ -80,11 +83,11 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
                     } catch (error) {
+                        console.log(error)
                         setLoading(false);
                         const {response} = error;
                         Swal.fire('Ha ocurrido un error', response.data, 'error');
                     } 
-                    
                 }
             })
 
