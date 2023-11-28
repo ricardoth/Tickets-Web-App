@@ -111,6 +111,7 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                             setLoading(false);
                             formik.resetForm();
                             close();
+                            Swal.fire('Información', 'Se ha actualizado el lugar correctamente', 'success');
                         } else {
                             setLoading(false);
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
