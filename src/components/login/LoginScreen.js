@@ -70,10 +70,16 @@ export const LoginScreen = () => {
           const { rut } = response.data.data;
           const basicInfoUser = {
             type: types.login,
-            payload: { user: userLogin, rut: rut, token: token} 
+            payload: { user: response.data.data, rut: rut, token: token} 
           }
           dispatch(basicInfoUser);
+          const loginInfo = {
+            logged: true,
+            user: response.data.data, rut: rut, token: token 
+          }
 
+          // dispatch(loginInfo);
+          localStorage.setItem('user', JSON.stringify(loginInfo));
           const lastPath = localStorage.getItem('lastPath') || '/dashboard';
           navigate(lastPath, {
             replace: true

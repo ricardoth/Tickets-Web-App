@@ -34,6 +34,7 @@ export const MenuTable = ({menus, setMenus, page, setPage}) => {
 
                 setTimeout(() => {
                     dispatch({ type: types.logout });
+                    localStorage.removeItem('user');
                 }, 1000)
           })
     }

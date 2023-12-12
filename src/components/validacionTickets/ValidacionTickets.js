@@ -59,6 +59,7 @@ export const ValidacionTicket = () => {
 
               setTimeout(() => {
                     dispatch({ type: types.logout });
+                    localStorage.removeItem('user');
               }, 1000)
         })
     }

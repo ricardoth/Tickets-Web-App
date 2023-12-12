@@ -6,8 +6,8 @@ import { AxiosInterceptor } from './interceptors/axiosInterceptor';
 import { TicketProvider } from './context/ticketContext';
 
 const init = () => {
-  // localStorage.setItem('user', JSON.stringify(user));
-  // console.log(localStorage);
+  //localStorage.setItem('user', JSON.stringify(user));
+  // localStorage.clear();
   return JSON.parse(localStorage.getItem('user')) || { logged: false };
   //return { logged: false };
 }
@@ -23,7 +23,6 @@ export const BibliotecaApp = () => {
     console.log(user)
     localStorage.setItem('user', JSON.stringify(user));
   }, [user])
-  
 
   return (
     <div>

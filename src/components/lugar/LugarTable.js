@@ -50,6 +50,7 @@ export const LugarTable = ({changeAddForm}) => {
             setLoading(false);
             setTimeout(() => {
                 dispatch({ type: types.logout });
+                localStorage.removeItem('user');
             }, 1000);
         });
     }

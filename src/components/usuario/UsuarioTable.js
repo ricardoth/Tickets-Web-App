@@ -40,6 +40,7 @@ export const UsuarioTable = ({changeAddForm}) => {
 
             setTimeout(() => {
                 dispatch({ type: types.logout });
+                localStorage.removeItem('user');
             }, 1000)
         });
 

@@ -50,6 +50,7 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
 
             setTimeout(() => {
                 dispatch({ type: types.logout });
+                localStorage.removeItem('user');
             }, 1000);
         }
     }

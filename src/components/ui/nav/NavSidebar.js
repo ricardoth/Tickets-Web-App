@@ -19,7 +19,7 @@ const NavSidebar = () => {
     const [ activeMenu, setActiveMenu ] = useState(null);
     
     useEffect(() => {
-      fetchData(endpoint, user.token )
+        fetchData(endpoint, user.token )
     }, [fetchData]);
 
     if (state.loading) {return }
@@ -32,6 +32,7 @@ const NavSidebar = () => {
 
     const handleLogout = () => {
         dispatch({ type: types.logout });
+        localStorage.removeItem('user');
 
         navigate("/login", {
             replace: true 
@@ -120,7 +121,7 @@ const NavSidebar = () => {
                     <Nav className="ms-auto">
                         <Nav.Item className="ms-auto">
                             <span className='nav-item nav-link text-info'>
-                                    {user.user}
+                                    {user.user.username}
                             </span>
                         </Nav.Item>
 
