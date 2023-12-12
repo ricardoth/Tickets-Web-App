@@ -10,25 +10,47 @@ import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { environment } from '../../../environment/environment.dev';
 import { NavItemChild } from '../nav/NavItemChild';
 import { MdOutlineExitToApp } from "react-icons/md";
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { Loader } from '../loader/Loader';
 
 const NavSidebar = () => {
     const { user, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
-    const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
-    const [ state, fetchData ] = useFetch(endpoint);
     const [ activeMenu, setActiveMenu ] = useState(null);
+    const [ menues, setMenues ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
+
+    const fetchMenuData = async () => {
+        const endpoint = environment.urlApiMenuUsuario + '/' + user.rut + '/' + environment.ID_APP;
+        try {
+            setLoading(true);
+            let response = await axios.get(endpoint, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
+            setMenues(response.data.data);
+            setLoading(false);
+        } catch (error) {
+            Swal.fire('Ha ocurrido un error', error, 'error');
+            dispatch({ type: types.logout });
+            localStorage.removeItem('user');
+            setLoading(false);
+        }
+    }
     
     useEffect(() => {
-        fetchData(endpoint, user.token )
-    }, [fetchData]);
+        fetchMenuData();
+    }, []);
 
-    if (state.loading) {return }
+    if (menues.length === 0 || loading) return <Loader />;
 
-    const { data } = state.source; 
-    
-    const padres = data.filter(x => x.padre === 0 && x.esPadre === true)
-    const hijos = data.filter(x => x.padre !== 0);
-    const nietos = data.filter(x => x.esPadre === false && x.tieneHijos === false);
+    const padres = menues.filter(x => x.padre === 0 && x.esPadre === true)
+    const hijos = menues.filter(x => x.padre !== 0);
+    const nietos = menues.filter(x => x.esPadre === false && x.tieneHijos === false);
 
     const handleLogout = () => {
         dispatch({ type: types.logout });

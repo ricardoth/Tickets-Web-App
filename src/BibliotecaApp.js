@@ -6,8 +6,7 @@ import { AxiosInterceptor } from './interceptors/axiosInterceptor';
 import { TicketProvider } from './context/ticketContext';
 
 const init = () => {
-  //localStorage.setItem('user', JSON.stringify(user));
-  // localStorage.clear();
+  //localStorage.clear();
   return JSON.parse(localStorage.getItem('user')) || { logged: false };
   //return { logged: false };
 }
