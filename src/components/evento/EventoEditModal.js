@@ -32,6 +32,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        console.log(eventoEdit)
         formik.setFieldValue('fecha', formatDateHourEventTicket(eventoEdit.fecha));
         convertImageToBase64(eventoEdit.contenidoFlyer)
             .then(base64String => formik.setFieldValue('contenidoFlyer', formattedImageBase64(base64String)))

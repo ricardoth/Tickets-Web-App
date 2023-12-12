@@ -34,6 +34,7 @@ export const EventoTable = ({changeAddForm}) => {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
         });
+
         if(response.status === 200) {
             setEventos(response.data);
             setLoading(loading);
