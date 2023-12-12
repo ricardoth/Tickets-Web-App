@@ -43,7 +43,6 @@ export const ChangePassword = () => {
             
             await axios.post(UrlResetPassword, objValues)
             .then(res => {
-                console.log(res)
                 setDialogConfirmPassword(true);
                 setLoading(false);
             })

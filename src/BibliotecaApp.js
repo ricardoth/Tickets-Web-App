@@ -20,7 +20,6 @@ export const BibliotecaApp = () => {
   useEffect(() => {
     if (!user) return;
     
-    console.log(user)
     localStorage.setItem('user', JSON.stringify(user));
   }, [user])
 
