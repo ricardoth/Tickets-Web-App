@@ -34,7 +34,8 @@ export const useFetch = ( url ) => {
                     source: null,
                     loading: false,
                     error: 'No se pudo cargar la info'
-                })
+                });
+                localStorage.removeItem('user');
             })
       },
       [url]);
