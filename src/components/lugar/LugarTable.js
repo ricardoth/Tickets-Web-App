@@ -45,8 +45,7 @@ export const LugarTable = ({changeAddForm}) => {
         })
         .catch(err => {
             const {response} = err;
-            const mensajesArray = response.data.map(x => x.errorMessage);
-            Swal.fire('Ha ocurrido un error', mensajesArray.toString(), 'error');
+            Swal.fire('Ha ocurrido un error', response.data.Message, 'error');
             setLoading(false);
             setTimeout(() => {
                 dispatch({ type: types.logout });
