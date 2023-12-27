@@ -219,9 +219,8 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                 <div className='row'>
                                     <div className='col-lg-6'>
                                         <label>Observación</label>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Observación" 
+                                        <textarea
+                                            placeholder='Observacion'
                                             className="form-control" 
                                             onChange={formik.handleChange} 
                                             name="observacion" 
