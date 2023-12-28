@@ -155,7 +155,6 @@ export const MedioPagoEditModal = ({show, close, medioPagoEdit}) => {
                             />
                             <br/>
                         </div>
-
                         
                         <div className="col-lg-6">
                             <label>Vigencia</label>
