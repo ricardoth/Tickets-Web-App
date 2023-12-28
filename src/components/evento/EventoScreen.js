@@ -19,7 +19,7 @@ export const EventoScreen = () => {
           </div>
 
         <hr/>
-         <EventoTable changeAddForm={showAddModal}/>
+        <EventoTable changeAddForm={showAddModal}/>
 
         <EventoAddModal show={showAddModal} close={() => setShowAddModal(false)} />
       </div>

@@ -121,7 +121,6 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                         const {response} = error;
                         Swal.fire('Ha ocurrido un error', response.data, 'error');
                     }
-
                 }
             });
         } 
@@ -152,7 +151,6 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             }
         }
     }
-
 
     return (
         <Modal
