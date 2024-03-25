@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { ModalTicket } from './ModalTicket';
 import { types } from '../../types/types';
 import { AuthContext } from '../../auth/authContext';
+import { FilterControlPanel } from './FilterControlPanel';
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
@@ -19,41 +20,54 @@ const URL_TICKET_VOUCHER_PDF = environment.UrlGetTicketVoucherPDF;
 
 export const TicketControlPanel = () => {
     const { dispatch } = useContext(AuthContext);
-    const [ tickets, setTickets ] = useState([]);
     const [ page, setPage ] = useState(1);
-    const [ loading, setLoading ] = useState(false);
     const [ isOpen, setIsOpen ] = useState(false);
     const [ isOpenVoucher, setIsOpenVoucher ] = useState(false);
     const [ ticket, setTicket ] = useState();
     const [ base64Voucher , setBase64Voucher ] = useState("");
-    const { data, meta } = tickets;
 
-    const fetchTickets = async (page, row = 10) => {
-        setLoading(!loading);
-        await axios.get(URL_TICKET + `?PageSize=${row}&PageNumber=${page}`, {
-            headers: {
-                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-            },
-        }).then(res => {
-            let datos = res.data;
-            setTickets(datos);
-            setLoading(false);
-        })
-        .catch( err => {
-            Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
+    const [ selectedEvento, setSelectedEvento ] = useState(0);
+    const [ selectedSector, setSelectedSector ] = useState(0);
 
-            setTimeout(() => {
-                dispatch({ type: types.logout });
-                localStorage.removeItem('user');
-            }, 1000)
-        });
+    const [ data, setData ] = useState([]);
+    const [ meta, setMeta ] = useState({});
+
+    const fetchTickets = async (page, row = 10, eventoParam, sectorParam) => {
+        let urlBase = URL_TICKET + `?PageSize=${row}&PageNumber=${page}`;
+
+        if (eventoParam != undefined) 
+            urlBase = urlBase + `&IdEvento=${eventoParam}`;
+
+        if (sectorParam != undefined)
+            urlBase = urlBase + `&IdSector=${sectorParam}`;
+
+        try {
+            let response = await axios.get(urlBase, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            });
+            const {data, meta} = response.data;
+            setData(data);
+            setMeta(meta);
+        } catch (error) {
+            setData([]);
+            setMeta({});
+        }
     }
 
     useEffect(() => {
-        fetchTickets(page);
+        fetchTickets(page, 10, selectedEvento, selectedSector);
     }, [page]);
 
-
+    useEffect(() => {
+        fetchTickets(page, 10, selectedEvento);
+    }, [selectedEvento]);
+    
+    useEffect(() => {
+        fetchTickets(page, 10, selectedEvento, selectedSector);
+    }, [selectedSector]);
+    
     if ( meta === undefined || data === undefined) return <Loader />;
 
     const handlePageChange = page => {
@@ -61,7 +75,7 @@ export const TicketControlPanel = () => {
     }
 
     const handleRowsChange = row => {
-        fetchTickets(1, row);
+        fetchTickets(1, row, selectedEvento, selectedSector);
     }
 
     const closeModal = () => {
@@ -148,10 +162,12 @@ export const TicketControlPanel = () => {
         {
             name: 'Usuario',
             selector: row => row.usuario.nombres + " " + row.usuario.apellidoP,
+            sortable: true
         },
         {
             name: 'Sector',
             selector: row => row.sector.nombreSector,
+            sortable: true
         },
         {
             name: 'Vigente',
@@ -192,6 +208,14 @@ export const TicketControlPanel = () => {
                 <h1>Gestión de Tickets</h1>
             </div>
             <hr/>
+
+            <FilterControlPanel 
+                selectedEvento={selectedEvento}
+                setSelectedEvento={setSelectedEvento}
+                selectedSector={selectedSector}
+                setSelectedSector={setSelectedSector}
+            />
+
                 <DataTable
                     title="Tickets"
                     className='animate__animated animate__fadeIn'

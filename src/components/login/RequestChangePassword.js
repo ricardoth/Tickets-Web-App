@@ -1,13 +1,11 @@
 import { useFormik } from 'formik';
 import { MdEmail } from 'react-icons/md';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { environment } from '../../environment/environment.dev';
 import './Form.css';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Loader } from '../ui/loader/Loader';
-import { types } from '../../types/types';
-
 const UrlRequestChangePassword = environment.UrlRequestChangePassword;
 const codigoApp = environment.ID_APP;
 
