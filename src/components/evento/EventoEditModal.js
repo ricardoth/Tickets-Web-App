@@ -119,6 +119,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                 <Modal
                     show={show}
                     onHide={close}
+                    size='lg'
                 >
                     <Modal.Header closeButton>
                         <Modal.Title>Editar Evento</Modal.Title>
