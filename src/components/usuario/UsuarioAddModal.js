@@ -19,10 +19,6 @@ const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
 const validationSchema = Yup.object().shape({
-    rutDv: Yup.string().test(
-        'Rut Válido', 
-        'El Rut no es válido',
-        value => validarRutChileno(value)),
     nombre: Yup.string().required('El Nombre es requerido'),
     apellidoP: Yup.string().required('El Apellido Paterno es requerido'),
     apellidoM: Yup.string().required('El Apellido Materno es requerido'),
@@ -33,6 +29,8 @@ const validationSchema = Yup.object().shape({
 
 export const UsuarioAddModal = ({show, close}) => {
     const [loading, setLoading] = useState(false);
+    const [usuarioExtranjero, setUsuarioExtranjero] = useState(false);
+    const [isVisibleRut, setIsVisibleRut] = useState(true);
 
     useEffect(() => {
         formik.resetForm();
@@ -48,14 +46,24 @@ export const UsuarioAddModal = ({show, close}) => {
             direccion: '',
             correo: '',
             telefono: '',
-            activo: true
+            activo: true,
+            esExtranjero: usuarioExtranjero
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            let rutSplit = values.rutDv.split('-');
-            let rut = rutSplit[0];
-            let dv = rutSplit[1];
-
+            let rut, dv;
+            if(usuarioExtranjero === false) {
+                if (!validarRutChileno(values.rutDv)) 
+                    Swal.fire("El Rut no es válido");
+                
+                let rutSplit = values.rutDv.split('-');
+                rut = rutSplit[0];
+                dv = rutSplit[1];
+            } else {
+                rut = null;
+                dv = null;
+            }
+           
             let userValues = {
                 idUsuario: 0,
                 idTipoUsuario: values.idTipoUsuario,
@@ -67,9 +75,9 @@ export const UsuarioAddModal = ({show, close}) => {
                 direccion: values.direccion,
                 correo: values.correo,
                 telefono: values.telefono,
-                activo: values.activo
+                activo: values.activo,
+                esExtranjero: usuarioExtranjero
             }
-
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Usuario?',
@@ -102,11 +110,17 @@ export const UsuarioAddModal = ({show, close}) => {
         } 
     });
 
+    const handleChangeEsExtranjero = () => {
+        setUsuarioExtranjero(!usuarioExtranjero);
+        setIsVisibleRut(!isVisibleRut);
+    }
+
     return (
         <>
             <Modal
                 show={show}
                 onHide={close}
+                size='lg'
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Agregar Usuario</Modal.Title>
@@ -114,6 +128,17 @@ export const UsuarioAddModal = ({show, close}) => {
 
                 <form className="container animate__animated animate__fadeIn" onSubmit={formik.handleSubmit}>
                     <Modal.Body>
+                        <div className='row'>
+                            <div className='col-lg-4'>
+                                <label>¿Es Extranjero?</label>
+                                <Switch
+                                    id="usuarioExtranjero"
+                                    isOn={usuarioExtranjero}
+                                    onToggle={handleChangeEsExtranjero}
+                                />
+                            </div>
+                        </div>
+                        <br/>
                         <div className="row">
                             <div className="col-lg-6">
                                 <label>TipoUsuario</label>
@@ -126,24 +151,29 @@ export const UsuarioAddModal = ({show, close}) => {
                                     tipoAuth={environment.BasicAuthType}
                                 />
                             </div>
-                            <div className='col-lg-6'>
-                                <label>Rut</label>
-                                <input 
-                                    type="text" 
-                                    placeholder="Rut" 
-                                    className="form-control" 
-                                    onChange={formik.handleChange} 
-                                    onBlur={formik.handleBlur}
-                                    name="rutDv" 
-                                    value={formik.values.rutDv} 
-                                    autoComplete="off"
-                                    maxLength={10}
-                                />
+                            {
+                                isVisibleRut && (
+                                    <div className='col-lg-6'>
+                                    <label>Rut</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Rut" 
+                                        className="form-control" 
+                                        onChange={formik.handleChange} 
+                                        onBlur={formik.handleBlur}
+                                        name="rutDv" 
+                                        value={formik.values.rutDv} 
+                                        autoComplete="off"
+                                        maxLength={10}
+                                    />
 
-                                {formik.touched.rutDv && formik.errors.rutDv ? (
-                                        <div style={{color:'red'}}>{formik.errors.rutDv}</div>
-                                        ) : null}
-                            </div>
+                                    {formik.touched.rutDv && formik.errors.rutDv ? (
+                                            <div style={{color:'red'}}>{formik.errors.rutDv}</div>
+                                            ) : null}
+                                </div>
+                                )
+                            }
+                            
                         </div>
                         <br/>
                         <div className="row">

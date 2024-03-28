@@ -23,7 +23,7 @@ const passBasicAuth = basicAuth.password;
 const validationSchema = Yup.object().shape({
     nombreEvento: Yup.string().required('El Nombre es requerido'),
     descripcion: Yup.string().required('La Descripción es requerida'),
-    direccion: Yup.string().required('La Dirección es requerido'),
+    //direccion: Yup.string().required('La Dirección es requerido'),
     fecha: Yup.string().required('La Fecha es obligatoria')
 });
 
@@ -39,7 +39,7 @@ export const EventoAddModal = ({show, close}) => {
             idLugar: 0,
             nombreEvento: '',
             descripcion: '',
-            direccion: '',
+            //direccion: '',
             fecha: '',
             flyer: '',
             contenidoFlyer: '',
@@ -109,7 +109,7 @@ export const EventoAddModal = ({show, close}) => {
     return (
         <>
           { loading ? <Loader /> :
-            <Modal show={show} onHide={close}>
+            <Modal show={show} onHide={close} size='lg'>
                 <Modal.Header closeButton>
                     <Modal.Title>Agregar Evento</Modal.Title>
                 </Modal.Header>
@@ -166,28 +166,9 @@ export const EventoAddModal = ({show, close}) => {
                                         ) : null}
                             </div>
                         </div>
-
                         <br/>
                         <div className='row'>
-                            <div className='col-lg-6'>
-                                <label>Dirección</label>
-                                <input 
-                                    type="text" 
-                                    placeholder="Dirección" 
-                                    className="form-control" 
-                                    onChange={formik.handleChange} 
-                                    name="direccion" 
-                                    value={formik.values.direccion} 
-                                    autoComplete="off"
-                                />
-
-                                {formik.touched.direccion && formik.errors.direccion ? (
-                                        <div style={{color:'red'}}>{formik.errors.direccion}</div>
-                                        ) : null}
-                            </div>  
-
-
-                            <div className='col-lg-6'>
+                            <div className='col-lg-4'>
                                 <label>Fecha Evento</label>
                                 <input 
                                     type="datetime-local" 
@@ -203,21 +184,8 @@ export const EventoAddModal = ({show, close}) => {
                                         <div style={{color:'red'}}>{formik.errors.fecha}</div>
                                         ) : null}
                             </div>
-                        </div>
-                        <br/>
-                        <div className='row'>
-                            <div className='col-lg-6'>
-                                <label>Observación</label>
-                                <textarea
-                                    placeholder='Observacion'
-                                    className="form-control" 
-                                    onChange={formik.handleChange} 
-                                    name="observacion" 
-                                    value={formik.values.observacion} 
-                                    autoComplete="off"
-                                />
-                            </div>
-                            <div className='col-lg-6'>
+
+                            <div className='col-lg-4'>
                                 <label>Productora Responsable</label>
                                 <input 
                                     type="text" 
@@ -229,6 +197,18 @@ export const EventoAddModal = ({show, close}) => {
                                     autoComplete="off"
                                 />
                             </div>
+                            <div className='col-lg-4'>
+                                <label>Observación</label>
+                                <textarea
+                                    placeholder='Observacion'
+                                    className="form-control" 
+                                    onChange={formik.handleChange} 
+                                    name="observacion" 
+                                    value={formik.values.observacion} 
+                                    autoComplete="off"
+                                />
+                            </div>
+                            
                         </div>
                         <br/>
                         <div className='row'>

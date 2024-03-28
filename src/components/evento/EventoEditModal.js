@@ -24,7 +24,7 @@ const passBasicAuth = basicAuth.password;
 const validationSchema = Yup.object().shape({
     nombreEvento: Yup.string().required('El Nombre es requerido'),
     descripcion: Yup.string().required('La Descripción es requerida'),
-    direccion: Yup.string().required('La Dirección es requerido'),
+    // direccion: Yup.string().required('La Dirección es requerido'),
     fecha: Yup.string().required('La Fecha es obligatoria')
 });
 
@@ -44,7 +44,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
             idLugar: eventoEdit.idLugar,
             nombreEvento: eventoEdit.nombreEvento,
             descripcion: eventoEdit.descripcion,
-            direccion: eventoEdit.direccion,
+            // direccion: eventoEdit.direccion,
             fecha: '',
             flyer: eventoEdit.flyer,
             contenidoFlyer: '',
@@ -179,25 +179,18 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                 </div>
                                 <br/>
                                 <div className='row'>
-                                    <div className='col-lg-6'>
-                                        <label>Dirección</label>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Dirección" 
+                                    <div className='col-lg-4'>
+                                        <label>Observación</label>
+                                        <textarea
+                                            placeholder='Observacion'
                                             className="form-control" 
                                             onChange={formik.handleChange} 
-                                            name="direccion" 
-                                            value={formik.values.direccion} 
+                                            name="observacion" 
+                                            value={formik.values.observacion} 
                                             autoComplete="off"
                                         />
-
-                                        {formik.touched.direccion && formik.errors.direccion ? (
-                                                <div style={{color:'red'}}>{formik.errors.direccion}</div>
-                                                ) : null}
-                                    </div>  
-
-
-                                    <div className='col-lg-6'>
+                                    </div>
+                                    <div className='col-lg-4'>
                                         <label>Fecha Evento</label>
                                         <input 
                                             type="datetime-local" 
@@ -213,23 +206,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                                                 <div style={{color:'red'}}>{formik.errors.fecha}</div>
                                                 ) : null}
                                     </div>
-                                </div>
-                                <br/>
-
-                                <div className='row'>
-                                    <div className='col-lg-6'>
-                                        <label>Observación</label>
-                                        <textarea
-                                            placeholder='Observacion'
-                                            className="form-control" 
-                                            onChange={formik.handleChange} 
-                                            name="observacion" 
-                                            value={formik.values.observacion} 
-                                            autoComplete="off"
-                                        />
-                                    </div>
-
-                                    <div className='col-lg-6'>
+                                    <div className='col-lg-4'>
                                         <label>Productora Responsable</label>
                                         <input 
                                             type="text" 

@@ -86,11 +86,7 @@ export const EventoTable = ({changeAddForm}) => {
             selector: row => row.idEvento,
             width: '100px',
         },
-        {
-            name: 'Lugar',
-            selector: row => row.lugar.nombreLugar,
-            width: '200px',
-        },
+        
         {
             name: 'Nombre',
             selector: row => row.nombreEvento,
@@ -102,8 +98,13 @@ export const EventoTable = ({changeAddForm}) => {
             width: '300px',
         },
         {
-            name: 'Dirección',
-            selector: row => row.direccion,
+            name: 'Lugar',
+            selector: row => row.lugar.nombreLugar,
+            width: '200px',
+        },
+        {
+            name: 'Dirección Lugar',
+            selector: row => row.lugar.ubicacion + ' ' + row.lugar.numeracion,
             width: '300px',
         },
         {

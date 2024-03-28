@@ -107,7 +107,13 @@ export const UsuarioTable = ({changeAddForm}) => {
         },
         {
             name: 'Rut',
-            selector: row => row.rut + '-' + row.dv,
+            selector: row => {
+                if (!row.esExtranjero) {
+                    return row.rut + '-' + row.dv;
+                } else {
+                    return '-';
+                }
+            },
             sortable: true
         },
         {
@@ -128,6 +134,15 @@ export const UsuarioTable = ({changeAddForm}) => {
             name: 'Dirección',
             width: '180px',
             selector: row => row.direccion,
+        },
+        {
+            name: 'Es Extranjero',
+            selector: row => ( 
+                row.esExtranjero === true ? 
+                <button className='btn btn-success'><FaCheck /></button> 
+                : 
+                <button className='btn btn-danger'><FaTimes /></button>  
+            )
         },
         {
             name: 'Vigente',
