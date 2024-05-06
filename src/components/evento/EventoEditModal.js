@@ -85,7 +85,6 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
                     } catch (error) {
-                        console.log(error)
                         setLoading(false);
                         const {response} = error;
                         Swal.fire('Ha ocurrido un error', response.data, 'error');

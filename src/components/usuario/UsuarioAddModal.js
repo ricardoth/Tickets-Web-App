@@ -102,7 +102,7 @@ export const UsuarioAddModal = ({show, close}) => {
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
                     }).catch(err => {
-                        Swal.fire('Ha ocurrido un error', err, 'error');
+                        Swal.fire('Ha ocurrido un error', err.response.data.Message, 'error');
                     });
                     
                 }
