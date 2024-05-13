@@ -26,10 +26,7 @@ const validationSchema = Yup.object().shape({
     //     value => validarRutChileno(value)),
     nombres: Yup.string().required('El Nombre es requerido'),
     apellidoP: Yup.string().required('El Apellido Paterno es requerido'),
-    apellidoM: Yup.string().required('El Apellido Materno es requerido'),
-    direccion: Yup.string().required('La Dirección es requerido'),
-    correo: Yup.string().required('El Correo es requerido'),
-    telefono: Yup.string().required('El Teléfono es requerido'),
+    correo: Yup.string().required('El Correo es requerido')
 });
 
 export const UsuarioEditModal = ({show, close, userEdit}) => {
