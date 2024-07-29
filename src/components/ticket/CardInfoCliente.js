@@ -87,9 +87,9 @@ export const CardInfoCliente = () => {
                 console.error("Ha ocurrido un error al realizar la Petición a API", err);
                 Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
 
-                setTimeout(() => {
-                    dispatch({ type: types.logout });
-                }, 1000)
+                // setTimeout(() => {
+                //     dispatch({ type: types.logout });
+                // }, 1000)
             });
         } else {
             console.log("Debe seleccionar un elemento");

@@ -37,7 +37,7 @@ export const environment = {
     // UrlGetTicketVoucherPDF: "https://localhost:7100/api/Ticket/GetTicketVoucherPDF",
     // UrlGeneracionManyTickets: "https://localhost:7100/api/Ticket/GenerarTickets",
     // UrlGetUsuarios: "https://localhost:7100/api/Usuario",
-    // UrlGetUsuariosFilter: "https://localhost:7100/api/Usuario/GetUsersFilter",
+    //UrlGetUsuariosFilter: "https://localhost:7100/api/Usuario/GetUsersFilter",
     // UrlGetUsuario: "https://localhost:7100/api/Usuario/",
     // UrlGetEventos: "https://localhost:7100/api/Evento",
     // UrlGetSectores: "https://localhost:7100/api/Sector",
@@ -52,13 +52,14 @@ export const environment = {
     // UrlValidarAccesoTicket: "https://localhost:7100/api/TicketScanner/ValidarAccesoTicket",
     // UrlGetAccesosEventosTicket: "https://localhost:7100/api/TicketScanner",
     // UrlSalidaAccesoEvento: "https://localhost:7100/api/TicketScanner/SalidaAccesoEvento"
+    
     UrlGeneracionTicket: "https://api-decimatio-dev.azurewebsites.net/api/Ticket",
     UrlGetTicketQR: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GetTicketQR",
     UrlGetTicketVoucherPDF: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GetTicketVoucherPDF",
     UrlGeneracionManyTickets: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GenerarTickets",
-    // UrlGetUsuarios: "https://api-decimatio-dev.azurewebsites.net/api/Usuario",
+    UrlGetUsuarios: "https://api-decimatio-dev.azurewebsites.net/api/Usuario",
     UrlGetUsuariosFilter: "https://api-decimatio-dev.azurewebsites.net/api/Usuario/GetUsersFilter",
-    // UrlGetUsuario: "https://api-decimatio-dev.azurewebsites.net/api/Usuario/",
+    UrlGetUsuario: "https://api-decimatio-dev.azurewebsites.net/api/Usuario/",
     UrlGetEventos: "https://api-decimatio-dev.azurewebsites.net/api/Evento",
     UrlGetEventosCombobox: "https://api-decimatio-dev.azurewebsites.net/api/Evento/GetEventosCombobox",
 
