@@ -5,7 +5,7 @@ import { parserEvento } from "../../types/parsers";
 import { environment } from "../../environment/environment.dev";
 import { SectorAddModal } from "./SectorAddModal";
 
-const UrlGetEventos = environment.UrlGetEventos;
+const UrlGetEventosCombobox = environment.UrlGetEventosCombobox;
 
 export const SectorScreen = () => {
     const [ showAddModal, setShowAddModal] = useState(false);
@@ -34,7 +34,7 @@ export const SectorScreen = () => {
                         id="idEvento"
                         value={idEvento}
                         setValue={handleChangeEvento}
-                        url={UrlGetEventos}
+                        url={UrlGetEventosCombobox}
                         parser={parserEvento}
                         tipoAuth={environment.BasicAuthType}
                     /> 

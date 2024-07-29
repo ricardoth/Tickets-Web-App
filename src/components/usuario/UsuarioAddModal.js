@@ -76,6 +76,8 @@ export const UsuarioAddModal = ({show, close}) => {
                 activo: values.activo,
                 esExtranjero: usuarioExtranjero
             }
+
+            console.log(userValues);
             Swal.fire({
                 title: 'Atención',
                 text: '¿Desea Agregar el Usuario?',
