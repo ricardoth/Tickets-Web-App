@@ -12,11 +12,14 @@ import { ModalTicket } from './ModalTicket';
 import { types } from '../../types/types';
 import { AuthContext } from '../../auth/authContext';
 import { FilterControlPanel } from './FilterControlPanel';
+import * as XLSX from 'xlsx';
+import { formatDateDayMonthYear } from '../../types/formatDate';
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 const URL_TICKET = environment.UrlGeneracionTicket;
 const URL_TICKET_VOUCHER_PDF = environment.UrlGetTicketVoucherPDF;
+const URL_TICKET_EXCEL = environment.UrlGetTicketsExcel;
 
 export const TicketControlPanel = () => {
     const { dispatch } = useContext(AuthContext);
@@ -31,6 +34,8 @@ export const TicketControlPanel = () => {
 
     const [ data, setData ] = useState([]);
     const [ meta, setMeta ] = useState({});
+
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const fetchTickets = async (page, row = 10, eventoParam, sectorParam) => {
         let urlBase = URL_TICKET + `?PageSize=${row}&PageNumber=${page}`;
@@ -148,6 +153,55 @@ export const TicketControlPanel = () => {
         });
     }
 
+    const generarReporte = async (eventoParam, sectorParam) => {
+        setIsLoading(true);
+        let urlBase = URL_TICKET_EXCEL;
+        if (eventoParam != undefined && eventoParam != 0) 
+            urlBase = urlBase + `?IdEvento=${eventoParam}`;
+
+        if (sectorParam != undefined && sectorParam  != 0)
+            urlBase = urlBase + `&IdSector=${sectorParam}`;
+
+        let response = await axios.get(urlBase, {
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+            }
+        });
+
+        if(response.status !== 200)
+            Swal.fire("Atención!", "Ha ocurrido un error al generar el reporte excel", "error");
+        
+        const {data} = response.data;
+        const extractedData = extractFieldsExcel(data);
+        const workSheet = XLSX.utils.json_to_sheet(extractedData);
+        const workBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workBook, workSheet, 'Reporte Tickets');
+        XLSX.writeFile(workBook, 'Reporte Excel Tickets Resonance Pass.xlsx');
+        setIsLoading(false);
+    } 
+
+    const extractFieldsExcel = (source) => {
+        return source.map(item => ({
+            "N° Ticket": item.idTicket,
+            "Cliente": item.usuario ?  `${item.usuario.nombres} ${item.usuario.apellidoP} ${item.usuario.apellidoM}` : '',
+            "RUT": item.usuario.rut != null ? `${item.usuario.rut}-${item.usuario.dv}` : 'Extranjero',
+            "Tipo Cliente": item.usuario.esExtranjero ? 'Extranjero': 'Chileno',
+            "Correo": item.usuario.correo,
+            "Evento": item.evento ? item.evento.nombreEvento : '',
+            "Sector": item.sector ? item.sector.nombreSector : '',
+            "Precio Entrada": item.sector.precio,
+            "Cargo": item.sector.cargo,
+            "Entrada + Cargo": item.sector.total,
+            "Fecha Ticket":  formatDateDayMonthYear(item.fechaTicket),
+            "Medio Pago": item.medioPago ? item.medioPago.nombreMedioPago : '',
+            " ": "----",
+            "Monto Total Cliente": item.montoTotal,
+
+
+
+        }))
+    }
+
     const columns = [
         {
             name: 'Folio',
@@ -202,38 +256,44 @@ export const TicketControlPanel = () => {
     ];
 
     return (
+        <>
+            {
+                isLoading ? <Loader /> : 
+                <div className='row mt-5'>
+                    <div className='d-flex justify-content-between'>
+                        <h1>Gestión de Tickets</h1>
+                        <div className="p-2">
+                            <button className='btn btn-success' onClick={() => generarReporte(selectedEvento, selectedSector)}>Generar Reporte  <i className="bi bi-filetype-xlsx"></i></button>
+                        </div>
+                    </div>
+                    <hr/>
 
-        <div className='row mt-5'>
-             <div className='d-flex justify-content-between'>
-                <h1>Gestión de Tickets</h1>
-            </div>
-            <hr/>
+                    <FilterControlPanel 
+                        selectedEvento={selectedEvento}
+                        setSelectedEvento={setSelectedEvento}
+                        selectedSector={selectedSector}
+                        setSelectedSector={setSelectedSector}
+                    />
 
-            <FilterControlPanel 
-                selectedEvento={selectedEvento}
-                setSelectedEvento={setSelectedEvento}
-                selectedSector={selectedSector}
-                setSelectedSector={setSelectedSector}
-            />
+                        <DataTable
+                            title="Tickets"
+                            className='animate__animated animate__fadeIn'
+                            columns={columns}
+                            data={data}
+                            pagination
+                            paginationServer
+                            paginationTotalRows={meta.totalCount}
+                            onChangePage={handlePageChange}
+                            onChangeRowsPerPage={handleRowsChange}
+                            responsive
+                            defaultSortAsc={true}
+                            noDataComponent={`No hay registros para mostrar`}
+                        />
 
-                <DataTable
-                    title="Tickets"
-                    className='animate__animated animate__fadeIn'
-                    columns={columns}
-                    data={data}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={meta.totalCount}
-                    onChangePage={handlePageChange}
-                    onChangeRowsPerPage={handleRowsChange}
-                    responsive
-                    defaultSortAsc={true}
-                    noDataComponent={`No hay registros para mostrar`}
-                />
-
-                <ModalTicketControlPanel isOpen={isOpen} closeModal={closeModal} ticketObj={ticket} />
-                <ModalTicket isOpen={isOpenVoucher} closeModal={closeModalVoucher} base64Pdf={base64Voucher}/>
-        </div>
-        
+                        <ModalTicketControlPanel isOpen={isOpen} closeModal={closeModal} ticketObj={ticket} />
+                        <ModalTicket isOpen={isOpenVoucher} closeModal={closeModalVoucher} base64Pdf={base64Voucher}/>
+                </div>
+            }
+        </>
     )
 }
