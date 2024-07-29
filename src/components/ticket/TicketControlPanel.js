@@ -178,6 +178,7 @@ export const TicketControlPanel = () => {
         XLSX.utils.book_append_sheet(workBook, workSheet, 'Reporte Tickets');
         XLSX.writeFile(workBook, 'Reporte Excel Tickets Resonance Pass.xlsx');
         setIsLoading(false);
+        fetchTickets(1);
     } 
 
     const extractFieldsExcel = (source) => {
