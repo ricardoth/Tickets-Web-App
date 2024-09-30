@@ -12,6 +12,7 @@ import { SectorScreen } from '../components/sector/SectorScreen';
 import { UsuarioScreen } from '../components/usuario/UsuarioScreen';
 import { LugarScreen } from '../components/lugar/LugarScreen';
 import { MedioPagoScreen } from '../components/medioPago/MedioPagoScreen';
+import { MercadoPagoTickets } from '../components/ticket/MercadoPagoTickets';
 const LazyNavSidebar = lazy(() => import('../components/ui/nav/NavSidebar'));
 const LazyMenuScreen = lazy(() => import('../components/menu/MenuScreen'));
 
@@ -39,6 +40,7 @@ export const DashboardRoutes = () => {
             <Route path='usuario' element={ <UsuarioScreen />} />
             <Route path='lugar' element={ <LugarScreen /> } />
             <Route path='medioPago' element={ <MedioPagoScreen /> } />
+            <Route path="ticketsMercadoPago" element={<MercadoPagoTickets />} />
             <Route path='/' element={ <DashboardScreen />} />
           </Routes>
         </div>

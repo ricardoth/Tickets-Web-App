@@ -76,5 +76,6 @@ export const environment = {
     UrlGetAccesosEventosTicket: "https://api-decimatio-dev.azurewebsites.net/api/TicketScanner",
     UrlSalidaAccesoEvento: "https://api-decimatio-dev.azurewebsites.net/api/TicketScanner/SalidaAccesoEvento",
 
-    UrlGetTicketsExcel: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GetTicketsExcel"
+    UrlGetTicketsExcel: "https://api-decimatio-dev.azurewebsites.net/api/Ticket/GetTicketsExcel",
+    UrlMercadoPago: "https://api-decimatio-dev.azurewebsites.net/api/MercadoPago"
 };
