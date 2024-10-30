@@ -85,6 +85,24 @@ export const MercadoPagoTickets = () => {
             width: "150px"
         },
         {
+            name: 'Merchant Order ID',
+            selector: row => row.merchantOrder?.id,
+            sortable: true,
+            width: "150px"
+        },
+        {
+            name: 'Merchant Status',
+            selector: row => row.merchantOrder?.status,
+            sortable: true,
+            width: "100px"
+        },
+        {
+            name: 'Order Status',
+            selector: row => row.merchantOrder?.orderStatus,
+            sortable: true,
+            width: "150px"
+        },
+        {
             name: 'Fecha Registro',
             selector: row => formatDateDayMonthYear(row.fechaTicket),
             sortable: true,
