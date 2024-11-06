@@ -40,10 +40,10 @@ export const TicketControlPanel = () => {
     const fetchTickets = async (page, row = 10, eventoParam, sectorParam) => {
         let urlBase = URL_TICKET + `?PageSize=${row}&PageNumber=${page}`;
 
-        if (eventoParam != undefined) 
+        if (eventoParam != undefined && eventoParam != 0) 
             urlBase = urlBase + `&IdEvento=${eventoParam}`;
 
-        if (sectorParam != undefined)
+        if (sectorParam != undefined && sectorParam != 0)
             urlBase = urlBase + `&IdSector=${sectorParam}`;
 
         try {
