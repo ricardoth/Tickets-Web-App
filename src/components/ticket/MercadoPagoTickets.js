@@ -8,7 +8,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 import { formatDateDayMonthYear } from '../../types/formatDate';
 import { Loader } from '../ui/loader/Loader';
 
-const URL_MERCADO_PAGO = environment.UrlMercadoPago;
+const URL_PREFERENCE_TICKETS = environment.UrlGetPreferenceTickets;
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
 
@@ -19,7 +19,7 @@ export const MercadoPagoTickets = () => {
     const fetchMercadoPagoTickets = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(URL_MERCADO_PAGO, {
+            const response = await axios.get(URL_PREFERENCE_TICKETS, {
                 headers: {
                     Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                 }
