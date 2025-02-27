@@ -7,6 +7,7 @@ export const environment = {
     //Basic Auth ApiDecimatio
     UserBasicAuth: 'UsrApiDecimatio',
     PasswordBasicAuth: 'a13997423b6df6a7131981d215f1d3bb',
+    URL_SITIO: "https://resonancepassbackoffice.netlify.app",
 
     //Login https://localhost:44383
     // UrlApiToken: "http://localhost:8086/api/Token",
@@ -22,7 +23,7 @@ export const environment = {
 
     UrlApiToken: "https://api-identification-sso.azurewebsites.net/api/Token",
     UrlResetPassword: "https://api-identification-sso.azurewebsites.net/api/Autentication/ResetPassword",
-    UrlRequestChangePassword: "https://api-identification-sso.azurewebsites.net/api/Autentication/RequestChangePassword",
+    UrlRequestChangePassword: "https://api-email-sender.azurewebsites.net/api/Email/resetPassword",
     UrlLoadProcessClientFile: "https://api-identification-sso.azurewebsites.net/api/ProcesoCarga",
   
     //IdentificationServerAPI

@@ -20,8 +20,9 @@ export const RequestChangePassword = () => {
         onSubmit: async (values) => {
             setLoading(true);
             let objValues = {
-                correo: values.correo,
-                idApp: codigoApp
+                to: values.correo,
+                subject: "Solicitud de Cambio de Contraseña",
+                urlRetorno: environment.URL_SITIO + "/changePassword"
             }
 
             await axios.post(UrlRequestChangePassword, 
