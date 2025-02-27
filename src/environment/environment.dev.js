@@ -23,7 +23,7 @@ export const environment = {
 
     UrlApiToken: "https://api-identification-sso.azurewebsites.net/api/Token",
     UrlResetPassword: "https://api-identification-sso.azurewebsites.net/api/Autentication/ResetPassword",
-    UrlRequestChangePassword: "https://api-email-sender.azurewebsites.net/api/Email/resetPassword",
+    UrlRequestChangePassword: "https://api-email-sender.azurewebsites.net/api/Email/requestResetPassword",
     UrlLoadProcessClientFile: "https://api-identification-sso.azurewebsites.net/api/ProcesoCarga",
   
     //IdentificationServerAPI
