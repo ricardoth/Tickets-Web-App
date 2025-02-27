@@ -3,6 +3,7 @@ services:
   webtickets:
     image: ticket-prod-i
     build:
+      context: .             
       dockerfile: Dockerfile.prod
     container_name: tickets-web-app-prod-c
     ports:

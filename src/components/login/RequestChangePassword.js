@@ -31,6 +31,7 @@ export const RequestChangePassword = () => {
                     const response = res.data;
                     //Setear context para pasar correo a la otra pantalla
                     localStorage.setItem('correo', values.correo);
+                    sessionStorage.setItem('correo', values.correo);
                     setDialogConfirmPassword(true);
                 } 
             })

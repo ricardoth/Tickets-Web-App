@@ -1,16 +1,38 @@
+# FROM node:alpine AS build 
+
+# WORKDIR /app
+
+# COPY package.json .
+
+# RUN npm i
+
+# COPY . .
+
+# RUN npm run build
+
+# #Step 2
+# FROM nginx 
+# COPY --from=build /app/build /usr/share/nginx/html
+
+# Paso 1: Construir la aplicación
 FROM node:alpine AS build 
 
 WORKDIR /app
 
-COPY package.json .
+# Copiar solo los archivos package.json y package-lock.json para usar el caché de npm
+COPY package*.json ./
 
-RUN npm i 
+# Instalar las dependencias
+RUN npm install
 
+# Copiar el resto del código fuente después de instalar las dependencias
 COPY . .
 
+# Construir la aplicación
 RUN npm run build
 
-#Step 2
-FROM nginx 
-COPY --from=build /app/build /usr/share/nginx/html
+# Paso 2: Servir la aplicación con Nginx
+FROM nginx
 
+# Copiar el directorio de construcción al directorio adecuado de Nginx
+COPY --from=build /app/build /usr/share/nginx/html

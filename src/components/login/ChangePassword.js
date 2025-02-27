@@ -17,15 +17,15 @@ const validationSchema = Yup.object().shape({
     confirmPassword: Yup.string().oneOf([Yup.ref('newPassword'), null], 'Las contraseñas deben ser iguales').required('La Confirmación de Contraseña es requerida')
 });
 
-
 const init = {
     correo: localStorage.getItem('correo') || null
 }
 
-
 export const ChangePassword = () => {
     const [ dialogConfirmPassword, setDialogConfirmPassword ] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    console.log(sessionStorage)
 
     const formik = useFormik({
         initialValues: {
@@ -37,7 +37,7 @@ export const ChangePassword = () => {
             let objValues = {
                 correo: init.correo,
                 newPassword: values.newPassword,
-                confirmPassword: values.confirmPassword
+                confirmPassword: values.confirmPassword,
             }
             setLoading(true);
             
