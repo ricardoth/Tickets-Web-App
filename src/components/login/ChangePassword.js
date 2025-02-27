@@ -3,12 +3,11 @@ import { MdPassword } from 'react-icons/md';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { environment } from '../../environment/environment.dev';
-
-import './Form.css';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { Loader } from '../ui/loader/Loader';
 import Swal from 'sweetalert2';
+import './Form.css';
 
 const UrlResetPassword = environment.UrlResetPassword;
 
