@@ -95,7 +95,7 @@ export const LugarTable = ({changeAddForm}) => {
     }
 
     const handleWatchReferencialMap = (paramLugar) => {
-        setReferencialMap(paramLugar.mapaReferencial);
+        setReferencialMap(paramLugar.urlImagenMapaReferencial);
         setShowReferencialMapModal(true);
     }
 
