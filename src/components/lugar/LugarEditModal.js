@@ -18,7 +18,7 @@ import { convertImageToBase64, formattedImageBase64 } from "../../selectors/imag
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
-const UrlPutLugar = environment.UrlGetLugares; 
+const UrlLugar = environment.UrlGetLugares; 
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
@@ -29,19 +29,53 @@ const validationSchema = Yup.object().shape({
     numeracion: Yup.string().required('La Numeración es requerido'),
 });
 
-export const LugarEditModal = ({show, close, lugarEdit}) => {
+export const LugarEditModal = ({show, close, idLugar}) => {
     const [ comunas, setComunas] = useState([]);
     const [ loading, setLoading ] = useState(false);
+    const [ lugar, setLugar ] = useState({});
+    const [ imagePreview, setImagePreview ] = useState('');
+    const [ referencialMap, setReferencialMap ] = useState('');
 
     useEffect(() => {
-        fetchComunasByRegion(lugarEdit.comuna.idRegion);
-        formik.setFieldValue('idComuna', lugarEdit.idComuna);
-        convertImageToBase64(lugarEdit.mapaReferencial)
-            .then(base64String => {
-                formik.setFieldValue('mapaReferencial', formattedImageBase64(base64String));
-            })
-            .catch(error => console.error(error));
-    }, [show, close]);
+        fetchLugarById(idLugar);
+    }, [idLugar, close]);
+
+    // useEffect(() => {
+    //     // fetchLugarById(lugarEdit.idLugar);
+
+    //     // fetchComunasByRegion(lugarEdit.comuna.idRegion);
+    //     // formik.setFieldValue('idComuna', lugarEdit.idComuna);
+    //     // convertImageToBase64(lugarEdit.mapaReferencial)
+    //     //     .then(base64String => {
+    //     //         console.log(base64String)
+    //     //         formik.setFieldValue('mapaReferencial', formattedImageBase64(base64String));
+    //     //     })
+    //     //     .catch(error => console.error(error));
+    // }, [show, close]);
+
+    const fetchLugarById = async (idLugar) => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`${UrlLugar}/${idLugar}`, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            });
+
+            if (response.status === 200) {
+                const { data } = response.data;
+                setLugar(data);
+
+                if( data.comuna && data.comuna.idRegion) {
+                    fetchComunasByRegion(data.comuna.idRegion);
+                }
+            }
+            setLoading(false);
+        } catch (error) {
+            const {response} = error;
+            Swal.fire('Ha ocurrido un error', response.data, 'error');
+        }
+    }
 
     const fetchComunasByRegion = async (paramRegion) => {
         try {
@@ -66,17 +100,19 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
 
     const formik = useFormik({
         initialValues: {
-            idLugar: lugarEdit.idLugar,
-            idRegion: lugarEdit.comuna.idRegion,
-            idComuna: lugarEdit.idComuna,
-            nombreLugar: lugarEdit.nombreLugar,
-            ubicacion: lugarEdit.ubicacion,
-            numeracion: lugarEdit.numeracion,
-            mapaReferencial: '',
-            nombreMapaReferencial: lugarEdit.nombreMapaReferencial,
-            activo: lugarEdit.activo
+            idLugar: idLugar,
+            idRegion:  lugar.comuna?.idRegion || 0,
+            idComuna: lugar.idComuna || 0,
+            nombreLugar: lugar.nombreLugar || '',
+            ubicacion: lugar.ubicacion || '',
+            numeracion: lugar.numeracion || '',
+            mapaReferencial: referencialMap || '',
+            urlImagenMapaReferencial: lugar.urlImagenMapaReferencial || '',
+            base64ImagenMapaReferencial: imagePreview || '',
+            activo: lugar.activo || false
         },
         validationSchema: validationSchema,
+        enableReinitialize: true,
         onSubmit: async (values) => {
             const objLugar = {
                 idLugar: values.idLugar,
@@ -85,7 +121,8 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                 ubicacion: values.ubicacion,
                 numeracion: values.numeracion,
                 mapaReferencial: values.mapaReferencial,
-                nombreMapaReferencial: values.nombreMapaReferencial,
+                urlImagenMapaReferencial: values.urlImagenMapaReferencial,
+                base64ImagenMapaReferencial: values.base64ImagenMapaReferencial,
                 activo: values.activo
             }
 
@@ -98,28 +135,30 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                 cancelButtonText: 'Cancelar',
             }).then(async (result) => {
                 if (result.isConfirmed) {
+                        console.log(objLugar);
                     
                     try {
-                        setLoading(!loading);
-                        let response = await axios.put(`${UrlPutLugar}?id=${values.idLugar}`, objLugar, {
+                        setLoading(true);
+                        let response = await axios.put(`${UrlLugar}?id=${values.idLugar}`, objLugar, {
                             headers: {
                                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                             },
                         });
 
+
                         if(response.status === 200) {
-                            setLoading(false);
                             formik.resetForm();
                             close();
                             Swal.fire('Información', 'Se ha actualizado el lugar correctamente', 'success');
                         } else {
-                            setLoading(false);
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');
                         }
+                        setLoading(false);
+
                     } catch (error) {
                         setLoading(false);
-                        const {response} = error;
-                        Swal.fire('Ha ocurrido un error', response.data, 'error');
+                        const message = error.response?.data || error.message || 'Error desconocido';
+                        Swal.fire('Ha ocurrido un error', message, 'error');
                     }
                 }
             });
@@ -137,14 +176,18 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
 
     const onFileChange = ({target}) => {
         const file = target.files[0];
-        if (file) {
+        if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             const fileName = file.name.split('.')[0];
             reader.readAsDataURL(file);
             reader.onload = () => {
                 const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-                formik.setFieldValue('mapaReferencial', base64String);
-                formik.setFieldValue('nombreMapaReferencial', fileName);
+                setImagePreview(base64String);
+                setReferencialMap(fileName);
+                // formik.setFieldValue('mapaReferencial', fileName);
+                // formik.setFieldValue('base64ImagenMapaReferencial', base64String)
+                // formik.setFieldValue('mapaReferencial', base64String);
+                // formik.setFieldValue('nombreMapaReferencial', fileName);
             }
             reader.onerror = (error) => {
                 console.log('Error al convertir a Base64:', error);
@@ -158,7 +201,7 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
             onHide={close}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Agregar Lugar</Modal.Title>
+                <Modal.Title>Editar Lugar</Modal.Title>
             </Modal.Header>
 
 
@@ -271,11 +314,15 @@ export const LugarEditModal = ({show, close, lugarEdit}) => {
                         <div className='row'>
                             <div className='col-lg-6'>
                                 {  
-                                    formik.values.mapaReferencial == '' ? 
+                                    formik.values.urlImagenMapaReferencial == '' ? 
                                         <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
                                             <FcAddImage />
                                         </div>
-                                        :  <ImageLoadAddEdit image={formik.values.mapaReferencial} />
+                                        : (
+                                            imagePreview == '' ? 
+                                            <img src={formik.values.urlImagenMapaReferencial} />
+                                            : <ImageLoadAddEdit image={formik.values.base64ImagenMapaReferencial} />
+                                        )
                                 }
                             </div>
                         </div>

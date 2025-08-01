@@ -25,7 +25,7 @@ export const LugarTable = ({changeAddForm}) => {
     const [ loading, setLoading ] = useState(false);
     const [ lugares, setLugares ] = useState([]);
     const [ showEditLugar, setShowEditLugar ] = useState(false);
-    const [ lugarEdit, setLugarEdit ] = useState({});
+    const [ idLugarEdit, setidLugarEdit ] = useState();
 
     const [ showReferencialMapModal, setShowReferencialMapModal ] = useState(false);
     const [ referencialMap, setReferencialMap ] = useState("");
@@ -89,9 +89,9 @@ export const LugarTable = ({changeAddForm}) => {
         });
     }
 
-    const handleEdit = (paramLugar) => {
+    const handleEdit = (idLugar) => {
         setShowEditLugar(true);
-        setLugarEdit(paramLugar);
+        setidLugarEdit(idLugar);
     }
 
     const handleWatchReferencialMap = (paramLugar) => {
@@ -135,7 +135,7 @@ export const LugarTable = ({changeAddForm}) => {
                     <button className='btn btn-danger' onClick={ (e) => handleDelete(row.idLugar)}>
                         <FaTrashAlt />
                     </button>&nbsp;
-                    <button className='btn btn-primary' onClick={ () => handleEdit(row)}>
+                    <button className='btn btn-primary' onClick={ () => handleEdit(row.idLugar)}>
                         <FaPen />
                     </button>
                 </div>
@@ -163,7 +163,7 @@ export const LugarTable = ({changeAddForm}) => {
             />
 
             {showEditLugar && (
-                <LugarEditModal show={showEditLugar} close={() => setShowEditLugar(false)} lugarEdit={lugarEdit} />
+                <LugarEditModal show={showEditLugar} close={() => setShowEditLugar(false)} idLugar={idLugarEdit} />
             ) }
 
             {
