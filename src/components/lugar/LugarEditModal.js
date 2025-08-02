@@ -40,19 +40,6 @@ export const LugarEditModal = ({show, close, idLugar}) => {
         fetchLugarById(idLugar);
     }, [idLugar, close]);
 
-    // useEffect(() => {
-    //     // fetchLugarById(lugarEdit.idLugar);
-
-    //     // fetchComunasByRegion(lugarEdit.comuna.idRegion);
-    //     // formik.setFieldValue('idComuna', lugarEdit.idComuna);
-    //     // convertImageToBase64(lugarEdit.mapaReferencial)
-    //     //     .then(base64String => {
-    //     //         console.log(base64String)
-    //     //         formik.setFieldValue('mapaReferencial', formattedImageBase64(base64String));
-    //     //     })
-    //     //     .catch(error => console.error(error));
-    // }, [show, close]);
-
     const fetchLugarById = async (idLugar) => {
         try {
             setLoading(true);
