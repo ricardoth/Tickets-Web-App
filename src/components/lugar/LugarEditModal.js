@@ -14,7 +14,6 @@ import { parserRegion } from "../../types/parsers";
 import { Combobox } from "../ui/combobox/Combobox";
 import { FcAddImage } from "react-icons/fc";
 import { ImageLoadAddEdit } from "../ui/imageLoad/ImageLoadAddEdit";
-import { convertImageToBase64, formattedImageBase64 } from "../../selectors/imageToBase64";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
@@ -171,10 +170,6 @@ export const LugarEditModal = ({show, close, idLugar}) => {
                 const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
                 setImagePreview(base64String);
                 setReferencialMap(fileName);
-                // formik.setFieldValue('mapaReferencial', fileName);
-                // formik.setFieldValue('base64ImagenMapaReferencial', base64String)
-                // formik.setFieldValue('mapaReferencial', base64String);
-                // formik.setFieldValue('nombreMapaReferencial', fileName);
             }
             reader.onerror = (error) => {
                 console.log('Error al convertir a Base64:', error);

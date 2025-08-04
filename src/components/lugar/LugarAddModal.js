@@ -17,7 +17,7 @@ import { ImageLoadAddEdit } from "../ui/imageLoad/ImageLoadAddEdit";
 
 const UrlGetRegiones = environment.UrlGetRegiones;
 const UrlGetComunasByRegion = environment.UrlGetComunasByRegion;
-const UrlPostLugar = environment.UrlGetLugares;
+const UrlLugar = environment.UrlGetLugares;
 
 const userBasicAuth = basicAuth.username;
 const passBasicAuth = basicAuth.password;
@@ -31,6 +31,8 @@ const validationSchema = Yup.object().shape({
 export const LugarAddModal = ({show, close}) => {
     const [ comunas, setComunas] = useState([]);
     const [ loading, setLoading ] = useState(false);
+    const [ imagePreview, setImagePreview ] = useState('');
+    const [ referencialMap, setReferencialMap ] = useState('');
 
     const fetchComunasByRegion = async (paramRegion) => {
         try {
@@ -61,7 +63,7 @@ export const LugarAddModal = ({show, close}) => {
             ubicacion: "",
             numeracion: "",
             mapaReferencial: '',
-            nombreMapaReferencial: '',
+            base64ImagenMapaReferencial: '',
             activo: true
         },
         validationSchema: validationSchema,
@@ -71,8 +73,8 @@ export const LugarAddModal = ({show, close}) => {
                 nombreLugar: values.nombreLugar,
                 ubicacion: values.ubicacion,
                 numeracion: values.numeracion,
-                mapaReferencial: values.mapaReferencial,
-                nombreMapaReferencial: values.nombreMapaReferencial,
+                mapaReferencial: referencialMap,
+                base64ImagenMapaReferencial: imagePreview,
                 activo: values.activo
             }
 
@@ -85,8 +87,8 @@ export const LugarAddModal = ({show, close}) => {
                 cancelButtonText: 'Cancelar',
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    setLoading(!loading);
-                    let response = await axios.post(UrlPostLugar, objLugar, {
+                    setLoading(true);
+                    let response = await axios.post(UrlLugar, objLugar, {
                         headers: {
                             Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                         },
@@ -107,6 +109,8 @@ export const LugarAddModal = ({show, close}) => {
 
     useEffect(() => {
         formik.resetForm();
+        setImagePreview('');
+        setReferencialMap('');
     }, [show]);
 
     const handleChangeRegion = async ({target}) => {
@@ -126,8 +130,8 @@ export const LugarAddModal = ({show, close}) => {
             reader.readAsDataURL(file);
             reader.onload = () => {
                 const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-                formik.setFieldValue('mapaReferencial', base64String);
-                formik.setFieldValue('nombreMapaReferencial', fileName);
+                setImagePreview(base64String);
+                setReferencialMap(fileName);
             }
             reader.onerror = (error) => {
                 console.log('Error al convertir a Base64:', error);
@@ -255,12 +259,12 @@ export const LugarAddModal = ({show, close}) => {
                         <div className='row'>
                             <div className='col-lg-6'>
                                 { 
-                                    formik.values.mapaReferencial == '' ? 
+                                    imagePreview == '' ? 
                                         <div className='' style={{border: '3px dotted', justifyContent: 'center', alignItems: 'center', display: 'flex', height: '50px'} } >
                                             <FcAddImage />
                                         </div>
                                         : 
-                                        <ImageLoadAddEdit image={formik.values.mapaReferencial} />     
+                                        <ImageLoadAddEdit image={imagePreview} />     
                                 }
                             </div>
                         </div>
