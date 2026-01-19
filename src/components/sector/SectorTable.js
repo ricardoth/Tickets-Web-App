@@ -12,7 +12,6 @@ import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import { SectorEditModal } from "./SectorEditModal";
 
-
 const UrlGetSectoresByEvento = environment.UrlGetSectoresByEvento;
 const UrlSector = environment.UrlGetSectores;
 const userBasicAuth = basicAuth.username;
@@ -34,28 +33,34 @@ export const SectorTable = ({changeAddForm, idEvento}) => {
     const fetchSectores = async (row) => {
         setLoading(!loading);
 
-        let response = await axios.get(UrlGetSectoresByEvento + `${row}` , {
-            headers: {
-                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-            },
-        })
+        try {
+            let response = await axios.get(UrlGetSectoresByEvento + `${row}` , {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            })
 
-        if (response.status === 200) {
-            let datos = response.data;
-            setSectores(datos);
-            setLoading(loading);
-        } else {
-            Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos, se cerrará la sesión automáticamente', 'error');
+            if (response.status === 200) {
+                let datos = response.data;
+                setSectores(datos);
+            } else 
+                setSectores([]);
+            setLoading(false);
+        }
+        catch (error) {
             setLoading(false);
 
-            setTimeout(() => {
-                dispatch({ type: types.logout });
-                localStorage.removeItem('user');
-            }, 1000);
+            if(error.request.status === 500) {
+                Swal.fire('Ha ocurrido un error en el servidor', 'No se pudieron cargar los datos, intente nuevamente más tarde', 'error');
+                setTimeout(() => {
+                    dispatch({ type: types.logout });
+                    localStorage.removeItem('user');
+                }, 1000);
+            }
         }
     }
 
-    if (data === undefined) return <Loader />;
+    if (sectores === undefined) return <Loader />;
 
     const handleEdit = (sectorParam) => {
         setSectorEdit(sectorParam);
