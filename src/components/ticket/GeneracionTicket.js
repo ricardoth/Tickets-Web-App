@@ -80,7 +80,7 @@ export const GeneracionTicket = () => {
                     },
                 });
 
-                if (response.status === 200) {
+                if (response.status === 201) {
                     openModal();
                     setBase64Pdf(response.data);
                     setLoading(false);

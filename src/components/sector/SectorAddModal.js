@@ -62,7 +62,7 @@ export const SectorAddModal = ({show, close}) => {
                             },
                         });
     
-                        if(response.status === 200) {
+                        if(response.status === 201) {
                             setLoading(false);
                             formik.resetForm();
                             close();
