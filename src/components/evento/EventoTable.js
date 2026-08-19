@@ -28,23 +28,30 @@ export const EventoTable = ({changeAddForm}) => {
     }, [changeAddForm, showEditEvento]);
  
     const fetchEventos = async () => {
-        setLoading(!loading);
-        let response = await axios.get(UrlGetEventos , {
-            headers: {
-                Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
-            },
-        });
+        setLoading(true);
+        try {
+            let response = await axios.get(UrlGetEventos , {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
+                },
+            });
 
-        if(response.status === 200) {
             setEventos(response.data);
-            setLoading(loading);
-        } else {
-            Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos, se cerrará la sesión automáticamente', 'error');
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            setEventos({ data: [], meta: {} });
 
-            setTimeout(() => {
-                dispatch({ type: types.logout });
-                localStorage.removeItem('user');
-            }, 1000);
+            const { response } = error;
+            if (response && response.status === 401) {
+                Swal.fire('Ha ocurrido un error al realizar la petición a la API', 'No se pudieron cargar los datos, se cerrará la sesión automáticamente', 'error');
+                setTimeout(() => {
+                    dispatch({ type: types.logout });
+                    localStorage.removeItem('user');
+                }, 1000);
+            } else {
+                Swal.fire('Ha ocurrido un error al cargar los eventos', 'No se pudo obtener uno o más eventos (posible falla al leer una imagen desde el almacenamiento). Puede reintentar la carga.', 'warning');
+            }
         }
     }
 
