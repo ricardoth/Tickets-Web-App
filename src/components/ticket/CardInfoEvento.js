@@ -155,7 +155,7 @@ export const CardInfoEvento = ({counter, increment, decrement}) => {
                                     <div className='row'>
                                         <div className='col-lg-6'>
                                             <div className='card'>
-                                                <ImageFlyer isVisible={isVisibleFlyer} image={evento.contenidoFlyer} classname={"img-fluid img-thumbnail"} style={{width:"100%", height:"100%",}} />
+                                                <ImageFlyer isVisible={isVisibleFlyer} image={evento.urlImagenFlyer} classname={"img-fluid img-thumbnail"} style={{width:"100%", height:"100%",}} />
                                             </div>
                                         </div>
                                         <div className='col-lg-6'>

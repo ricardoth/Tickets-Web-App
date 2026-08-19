@@ -33,7 +33,7 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
 
     useEffect(() => {
         formik.setFieldValue('fecha', formatDateHourEventTicket(eventoEdit.fecha));
-        convertImageToBase64(eventoEdit.contenidoFlyer)
+        convertImageToBase64(eventoEdit.urlImagenFlyer)
             .then(base64String => formik.setFieldValue('contenidoFlyer', formattedImageBase64(base64String)))
             .catch(error => console.error(error));
     }, [eventoEdit]);
