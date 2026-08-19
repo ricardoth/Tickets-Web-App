@@ -80,13 +80,11 @@ export const GeneracionTicket = () => {
                     },
                 });
 
-                if (response.status === 201) {
-                    openModal();
-                    setBase64Pdf(response.data);
-                    setLoading(false);
-                    formik.resetForm();
-                    ticketDispatch({type: types.resetFormValues});
-                }
+                openModal();
+                setBase64Pdf(response.data);
+                setLoading(false);
+                formik.resetForm();
+                ticketDispatch({type: types.resetFormValues});
             } catch (error) {
                 console.error('API error:', error);
                 setLoading(false);
