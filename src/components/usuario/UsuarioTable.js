@@ -22,11 +22,26 @@ export const UsuarioTable = ({changeAddForm}) => {
     const [ usuarios, setUsuarios ] = useState([]);
     const [ showEditUser, setShowEditUser ] = useState(false);
     const [ userEdit, setUserEdit ] = useState({});
+    const [ query, setQuery ] = useState('');
+    const [ debouncedQuery, setDebouncedQuery ] = useState('');
     const { data, meta } = usuarios;
 
-    const fetchUsuarios = async (page, row = 10) => {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedQuery(query);
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [query]);
+
+    const fetchUsuarios = async (page, row = 10, queryParam = '') => {
         setLoading(true);
-        await axios.get(UrlGetUsuariosTicket + `?PageSize=${row}&PageNumber=${page}`, {
+        let urlBase = UrlGetUsuariosTicket + `?PageSize=${row}&PageNumber=${page}`;
+
+        if (queryParam)
+            urlBase = urlBase + `&Query=${encodeURIComponent(queryParam)}`;
+
+        await axios.get(urlBase, {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
             },
@@ -48,19 +63,26 @@ export const UsuarioTable = ({changeAddForm}) => {
     }
 
     useEffect(() => {
-        fetchUsuarios(page);
+        fetchUsuarios(page, 10, debouncedQuery);
         setLoading(false);
     }, [changeAddForm, showEditUser, page]);
-    
+
+    useEffect(() => {
+        if (page === 1) {
+            fetchUsuarios(1, 10, debouncedQuery);
+        } else {
+            setPage(1);
+        }
+    }, [debouncedQuery]);
 
     if ( meta === undefined || data === undefined) return <Loader />;
-    
+
     const handlePageChange = page => {
         setPage(page);
     }
 
     const handleRowsChange = row => {
-        fetchUsuarios(1, row);
+        fetchUsuarios(1, row, debouncedQuery);
     }
 
     const handleDelete = (paramIdUser) => {
@@ -80,7 +102,7 @@ export const UsuarioTable = ({changeAddForm}) => {
             });
 
             if (response.status === 200) {
-                fetchUsuarios(1);
+                fetchUsuarios(1, 10, debouncedQuery);
             } else {
                 Swal.fire('Ha ocurrido un error', 'No se pudo eliminar el elemento', 'error');
             }
@@ -173,7 +195,20 @@ export const UsuarioTable = ({changeAddForm}) => {
 
     return (
         <>
-            <DataTable 
+            <div className="row mb-3">
+                <div className="col-lg-4">
+                    <label>Buscar</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Buscar usuario..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <DataTable
                 title="Tickets"
                 className='animate__animated animate__fadeIn'
                 columns={columns}

@@ -37,14 +37,28 @@ export const TicketControlPanel = () => {
 
     const [ isLoading, setIsLoading ] = useState(false);
 
-    const fetchTickets = async (page, row = 10, eventoParam, sectorParam) => {
+    const [ query, setQuery ] = useState('');
+    const [ debouncedQuery, setDebouncedQuery ] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedQuery(query);
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [query]);
+
+    const fetchTickets = async (page, row = 10, eventoParam, sectorParam, queryParam) => {
         let urlBase = URL_TICKET + `?PageSize=${row}&PageNumber=${page}`;
 
-        if (eventoParam != undefined && eventoParam != 0) 
+        if (eventoParam != undefined && eventoParam != 0)
             urlBase = urlBase + `&IdEvento=${eventoParam}`;
 
         if (sectorParam != undefined && sectorParam != 0)
             urlBase = urlBase + `&IdSector=${sectorParam}`;
+
+        if (queryParam)
+            urlBase = urlBase + `&Query=${encodeURIComponent(queryParam)}`;
 
         try {
             let response = await axios.get(urlBase, {
@@ -62,17 +76,25 @@ export const TicketControlPanel = () => {
     }
 
     useEffect(() => {
-        fetchTickets(page, 10, selectedEvento, selectedSector);
+        fetchTickets(page, 10, selectedEvento, selectedSector, debouncedQuery);
     }, [page]);
 
     useEffect(() => {
-        fetchTickets(page, 10, selectedEvento);
+        fetchTickets(page, 10, selectedEvento, selectedSector, debouncedQuery);
     }, [selectedEvento]);
-    
+
     useEffect(() => {
-        fetchTickets(page, 10, selectedEvento, selectedSector);
+        fetchTickets(page, 10, selectedEvento, selectedSector, debouncedQuery);
     }, [selectedSector]);
-    
+
+    useEffect(() => {
+        if (page === 1) {
+            fetchTickets(1, 10, selectedEvento, selectedSector, debouncedQuery);
+        } else {
+            setPage(1);
+        }
+    }, [debouncedQuery]);
+
     if ( meta === undefined || data === undefined) return <Loader />;
 
     const handlePageChange = page => {
@@ -80,7 +102,7 @@ export const TicketControlPanel = () => {
     }
 
     const handleRowsChange = row => {
-        fetchTickets(1, row, selectedEvento, selectedSector);
+        fetchTickets(1, row, selectedEvento, selectedSector, debouncedQuery);
     }
 
     const closeModal = () => {
@@ -147,8 +169,8 @@ export const TicketControlPanel = () => {
                     }, 1000)
                 }
 
-                fetchTickets(page);
-                
+                fetchTickets(page, 10, selectedEvento, selectedSector, debouncedQuery);
+
             }
         });
     }
@@ -178,8 +200,8 @@ export const TicketControlPanel = () => {
         XLSX.utils.book_append_sheet(workBook, workSheet, 'Reporte Tickets');
         XLSX.writeFile(workBook, 'Reporte Excel Tickets Resonance Pass.xlsx');
         setIsLoading(false);
-        fetchTickets(1);
-    } 
+        fetchTickets(1, 10, selectedEvento, selectedSector, debouncedQuery);
+    }
 
     const extractFieldsExcel = (source) => {
         return source.map(item => ({
@@ -269,12 +291,25 @@ export const TicketControlPanel = () => {
                     </div>
                     <hr/>
 
-                    <FilterControlPanel 
+                    <FilterControlPanel
                         selectedEvento={selectedEvento}
                         setSelectedEvento={setSelectedEvento}
                         selectedSector={selectedSector}
                         setSelectedSector={setSelectedSector}
                     />
+
+                        <div className="row mb-3">
+                            <div className="col-lg-4">
+                                <label>Buscar</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Buscar ticket..."
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
 
                         <DataTable
                             title="Tickets"
