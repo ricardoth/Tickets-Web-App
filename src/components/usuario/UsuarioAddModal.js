@@ -92,7 +92,7 @@ export const UsuarioAddModal = ({show, close}) => {
                             Authorization: `Basic ${Buffer.from(`${userBasicAuth}:${passBasicAuth}`).toString('base64')}`,
                         },
                     }).then(response => {
-                        if(response.status === 201) {
+                        if(response.status === 200 || response.status === 201) {
                             setLoading(false);
                             formik.resetForm();
                             close();
