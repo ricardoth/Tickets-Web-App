@@ -1,5 +1,6 @@
 import React, { useContext, useEffect ,useState} from 'react'
 import {Buffer} from 'buffer';
+import axios from 'axios';
 import { AuthContext } from '../../../auth/authContext';
 import { environment } from '../../../environment/environment.dev';
 
@@ -37,10 +38,10 @@ export const Combobox = ({ id, value, setValue, url, parser, tipoAuth}) => {
         }
 
         async function getCharacters() {
-          const response = await fetch(url, {
+          const response = await axios.get(url, {
             headers: headerAuth
           });
-          const { data } = await response.json();
+          const { data } = response.data;
           if (!unmounted) {
             const active = data.some(o => 'activo' in o);
             const isActive = data.some(o => 'esActivo' in o);

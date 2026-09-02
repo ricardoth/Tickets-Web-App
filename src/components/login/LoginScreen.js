@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/authContext';
 import { useForm } from '../../hooks/useForm';
@@ -21,6 +21,13 @@ export const LoginScreen = () => {
       password: ''
     });
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      if (localStorage.getItem('sessionExpired')) {
+        localStorage.removeItem('sessionExpired');
+        Swal.fire('Sesión expirada', 'Por favor, inicia sesión nuevamente', 'info');
+      }
+    }, []);
 
     const handleLogin = async (e) => {
       e.preventDefault();

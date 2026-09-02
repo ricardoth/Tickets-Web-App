@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 import '../../styles/Switch.css';
 import { environment } from '../../environment/environment.dev';
 import { Switch } from '../ui/switch/Switch';
@@ -61,24 +62,21 @@ export const MenuEditModal = ({show, handleClose, menuEdit} ) => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     
-                    fetch(endpoint + "?id=" + menuEdit.idMenu, {
-                        method: 'PUT',
+                    axios.put(endpoint + "?id=" + menuEdit.idMenu, menuSend, {
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${user.token}`
-                        },
-                        body: JSON.stringify(menuSend)
+                        }
                     })
-                    .then(response => response.json())
-                    .then(data => {
+                    .then(response => {
                         handleClose(true);
                         setTimeout(() => {
                             Swal.fire('Actualizado!', '', 'success');
                         }, 100);
-                        
+
                     })
-                    .catch(err => console.log(err)); 
+                    .catch(err => console.log(err));
     
                 }
             });

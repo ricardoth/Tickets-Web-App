@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Modal} from  'react-bootstrap';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 import { environment } from '../../environment/environment.dev';
 import '../../styles/Switch.css';
 import { Switch } from '../ui/switch/Switch';
@@ -67,17 +68,15 @@ export const MenuAddModal = ({show, close, setMenus}) => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     
-                    fetch(endpoint , {
-                        method: 'POST',
+                    axios.post(endpoint, menuSend, {
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${user.token}`
-                        },
-                        body: JSON.stringify(menuSend)
+                        }
                     })
-                    .then(response => response.json())
-                    .then(data => {
+                    .then(response => {
+                        const data = response.data;
                         if(!data.ok ){
                             setMenus(1);
                             close(true);
@@ -87,7 +86,7 @@ export const MenuAddModal = ({show, close, setMenus}) => {
                             console.log(data)
                         }
                     })
-                    .catch(err => console.log(err)); 
+                    .catch(err => console.log(err));
     
                 }
             });

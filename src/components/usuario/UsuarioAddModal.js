@@ -96,6 +96,7 @@ export const UsuarioAddModal = ({show, close}) => {
                             setLoading(false);
                             formik.resetForm();
                             close();
+                            Swal.fire('Información', 'Se ha creado el usuario correctamente', 'success');
                         } else {
                             setLoading(false);
                             Swal.fire('Ha ocurrido un error', 'No se pudo agregar el elemento', 'error');

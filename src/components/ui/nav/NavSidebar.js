@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../auth/authContext';
-import { useFetch } from '../../../hooks/useFetch';
 import { types } from '../../../types/types';
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
