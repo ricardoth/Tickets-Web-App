@@ -187,7 +187,7 @@ export const CardInfoEvento = ({counter, increment, decrement}) => {
                                         <label>Selecciona tu Sector</label>
                                         <select id="idSector" value={ticketState.formValues.idSector} onChange={handleChangeSector} className='custom-select form-control'>
                                             <option value="">---Seleccione---</option>
-                                            { sectores.map((sector) => (
+                                            { sectores.filter((sector) => sector.activo).map((sector) => (
                                                 <option key={sector.idSector} value={sector.idSector}>{sector.nombreSector}</option>
                                             )) }
                                         </select>
