@@ -51,6 +51,12 @@ export const UsuarioTable = ({changeAddForm}) => {
             setLoading(false);
         })
         .catch( err => {
+            if (err.response && err.response.status === 404) {
+                setUsuarios({ data: [], meta: { totalCount: 0 } });
+                setLoading(false);
+                return;
+            }
+
             Swal.fire('Ha ocurrido un error al realizar la petición a la API', `No se pudieron cargar los datos: ${err}`, 'error');
 
             setTimeout(() => {
