@@ -14,7 +14,7 @@ import { FcAddImage } from 'react-icons/fc';
 import { Loader } from '../ui/loader/Loader';
 import { formatDateHourEventTicket } from '../../types/formatDate';
 import { ImageLoadAddEdit } from '../ui/imageLoad/ImageLoadAddEdit';
-import { convertImageToBase64, formattedImageBase64 } from '../../selectors/imageToBase64';
+import { convertImageToBase64, formattedImageBase64, resizeImageToBase64 } from '../../selectors/imageToBase64';
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlPutEvento = environment.UrlGetEventos;
@@ -87,7 +87,10 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
                     } catch (error) {
                         setLoading(false);
                         const {response} = error;
-                        Swal.fire('Ha ocurrido un error', response.data, 'error');
+                        const mensaje = typeof response?.data === 'string' && response.data
+                            ? response.data
+                            : (response?.status === 413 ? 'La imagen es demasiado pesada' : 'No se pudo actualizar el evento');
+                        Swal.fire('Ha ocurrido un error', mensaje, 'error');
                     } 
                 }
             })
@@ -98,17 +101,16 @@ export const EventoEditModal = ({show, close, eventoEdit}) => {
     const onFileChange = ({target}) => {
         const file = target.files[0];
         if (file) {
-            const reader = new FileReader();
             const fileName = file.name.split('.')[0];
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-                formik.setFieldValue('flyer', fileName);
-                formik.setFieldValue('contenidoFlyer', base64String);
-            }
-            reader.onerror = (error) => {
-                console.log('Error al convertir a Base64:', error);
-            }
+            resizeImageToBase64(file)
+                .then((base64String) => {
+                    formik.setFieldValue('flyer', fileName);
+                    formik.setFieldValue('contenidoFlyer', base64String);
+                })
+                .catch((error) => {
+                    console.log('Error al convertir a Base64:', error);
+                    Swal.fire('Ha ocurrido un error', 'No se pudo procesar la imagen seleccionada', 'error');
+                });
         }
     }
   

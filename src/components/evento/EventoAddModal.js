@@ -13,6 +13,7 @@ import { parserLugar } from '../../types/parsers';
 import { Loader } from '../ui/loader/Loader';
 import { FcAddImage } from "react-icons/fc";
 import { ImageLoadAddEdit } from '../ui/imageLoad/ImageLoadAddEdit';
+import { resizeImageToBase64 } from '../../selectors/imageToBase64';
 
 const UrlGetLugares = environment.UrlGetLugares;
 const UrlEvento = environment.UrlGetEventos;
@@ -82,7 +83,10 @@ export const EventoAddModal = ({show, close}) => {
                     } catch (error) {
                         setLoading(false);
                         const {response} = error;
-                        Swal.fire('Ha ocurrido un error', response.data, 'error');
+                        const mensaje = typeof response?.data === 'string' && response.data
+                            ? response.data
+                            : (response?.status === 413 ? 'La imagen es demasiado pesada' : 'No se pudo agregar el evento');
+                        Swal.fire('Ha ocurrido un error', mensaje, 'error');
                     }
                 }
             });
@@ -92,17 +96,16 @@ export const EventoAddModal = ({show, close}) => {
     const onFileChange = ({target}) => {
         const file = target.files[0];
         if (file) {
-            const reader = new FileReader();
             const fileName = file.name.split('.')[0];
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-                formik.setFieldValue('flyer', fileName);
-                formik.setFieldValue('contenidoFlyer', base64String);
-            }
-            reader.onerror = (error) => {
-                console.log('Error al convertir a Base64:', error);
-            }
+            resizeImageToBase64(file)
+                .then((base64String) => {
+                    formik.setFieldValue('flyer', fileName);
+                    formik.setFieldValue('contenidoFlyer', base64String);
+                })
+                .catch((error) => {
+                    console.log('Error al convertir a Base64:', error);
+                    Swal.fire('Ha ocurrido un error', 'No se pudo procesar la imagen seleccionada', 'error');
+                });
         }
     }
 
